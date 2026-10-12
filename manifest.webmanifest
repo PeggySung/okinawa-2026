@@ -1,0 +1,16 @@
+{
+  "name": "琉球で遭難中 RYUKYU LOST CLUB",
+  "short_name": "琉球で遭難中",
+  "description": "2026 沖繩旅行：行程、航班、行前準備、購物清單、記帳",
+  "lang": "zh-Hant",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#FBF8F1",
+  "theme_color": "#FBF8F1",
+  "icons": [
+    {"src": "img/icon-192.png", "sizes": "192x192", "type": "image/png"},
+    {"src": "img/icon-512.png", "sizes": "512x512", "type": "image/png"},
+    {"src": "img/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable"}
+  ]
+}
