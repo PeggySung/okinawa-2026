@@ -3,14 +3,14 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>琉球で遭難中</title>
-<meta name="description" content="RYUKYU LOST CLUB・2026 沖繩旅行">
+<title>小夥伴粗國玩：琉球之旅</title>
+<meta name="description" content="Little Buddies, Big Adventures in Ryukyu・2026 沖繩旅行">
 <meta name="theme-color" content="#FBF8F1">
 <meta name="color-scheme" content="light only">
 <meta name="robots" content="noindex, nofollow">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="琉球で遭難中">
+<meta name="apple-mobile-web-app-title" content="小夥伴粗國玩">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" type="image/png" href="img/icon-192.png">
@@ -57,7 +57,8 @@ a{color:var(--sea-deep)} a.btn{text-decoration:none}
 .brand{display:flex;align-items:center;gap:9px;min-width:0;flex:1}
 .brand img{width:34px;height:34px;border-radius:9px;box-shadow:0 0 0 2px var(--card),0 0 0 3.5px var(--ink)}
 .brand b{font-family:var(--f-title);font-weight:400;font-size:19px;letter-spacing:.04em;white-space:nowrap}
-.brand small{display:block;font-family:var(--f-num);font-size:9.5px;letter-spacing:.18em;color:var(--sea-deep);font-weight:800;margin-top:-3px}
+.brand>div{min-width:0}
+.brand small{display:block;font-family:var(--f-num);font-size:9px;letter-spacing:.06em;color:var(--sea-deep);font-weight:800;margin-top:-2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .pill{font-family:var(--f-title);font-size:13px;background:var(--sea-light);color:var(--sea-deep);padding:4px 11px;border-radius:999px;white-space:nowrap;
   border:1.5px dashed rgba(11,116,120,.35)}
 .pill.go{background:var(--hib-light);color:#B32F3B;border-color:rgba(228,80,94,.4)}
@@ -167,9 +168,10 @@ h2.sec .deco{width:22px;height:22px;color:var(--hib)}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 
 /* ── flight ── */
-.pass{padding:0;overflow:hidden}
+.pass{padding:0;overflow:hidden;box-shadow:var(--shadow)}
+.pass::after{content:"";position:absolute;inset:0;border-radius:inherit;box-shadow:inset 0 0 0 1.5px var(--line-2);pointer-events:none;z-index:1}
 .pass-top{padding:14px 16px 12px;background:linear-gradient(135deg,var(--sea-wash),var(--card));border-bottom:2px dashed var(--line-2);position:relative}
-.pass-top::before,.pass-top::after{content:"";position:absolute;bottom:-11px;width:20px;height:20px;border-radius:50%;background:var(--paper);box-shadow:inset 0 0 0 1.5px var(--line-2)}
+.pass-top::before,.pass-top::after{content:"";position:absolute;z-index:2;bottom:-11px;width:20px;height:20px;border-radius:50%;background:var(--paper);box-shadow:inset 0 0 0 1.5px var(--line-2)}
 .pass-top::before{left:-11px} .pass-top::after{right:-11px}
 .pass-head{display:flex;justify-content:space-between;align-items:center;font-family:var(--f-title);font-size:14px;color:var(--ink-2)}
 .pass-head b{font-family:var(--f-num);font-size:15px;color:var(--ink);letter-spacing:.04em}
@@ -325,7 +327,8 @@ textarea.in{min-height:72px;resize:vertical}
 .gate{text-align:center;padding-top:10px}
 .gate .hero{width:min(64vw,250px);aspect-ratio:1;border-radius:22%;display:block;margin:0 auto 18px;box-shadow:0 0 0 4px var(--card),0 0 0 6px var(--ink),6px 9px 0 6px rgba(43,58,78,.12)}
 .gate h1{font-family:var(--f-title);font-weight:400;font-size:30px;margin:0;letter-spacing:.05em}
-.gate .en{font-family:var(--f-num);font-weight:800;letter-spacing:.24em;font-size:12px;color:var(--sea-deep);margin-top:2px}
+.gate .sub{font-family:var(--f-title);font-size:20px;color:var(--ink-2);margin-top:2px;letter-spacing:.1em}
+.gate .en{font-family:var(--f-num);font-weight:800;letter-spacing:.12em;font-size:11.5px;margin-top:6px;color:var(--sea-deep);margin-top:2px}
 .gate .lead{margin:16px auto 22px;max-width:320px;color:var(--ink-2)}
 .gate .card{text-align:left;margin:16px 0}
 .gate .card b{font-family:var(--f-title);font-weight:400;font-size:16px}
@@ -342,13 +345,13 @@ textarea.in{min-height:72px;resize:vertical}
 <body class="bare">
 <header id="top" class="hidden">
   <div class="headrow">
-    <div class="brand"><img src="img/icon-192.png" alt=""><div><b>琉球で遭難中</b><small>RYUKYU LOST CLUB</small></div></div>
+    <div class="brand"><img src="img/icon-192.png" alt=""><div><b>小夥伴粗國玩</b><small>琉球之旅・LITTLE BUDDIES</small></div></div>
     <span id="countdown" class="pill"></span>
     <button id="meBtn" aria-label="我的資料"></button>
   </div>
   <nav class="tabs" role="tablist" aria-label="主選單">
     <button class="tab" role="tab" data-tab="trip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-6.5-5.6-6.5-11a6.5 6.5 0 0113 0C18.5 15.4 12 21 12 21z"/><circle cx="12" cy="10" r="2.4"/></svg>行程</button>
-    <button class="tab" role="tab" data-tab="flight"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M10.5 13.5L4 11l1.5-1.5 7 1L17 6c1-1 2.6-1.3 3.2-.7.6.6.3 2.2-.7 3.2l-4.5 4.5 1 7L14.5 21.5 12 15l-3 3v2.5L7.5 22 6 18 2 16.5 3.5 15H6l3-3"/></svg>航班</button>
+    <button class="tab" role="tab" data-tab="flight"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2z"/></svg>航班</button>
     <button class="tab" role="tab" data-tab="prep"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="4.5" y="4" width="15" height="17" rx="2.5"/><path d="M9 4V3h6v1M8.5 10.5l1.8 1.8 3.5-3.6M8.5 16h7"/></svg>準備</button>
     <button class="tab" role="tab" data-tab="shop"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M5 8h14l-1.2 11.2a2 2 0 01-2 1.8H8.2a2 2 0 01-2-1.8L5 8z"/><path d="M9 10V6.5a3 3 0 016 0V10"/></svg>購物</button>
     <button class="tab" role="tab" data-tab="money"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><path d="M8.8 7.5L12 12l3.2-4.5M12 12v5M9 12.5h6M9 15h6"/></svg>記帳</button>
@@ -405,7 +408,7 @@ const ic = {
   coin: I('<circle cx="12" cy="12" r="8.5"/><path d="M8.8 7.5L12 12l3.2-4.5M12 12v5M9 12.5h6M9 15h6"/>'),
   lock: I('<rect x="5" y="10.5" width="14" height="10" rx="2.5"/><path d="M8 10.5V8a4 4 0 018 0v2.5"/>'),
   arrow: I('<path d="M5 12h13M13 7l5 5-5 5"/>','stroke-width="2.2"'),
-  plane: I('<path d="M10.5 13.5L4 11l1.5-1.5 7 1L17 6c1-1 2.6-1.3 3.2-.7.6.6.3 2.2-.7 3.2l-4.5 4.5 1 7L14.5 21.5 12 15l-3 3v2.5L7.5 22 6 18 2 16.5 3.5 15H6l3-3"/>'),
+  plane: I('<path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2z"/>'),
   bag: I('<rect x="5" y="7" width="14" height="13" rx="2.5"/><path d="M9 7V4.5h6V7M9 11v5M15 11v5"/>'),
   suitcase: I('<rect x="6" y="6.5" width="12" height="13" rx="2.5"/><path d="M10 6.5V4h4v2.5M8.5 21v-1.5M15.5 21v-1.5M12 10v6"/>'),
   alert: I('<path d="M12 4l9 16H3l9-16z"/><path d="M12 10v4M12 17v.5"/>'),
@@ -519,7 +522,7 @@ function bare(on) {
   $('#fab').classList.add('hidden');
 }
 function gateHead(lead) {
-  return `<div class="gate"><img class="hero" src="img/hero.webp" alt=""><h1>琉球で遭難中</h1><div class="en">RYUKYU LOST CLUB</div>${lead ? `<p class="lead">${lead}</p>` : ''}`;
+  return `<div class="gate"><img class="hero" src="img/hero.webp" alt=""><h1>小夥伴粗國玩</h1><div class="sub">琉球之旅</div><div class="en">LITTLE BUDDIES, BIG ADVENTURES IN RYUKYU</div>${lead ? `<p class="lead">${lead}</p>` : ''}`;
 }
 function showSetupNeeded() {
   bare(true);
@@ -862,7 +865,7 @@ function renderFlight() {
       </div>
     </div>
     <div class="pass-bot">
-      <div class="seats">${IDS.map(id => `<div>${avatar(id, 'l').replace('data-profile', 'data-full')}<span class="num">${esc(f.seats?.[id] || '—')}</span><span class="who-n">${nm(id)}</span></div>`).join('')}</div>
+      <div class="seats">${IDS.map(id => `<div>${avatar(id, 'l')}<span class="num">${esc(f.seats?.[id] || '—')}</span><span class="who-n">${nm(id)}</span></div>`).join('')}</div>
       <div class="wave-div" style="margin:14px 0 10px"></div>
       <dl class="kv"><dt>報到時間</dt><dd>${esc(f.checkin)}</dd><dt>票價</dt><dd>${esc(f.fare)}・託運 1 件</dd></dl>
     </div></div>`;
