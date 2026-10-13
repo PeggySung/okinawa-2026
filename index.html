@@ -36,7 +36,8 @@
   --safe-t:env(safe-area-inset-top,0px); --safe-b:env(safe-area-inset-bottom,0px);
 }
 *,*::before,*::after{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-html{background:var(--paper);scrollbar-gutter:stable}
+html{background:var(--paper);scrollbar-gutter:stable;overflow-x:hidden;overflow-x:clip}
+body{overflow-x:clip}
 html.locked,html.locked body{overflow:hidden}
 body{margin:0;min-height:100vh;background:var(--paper);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.55;
   -webkit-font-smoothing:antialiased;overflow-x:hidden}
@@ -716,15 +717,24 @@ function renderHeader() {
 }
 document.querySelectorAll('.tab').forEach(t => t.onclick = () => {
   if (S.tab === t.dataset.tab) { scrollTo({top: 0, behavior: 'smooth'}); return; }
-  S.tab = t.dataset.tab; localSet('tab', S.tab); renderHeader(); render(); scrollTo({top: 0});
+  S.tab = t.dataset.tab; localSet('tab', S.tab); renderHeader(); render(); scrollTo({top: 0}); popTab();
 });
 const TAB_ORDER = ['trip', 'flight', 'prep', 'shop', 'money'];
 function goTab(t, dir) {
   if (!t || t === S.tab) return;
   S.tab = t; localSet('tab', S.tab); renderHeader(); render(); scrollTo({top: 0});
-  const m = $('#main'); m.classList.remove('inL', 'inR'); void m.offsetWidth; if (dir) m.classList.add(dir > 0 ? 'inL' : 'inR');
+  popTab();
+  if (dir) $('#main').animate([{transform: `translateX(${dir * 22}%) rotate(${dir * 1.2}deg)`, opacity: 0},
+    {transform: 'none', opacity: 1}], {duration: 380, easing: 'cubic-bezier(.34,1.56,.64,1)'});
 }
-// 手機左右滑動切換頁籤（從可橫向捲動的區塊、輸入框、或螢幕最左右邊緣開始的滑動不算）
+function popTab() {
+  const b = document.querySelector(`.tab[data-tab="${S.tab}"]`);
+  b?.animate([{transform: 'scale(.82)'}, {transform: 'scale(1.12)'}, {transform: 'scale(1)'}], {duration: 360, easing: 'ease-out'});
+  b?.querySelector('svg')?.animate([{transform: 'rotate(0)'}, {transform: 'rotate(-14deg)'}, {transform: 'rotate(10deg)'}, {transform: 'rotate(0)'}], {duration: 420, easing: 'ease-in-out'});
+}
+// 手機左右滑動切換頁籤：畫面會跟著手指移動，放開後彈出／彈入
+// （從可橫向捲動的區塊、輸入框、或螢幕最左右邊緣開始的滑動不算）
+const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
 let sw = null;
 document.addEventListener('touchstart', e => {
   sw = null;
@@ -734,15 +744,37 @@ document.addEventListener('touchstart', e => {
   if (t.clientX < 24 || t.clientX > innerWidth - 24) return;
   if (el.closest('input,textarea,select,.daybar,[data-noswipe]')) return;
   for (let n = el; n && n !== document.body; n = n.parentElement) if (n.scrollWidth > n.clientWidth + 2 && /(auto|scroll)/.test(getComputedStyle(n).overflowX)) return;
-  sw = {x: t.clientX, y: t.clientY, t: Date.now()};
+  sw = {x: t.clientX, y: t.clientY, t: Date.now(), lock: null, dx: 0};
 }, {passive: true});
-document.addEventListener('touchend', e => {
+document.addEventListener('touchmove', e => {
   if (!sw) return;
-  const t = e.changedTouches[0], dx = t.clientX - sw.x, dy = t.clientY - sw.y, dt = Date.now() - sw.t; sw = null;
-  if (dt > 700 || Math.abs(dx) < 60 || Math.abs(dx) < Math.abs(dy) * 1.6) return;
+  const t = e.touches[0], dx = t.clientX - sw.x, dy = t.clientY - sw.y;
+  if (!sw.lock) { if (Math.abs(dx) < 10 && Math.abs(dy) < 10) return; sw.lock = Math.abs(dx) > Math.abs(dy) * 1.2 ? 'x' : 'y'; }
+  if (sw.lock !== 'x') return;
+  e.preventDefault();
+  const i = TAB_ORDER.indexOf(S.tab), edge = (dx > 0 && i === 0) || (dx < 0 && i === TAB_ORDER.length - 1);
+  sw.dx = dx;
+  if (reduceMotion) return;
+  const k = edge ? 0.18 : 0.55, x = dx * k;
+  const m = $('#main'); m.style.transition = 'none';
+  m.style.transform = `translateX(${x}px) rotate(${x / 90}deg)`; m.style.opacity = String(1 - Math.min(Math.abs(x) / 600, .35));
+}, {passive: false});
+document.addEventListener('touchend', () => {
+  if (!sw) return;
+  const {dx, t, lock} = sw; sw = null;
+  const m = $('#main');
+  const back = () => { if (!m.style.transform) return; m.style.transition = 'transform .35s cubic-bezier(.34,1.56,.64,1), opacity .25s'; m.style.transform = ''; m.style.opacity = ''; };
+  if (lock !== 'x') { back(); return; }
+  const fast = Math.abs(dx) > 40 && Date.now() - t < 300;
   const i = TAB_ORDER.indexOf(S.tab) + (dx < 0 ? 1 : -1);
-  if (i >= 0 && i < TAB_ORDER.length) goTab(TAB_ORDER[i], dx < 0 ? 1 : -1);
+  if ((Math.abs(dx) < 70 && !fast) || i < 0 || i >= TAB_ORDER.length) { back(); return; }
+  const dir = dx < 0 ? 1 : -1;
+  if (reduceMotion) { m.style.transform = ''; m.style.opacity = ''; goTab(TAB_ORDER[i]); return; }
+  m.style.transition = 'transform .16s ease-in, opacity .16s ease-in';
+  m.style.transform = `translateX(${-dir * 45}%) rotate(${-dir * 2}deg)`; m.style.opacity = '0';
+  setTimeout(() => { m.style.transition = 'none'; m.style.transform = ''; m.style.opacity = ''; goTab(TAB_ORDER[i], dir); }, 160);
 }, {passive: true});
+document.addEventListener('touchcancel', () => { sw = null; const m = $('#main'); m.style.transition = ''; m.style.transform = ''; m.style.opacity = ''; });
 function syncNet() { $('#netbar').classList.toggle('hidden', navigator.onLine); }
 addEventListener('online', syncNet); addEventListener('offline', syncNet); syncNet();
 
@@ -896,7 +928,7 @@ function editItem(x, day) {
     <label class="f"><span>行程項目 <em>*</em></span><input class="in" id="fTitle" value="${esc(x.title)}" maxlength="200"></label>
     <div class="row2"><label class="f"><span>哪一天</span><select class="in" id="fDay">${dayOpts}</select></label>
       <label class="f"><span>類型</span><select class="in" id="fKind"><option value="spot">景點／活動</option><option value="move" ${x.kind === 'move' ? 'selected' : ''}>移動</option></select></label></div>
-    <div class="row2"><div class="f"><span>開始（日本時間・24 小時制）</span>${timeField('fStart', x.start)}</div>
+    <div class="row2"><div class="f"><span>開始</span>${timeField('fStart', x.start)}</div>
       <div class="f"><span>結束</span>${timeField('fEnd', x.end)}</div></div>
     <p class="tiny muted" id="fMins" style="margin:-6px 2px 10px"></p>
     <label class="f"><span>備註 1</span><textarea class="in" id="fN1">${esc(x.n1)}</textarea></label>
@@ -910,7 +942,10 @@ function editItem(x, day) {
     <div class="sheet-acts">${isNew ? '' : `<button class="btn" id="fDel">${ic.trash}刪除</button>`}<button class="btn pri" id="fSave">儲存</button></div>`, s => {
     const upd = () => {
       const a = toMin(s.querySelector('#fStart').value), b = toMin(s.querySelector('#fEnd').value);
-      s.querySelector('#fMins').textContent = a !== null && b !== null && b > a ? `共 ${b - a} 分鐘（自動計算）` : '';
+      const bad = b !== null && (a === null || b < a), mm = s.querySelector('#fMins');
+      mm.textContent = bad ? (a === null ? '有結束時間時，請先選開始時間' : '結束時間不能早於開始時間') : a !== null && b !== null && b > a ? `共 ${b - a} 分鐘（自動計算）` : '';
+      mm.style.color = bad ? '#B32F3B' : '';
+      s.querySelectorAll('[data-tp=fEnd] select').forEach(x => x.style.boxShadow = bad ? 'inset 0 0 0 2px #E4505E' : '');
       const q = s.querySelector('#fMap').value.trim();
       s.querySelector('#fMapTest').href = q ? mapsSearch(q) : '#';
     };
@@ -918,6 +953,9 @@ function editItem(x, day) {
     s.querySelector('#fSave').onclick = async () => {
       const v = id => s.querySelector(id).value.trim();
       const title = v('#fTitle'); if (!title) { toast('請填寫行程項目'); return; }
+      const sm = toMin(v('#fStart')), em = toMin(v('#fEnd'));
+      if (em !== null && sm === null) { toast('有結束時間時，請先選開始時間'); return; }
+      if (em !== null && em < sm) { toast('結束時間不能早於開始時間'); return; }
       const d = +v('#fDay');
       const data = {day: d, date: DAYS.find(x => x.d === d)?.date || '', start: v('#fStart'), end: v('#fEnd'), title, kind: v('#fKind'),
         n1: v('#fN1'), n2: v('#fN2'), n3: v('#fN3'), price: v('#fPrice'), map: v('#fMap'), mapcode: v('#fMc'),
