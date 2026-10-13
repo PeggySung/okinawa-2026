@@ -36,7 +36,8 @@
   --safe-t:env(safe-area-inset-top,0px); --safe-b:env(safe-area-inset-bottom,0px);
 }
 *,*::before,*::after{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-html{background:var(--paper)}
+html{background:var(--paper);scrollbar-gutter:stable}
+html.locked,html.locked body{overflow:hidden}
 body{margin:0;min-height:100vh;background:var(--paper);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.55;
   -webkit-font-smoothing:antialiased;overflow-x:hidden}
 body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;opacity:.5;
@@ -51,6 +52,7 @@ html,.sheet-body,textarea{scrollbar-width:thin;scrollbar-color:rgba(27,165,168,.
 ::-webkit-scrollbar-thumb:hover{background-color:rgba(11,116,120,.65)}
 ::-webkit-scrollbar-corner{background:transparent}
 .daybar::-webkit-scrollbar{display:none}
+@media (hover:hover) and (pointer:fine){.daybar{cursor:grab}.daybar.dragging{cursor:grabbing;scroll-snap-type:none}.daybar.dragging .daychip{pointer-events:none}}
 button{cursor:pointer;border:0;background:none;padding:0}
 a{color:var(--sea-deep)} a.btn{text-decoration:none}
 .num{font-family:var(--f-num);font-variant-numeric:tabular-nums;font-weight:700}
@@ -121,6 +123,9 @@ h2.sec .deco{width:22px;height:22px;color:var(--hib)}
 .av.l{width:46px;height:46px}
 .av.xl{width:132px;height:132px;box-shadow:0 0 0 4px var(--card),0 0 0 8px var(--c)}
 .avs{display:inline-flex;align-items:center}
+.chip .av,.sub .av.s{width:16px;height:16px;box-shadow:0 0 0 1px var(--card),0 0 0 2.5px var(--c)}
+.chip .avs .av+.av,.sub .avs .av+.av{margin-left:-3px}
+.chip:has(.av){padding-left:5px}
 .avs .av+.av{margin-left:-5px}
 .who{display:inline-flex;align-items:center;gap:6px;font-family:var(--f-title);font-size:14px}
 .dot{width:11px;height:11px;border-radius:50%;display:inline-block;border:2px solid var(--c);background:transparent}
@@ -130,6 +135,7 @@ h2.sec .deco{width:22px;height:22px;color:var(--hib)}
 /* ── itinerary ── */
 .daybar{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;margin:0 -16px;padding:2px 16px 10px;scroll-snap-type:x proximity}
 .daybar::-webkit-scrollbar{display:none}
+@media (hover:hover) and (pointer:fine){.daybar{cursor:grab}.daybar.dragging{cursor:grabbing;scroll-snap-type:none}.daybar.dragging .daychip{pointer-events:none}}
 .daychip{flex:none;scroll-snap-align:center;min-width:72px;padding:7px 10px 6px;border-radius:var(--r-btn);background:var(--card);
   box-shadow:inset 0 0 0 1.5px var(--line);text-align:center;font-family:var(--f-title);line-height:1.2}
 .daychip b{display:block;font-weight:400;font-size:16px}
@@ -296,7 +302,7 @@ details.cat>summary .cnt{margin-left:auto;font-size:13px}
 .sheet-head.shadowed{border-bottom-color:var(--line)}
 .sheet-head:empty{display:none}
 .sheet-body{flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;padding:12px 18px calc(var(--safe-b) + 18px)}
-.sheet-head:empty+.sheet-body{padding-top:0}
+.sheet-head:empty+.sheet-body{padding-top:14px}
 #sheet h3{font-family:var(--f-title);font-weight:400;font-size:20px;margin:0 0 10px;display:flex;align-items:center;gap:8px}
 #sheet h3 .x{margin-left:auto}
 .f{display:block;margin-bottom:12px}
@@ -306,6 +312,12 @@ details.cat>summary .cnt{margin-left:auto;font-size:13px}
 .in:focus{box-shadow:inset 0 0 0 2px var(--sea)}
 .in:disabled{background:var(--sand);color:var(--ink-2)}
 textarea.in{min-height:72px;resize:vertical}
+select.in{-webkit-appearance:none;appearance:none;padding-right:42px;cursor:pointer;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2356667A' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 14px center;background-size:16px}
+.tp{display:flex;align-items:center;gap:6px}
+.tp select.in{flex:1;min-width:0;padding-left:12px;padding-right:30px;background-position:right 8px center;font-family:var(--f-num);font-weight:700;text-align:center}
+.tp b{font-family:var(--f-num);font-weight:800;color:var(--ink-2)}
 .in.big{font-family:var(--f-num);font-weight:800;font-size:30px;min-height:60px;text-align:right}
 .row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
@@ -482,13 +494,14 @@ function openSheet(html, mount) {
   const s = $('#sheet');
   const m = /^\s*<h3[\s\S]*?<\/h3>/.exec(html), head = m ? m[0] : '', body = m ? html.slice(m[0].length) : html;
   s.innerHTML = `<div class="grab"></div><div class="sheet-head">${head}</div><div class="sheet-body">${body}</div>`;
-  $('#veil').classList.add('on'); s.classList.add('on');
+  $('#veil').classList.add('on'); s.classList.add('on'); document.documentElement.classList.add('locked');
   const sb = s.querySelector('.sheet-body'), sh = s.querySelector('.sheet-head');
   sb.scrollTop = 0; sb.onscroll = () => sh.classList.toggle('shadowed', sb.scrollTop > 2);
   s.querySelectorAll('[data-close]').forEach(b => b.onclick = closeSheet);
   sheetClose = null; mount?.(s);
 }
 function closeSheet() {
+  document.documentElement.classList.remove('locked');
   $('#sheet').classList.remove('on'); $('#veil').classList.remove('on'); sheetClose?.(); sheetClose = null;
 }
 $('#veil').onclick = () => { if (!$('#dlg').classList.contains('on')) closeSheet(); };
@@ -748,10 +761,11 @@ function openPreview(id) {
   const lb = $('#lightbox'), p = PROFILE[id] || {};
   lb.style.setProperty('--c', COLORS[id]);
   lb.innerHTML = `<img src="img/full/${id}.webp" alt="${esc(SHORT[id])} 的頭像"><div class="cap">${esc(SHORT[id])}<small>${esc(p.full || '')}・${esc(p.title || '')}</small></div><div class="hint">點任意處關閉</div>`;
-  lb.classList.add('on');
-  lb.onclick = () => lb.classList.remove('on');
+  lb.classList.add('on'); document.documentElement.classList.add('locked');
+  lb.onclick = closePreview;
 }
-addEventListener('keydown', e => { if (e.key === 'Escape') $('#lightbox').classList.remove('on'); });
+function closePreview() { $('#lightbox').classList.remove('on'); if (!$('#sheet.on')) document.documentElement.classList.remove('locked'); }
+addEventListener('keydown', e => { if (e.key === 'Escape') closePreview(); });
 /* profile (tap any avatar) */
 document.addEventListener('click', e => {
   const a = e.target.closest('[data-profile]');
@@ -792,6 +806,18 @@ function nowMarks(items, date) {
   if (!now) next = list.find(x => toMin(x.start) > j.min)?.id || null;
   return {now, next};
 }
+let drag = null;
+addEventListener('pointermove', e => {
+  if (!drag) return; const dx = e.clientX - drag.x;
+  if (!drag.moved && Math.abs(dx) > 5) { drag.moved = true; drag.bar.classList.add('dragging'); }
+  if (drag.moved) drag.bar.scrollLeft = drag.l - dx;
+});
+addEventListener('pointerup', () => { if (!drag) return; const d = drag; drag = null; setTimeout(() => { d.bar.classList.remove('dragging'); d.bar.dataset.dragged = d.moved ? '1' : ''; setTimeout(() => d.bar.dataset.dragged = '', 0); }, 0); });
+function dragScroll(bar) {
+  bar.addEventListener('pointerdown', e => { if (e.pointerType !== 'mouse' || e.button !== 0) return; drag = {bar, x: e.clientX, l: bar.scrollLeft, moved: false}; });
+  bar.addEventListener('click', e => { if (drag?.moved || bar.classList.contains('dragging')) { e.stopPropagation(); e.preventDefault(); } }, true);
+  bar.addEventListener('wheel', e => { if (Math.abs(e.deltaY) > Math.abs(e.deltaX)) { bar.scrollLeft += e.deltaY; e.preventDefault(); } }, {passive: false});
+}
 function centerDay(animate) {
   const bar = $('#daybar'), sel = bar?.querySelector('[aria-pressed=true]'); if (!sel) return;
   if (animate && S.dayScroll != null) bar.scrollLeft = S.dayScroll;
@@ -815,6 +841,7 @@ function renderTrip(animate = false) {
     <button class="btn full" id="addIt" style="margin-top:6px">${ic.plus}新增${day === 0 ? '備案' : '行程'}</button>`;
   $('#daybar').onclick = e => { const b = e.target.closest('[data-day]'); if (!b) return; S.dayScroll = $('#daybar').scrollLeft; S.day = +b.dataset.day; renderTrip(true); };
   centerDay(animate);
+  dragScroll($('#daybar'));
   $('#addIt').onclick = () => editItem(null, day);
   $('#main').querySelectorAll('[data-edit]').forEach(b => b.onclick = () => editItem(S.itinerary.find(x => x.id === b.dataset.edit)));
   $('#main').querySelectorAll('[data-copy]').forEach(b => b.onclick = () => copyText(b.dataset.copy));
@@ -849,6 +876,19 @@ function itemHTML(x, marks) {
       ${x.map || mc ? `<div class="acts">${x.map ? `<a class="btn sm" href="${mapsSearch(x.map)}" target="_blank" rel="noopener">${ic.map}地圖</a><a class="btn sm pri" href="${mapsDir(x.map)}" target="_blank" rel="noopener">${ic.nav}導航</a>` : ''}${mc}</div>` : ''}
     </div></div>`;
 }
+function timeField(id, val) {
+  const [h, m] = /^\d{1,2}:\d{2}$/.test(val || '') ? val.split(':') : ['', ''];
+  const mins = [...new Set([...Array(12)].map((_, i) => String(i * 5).padStart(2, '0')).concat(m ? [m] : []))].sort();
+  return `<div class="tp" data-tp="${id}"><select class="in" aria-label="時"><option value="">--</option>${[...Array(24)].map((_, i) => { const v = String(i).padStart(2, '0'); return `<option ${v === h.padStart(2, '0') && h !== '' ? 'selected' : ''}>${v}</option>`; }).join('')}</select><b>:</b>
+    <select class="in" aria-label="分">${mins.map(v => `<option ${v === m ? 'selected' : ''}>${v}</option>`).join('')}</select><input type="hidden" id="${id}" value="${esc(val || '')}"></div>`;
+}
+function bindTimeFields(root) {
+  root.querySelectorAll('.tp').forEach(w => {
+    const [hs, ms] = w.querySelectorAll('select'), hid = w.querySelector('input');
+    const sync = () => { hid.value = hs.value ? `${hs.value}:${ms.value || '00'}` : ''; ms.disabled = !hs.value; hid.oninput?.(); };
+    hs.onchange = ms.onchange = sync; ms.disabled = !hs.value;
+  });
+}
 function editItem(x, day) {
   const isNew = !x; x = x || {day, start: '', end: '', title: '', kind: 'spot', n1: '', n2: '', n3: '', price: '', map: '', mapcode: ''};
   const dayOpts = DAYS.map(d => `<option value="${d.d}" ${x.day === d.d ? 'selected' : ''}>Day ${d.d}（${+d.date.slice(5, 7)}/${+d.date.slice(8)}）</option>`).join('') + `<option value="0" ${x.day === 0 ? 'selected' : ''}>備案</option>`;
@@ -856,8 +896,8 @@ function editItem(x, day) {
     <label class="f"><span>行程項目 <em>*</em></span><input class="in" id="fTitle" value="${esc(x.title)}" maxlength="200"></label>
     <div class="row2"><label class="f"><span>哪一天</span><select class="in" id="fDay">${dayOpts}</select></label>
       <label class="f"><span>類型</span><select class="in" id="fKind"><option value="spot">景點／活動</option><option value="move" ${x.kind === 'move' ? 'selected' : ''}>移動</option></select></label></div>
-    <div class="row2"><label class="f"><span>開始（日本時間）</span><input class="in" type="time" id="fStart" value="${esc(x.start)}"></label>
-      <label class="f"><span>結束</span><input class="in" type="time" id="fEnd" value="${esc(x.end)}"></label></div>
+    <div class="row2"><div class="f"><span>開始（日本時間・24 小時制）</span>${timeField('fStart', x.start)}</div>
+      <div class="f"><span>結束</span>${timeField('fEnd', x.end)}</div></div>
     <p class="tiny muted" id="fMins" style="margin:-6px 2px 10px"></p>
     <label class="f"><span>備註 1</span><textarea class="in" id="fN1">${esc(x.n1)}</textarea></label>
     <label class="f"><span>備註 2</span><textarea class="in" id="fN2">${esc(x.n2)}</textarea></label>
@@ -874,7 +914,7 @@ function editItem(x, day) {
       const q = s.querySelector('#fMap').value.trim();
       s.querySelector('#fMapTest').href = q ? mapsSearch(q) : '#';
     };
-    s.querySelectorAll('#fStart,#fEnd,#fMap').forEach(i => i.oninput = upd); upd();
+    s.querySelectorAll('#fStart,#fEnd,#fMap').forEach(i => i.oninput = upd); bindTimeFields(s); upd();
     s.querySelector('#fSave').onclick = async () => {
       const v = id => s.querySelector(id).value.trim();
       const title = v('#fTitle'); if (!title) { toast('請填寫行程項目'); return; }
