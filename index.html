@@ -1006,14 +1006,14 @@ function editCk(x) {
 /* ───────────── 購物 ───────────── */
 function renderShop() {
   const who = S.shopWho || S.me, mine = who === S.me;
-  const items = [...(S.shopping[who] || [])].sort((a, b) => (a.bought - b.bought) || ((a.order ?? 0) - (b.order ?? 0)));
+  const items = [...(S.shopping[who] || [])].sort((a, b) => (a.bought - b.bought) || ((a.day || 9) - (b.day || 9)) || ((a.order ?? 0) - (b.order ?? 0)));
   const bar = `<div class="whobar">${IDS.map(m => `<button aria-pressed="${m === who}" data-w="${m}" style="--c:${COLORS[m]}">${avatar(m).replace('data-profile', 'data-x')}${nm(m)}<span class="tiny muted">${(S.shopping[m] || []).length} 項</span></button>`).join('')}</div>`;
   const totAll = items.reduce((s, x) => s + (Number(x.budget) || 0) * (Number(x.qty) || 1), 0);
   const totLeft = items.filter(x => !x.bought).reduce((s, x) => s + (Number(x.budget) || 0) * (Number(x.qty) || 1), 0);
   const list = items.length ? `<div class="card">${items.map(x => `<div class="sh ${x.bought ? 'done' : ''}">
       <button class="box" role="checkbox" aria-checked="${!!x.bought}" aria-label="${esc(x.name)}" data-buy="${x.id}" ${mine ? '' : 'disabled'} style="--c:${COLORS[who]}">${ic.check}</button>
       <${mine ? 'button' : 'div'} class="body" ${mine ? `data-ed="${x.id}"` : ''}><div class="nm">${esc(x.name)}</div>
-        ${x.qty || x.budget || x.note ? `<div class="sub">${x.qty ? `<span class="chip">× <span class="num">${esc(x.qty)}</span></span>` : ''}${x.budget ? `<span class="chip terra">預算 <span class="num">¥${Number(x.budget).toLocaleString()}</span></span>` : ''}${x.note ? `<span class="small muted">${esc(x.note)}</span>` : ''}</div>` : ''}
+        ${x.day || x.qty || x.budget || x.note ? `<div class="sub">${x.day ? `<span class="chip sea">${dayLabel(x.day)}</span>` : ''}${x.qty ? `<span class="chip">× <span class="num">${esc(x.qty)}</span></span>` : ''}${x.budget ? `<span class="chip terra">預算 <span class="num">¥${Number(x.budget).toLocaleString()}</span></span>` : ''}${x.note ? `<span class="small muted">${esc(x.note)}</span>` : ''}</div>` : ''}
         ${x.place ? `<div class="sub"><span class="small muted">${ic.map.replace('<svg', '<svg style="width:13px;height:13px;vertical-align:-2px"')} ${esc(x.place)}</span></div>` : ''}
       </${mine ? 'button' : 'div'}>${x.place ? `<a class="btn sm" href="${mapsSearch(x.place)}" target="_blank" rel="noopener" aria-label="在 Google Maps 開啟 ${esc(x.place)}">${ic.map}地圖</a>` : ''}</div>`).join('')}
       ${totAll ? `<div class="totals"><span>預算合計 <b class="num">¥${totAll.toLocaleString()}</b></span><span>還沒買 <b class="num">¥${totLeft.toLocaleString()}</b></span></div>` : ''}</div>`
@@ -1028,12 +1028,15 @@ function renderShop() {
   $('#main').querySelectorAll('[data-ed]').forEach(b => b.onclick = () => editShop(S.shopping[S.me].find(i => i.id === b.dataset.ed)));
   if (mine) { const f = $('#fab'); f.classList.remove('hidden'); f.querySelector('span').textContent = '新增'; f.onclick = () => editShop(null); }
 }
+function dayLabel(d) { const i = DAYS.find(x => x.d === d); return i ? `Day ${d}・${+i.date.slice(5, 7)}/${+i.date.slice(8)}` : ''; }
 function editShop(x) {
-  const isNew = !x; x = x || {name: '', qty: '', budget: '', note: '', place: '', bought: false};
+  const isNew = !x; x = x || {name: '', qty: '', budget: '', note: '', place: '', day: 0, bought: false};
+  let day = x.day || 0;
   openSheet(`<h3>${isNew ? '新增想買的東西' : '編輯'}<button class="iconbtn x" data-close aria-label="關閉">${ic.x}</button></h3>
     <label class="f"><span>品名 <em>*</em></span><input class="in" id="sName" value="${esc(x.name)}" maxlength="200"></label>
     <div class="row2"><label class="f"><span>數量</span><input class="in" id="sQty" type="number" inputmode="numeric" min="1" value="${esc(x.qty)}"></label>
       <label class="f"><span>預算（日圓，單價）</span><input class="in" id="sBud" type="number" inputmode="decimal" min="0" value="${esc(x.budget)}"></label></div>
+    <div class="f"><span>預計哪天買</span><div class="seg" id="sDay" style="flex-wrap:wrap">${[0, ...DAYS.map(d => d.d)].map(d => `<button type="button" data-d="${d}" aria-pressed="${day === d}">${d ? 'Day ' + d : '未定'}</button>`).join('')}</div></div>
     <label class="f"><span>購買地點（店家名稱或地址）</span><input class="in" id="sPlace" value="${esc(x.place || '')}" placeholder="例如 御菓子御殿 國際通松尾店"></label>
     <p class="tiny" style="margin:-6px 2px 10px"><a id="sPlaceTest" href="#" target="_blank" rel="noopener">在 Google Maps 檢查這個地點 ›</a></p>
     <label class="f"><span>備註</span><input class="in" id="sNote" value="${esc(x.note)}" placeholder="口味、幫誰買…"></label>
@@ -1041,10 +1044,11 @@ function editShop(x) {
     if (isNew) setTimeout(() => s.querySelector('#sName').focus(), 250);
     const pt = () => { const q = s.querySelector('#sPlace').value.trim(); const a = s.querySelector('#sPlaceTest'); a.href = q ? mapsSearch(q) : '#'; a.style.visibility = q ? 'visible' : 'hidden'; };
     s.querySelector('#sPlace').oninput = pt; pt();
+    s.querySelector('#sDay').onclick = e => { const b = e.target.closest('[data-d]'); if (!b) return; day = +b.dataset.d; s.querySelectorAll('#sDay [data-d]').forEach(x => x.setAttribute('aria-pressed', String(+x.dataset.d === day))); };
     s.querySelector('#sSave').onclick = () => {
       const name = s.querySelector('#sName').value.trim(); if (!name) { toast('請填寫品名'); return; }
       const num = id => { const v = s.querySelector(id).value; return v === '' ? null : Number(v); };
-      const data = {name, qty: num('#sQty'), budget: num('#sBud'), place: s.querySelector('#sPlace').value.trim(), note: s.querySelector('#sNote').value.trim(), updatedAt: serverTimestamp()};
+      const data = {name, qty: num('#sQty'), budget: num('#sBud'), place: s.querySelector('#sPlace').value.trim(), day, note: s.querySelector('#sNote').value.trim(), updatedAt: serverTimestamp()};
       const p = isNew ? setDoc(doc(collection(db, 'shopping', S.me, 'items')), {...data, bought: false, order: Date.now()})
         : updateDoc(doc(db, 'shopping', S.me, 'items', x.id), data);
       p.catch(e => toast(errMsg(e))); closeSheet(); toast('已儲存');
