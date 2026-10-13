@@ -1,5 +1,5 @@
 // 離線快取：網頁本身先試網路、沒網路用快取；圖片、字體、Firebase 程式庫用快取
-const VERSION = 'rlc-v4';
+const VERSION = 'rlc-v5';
 const SHELL = ['./', './index.html', './firebase-config.js', './manifest.webmanifest',
   './img/icon-192.png', './img/apple-touch-icon.png', './img/hero.webp',
   './img/qi.webp', './img/xuan.webp', './img/yun.webp', './img/yue.webp'];
