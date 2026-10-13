@@ -307,6 +307,14 @@ textarea.in{min-height:72px;resize:vertical}
 #dlg h4{margin:0 0 8px;font-family:var(--f-title);font-weight:400;font-size:19px}
 #dlg p{margin:0 0 16px;color:var(--ink-2);font-size:14.5px;white-space:pre-line}
 #dlg .sheet-acts{margin:0}
+#lightbox{position:fixed;inset:0;z-index:80;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:24px 16px calc(var(--safe-b) + 24px);
+  background:rgba(30,40,55,.94);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);opacity:0;pointer-events:none;transition:opacity .2s}
+#lightbox.on{opacity:1;pointer-events:auto}
+#lightbox img{width:min(92vw,520px);max-height:74vh;object-fit:contain;border-radius:22px;background:var(--paper);box-shadow:0 0 0 4px var(--card),0 0 0 7px var(--c,var(--sea))}
+#lightbox .cap{color:#fff;font-family:var(--f-title);font-size:18px;text-align:center}
+#lightbox .cap small{display:block;font-size:13px;opacity:.8}
+#lightbox .hint{color:rgba(255,255,255,.7);font-size:12.5px}
+[data-full]{cursor:zoom-in}
 #toast{position:fixed;left:50%;bottom:calc(var(--safe-b) + 86px);z-index:70;transform:translate(-50%,20px);opacity:0;transition:.2s;pointer-events:none;
   background:var(--ink);color:#fff;padding:9px 16px;border-radius:12px;font-size:14px;max-width:calc(100% - 40px);text-align:center}
 #toast.on{opacity:1;transform:translate(-50%,0)}
@@ -351,6 +359,7 @@ textarea.in{min-height:72px;resize:vertical}
 <section id="sheet" role="dialog" aria-modal="true"></section>
 <div id="dlg" role="alertdialog" aria-modal="true"></div>
 <div id="toast" role="status" aria-live="polite"></div>
+<div id="lightbox" role="dialog" aria-modal="true" aria-label="頭像預覽"></div>
 
 <script type="module">
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
@@ -681,6 +690,19 @@ function render() {
   ({trip: renderTrip, flight: renderFlight, prep: renderPrep, shop: renderShop, money: renderMoney})[S.tab]();
 }
 
+/* avatar preview (tap to see the full picture) */
+document.addEventListener('click', e => {
+  const a = e.target.closest('[data-full]'); if (!a) return;
+  e.preventDefault(); e.stopPropagation(); openPreview(a.dataset.full);
+}, true);
+function openPreview(id) {
+  const lb = $('#lightbox'), p = PROFILE[id] || {};
+  lb.style.setProperty('--c', COLORS[id]);
+  lb.innerHTML = `<img src="img/full/${id}.webp" alt="${esc(SHORT[id])} 的頭像"><div class="cap">${esc(SHORT[id])}<small>${esc(p.full || '')}・${esc(p.title || '')}</small></div><div class="hint">點任意處關閉</div>`;
+  lb.classList.add('on');
+  lb.onclick = () => lb.classList.remove('on');
+}
+addEventListener('keydown', e => { if (e.key === 'Escape') $('#lightbox').classList.remove('on'); });
 /* profile (tap any avatar) */
 document.addEventListener('click', e => {
   const a = e.target.closest('[data-profile]');
@@ -691,7 +713,8 @@ function openProfile(id) {
   if (!S.members[id] && !PROFILE[id]) return;
   const m = {...S.members[id], ...PROFILE[id], short: SHORT[id]};
   openSheet(`<div class="profile" style="--c:${COLORS[id]}">
-    ${avatar(id, 'xl').replace('data-profile', 'data-x')}
+    ${avatar(id, 'xl').replace('data-profile', 'data-full')}
+    <div class="tiny muted" style="margin-top:8px">點頭像看大圖</div>
     <div class="nm">${esc(m.short)}</div><div class="full">${esc(m.full)}</div>
     <div class="ttl">${esc(m.title)}</div>
     <blockquote>「${esc(m.quote)}」</blockquote>
@@ -837,7 +860,7 @@ function renderFlight() {
       </div>
     </div>
     <div class="pass-bot">
-      <div class="seats">${IDS.map(id => `<div>${avatar(id, 'l')}<span class="num">${esc(f.seats?.[id] || '—')}</span><span class="who-n">${nm(id)}</span></div>`).join('')}</div>
+      <div class="seats">${IDS.map(id => `<div>${avatar(id, 'l').replace('data-profile', 'data-full')}<span class="num">${esc(f.seats?.[id] || '—')}</span><span class="who-n">${nm(id)}</span></div>`).join('')}</div>
       <div class="wave-div" style="margin:14px 0 10px"></div>
       <dl class="kv"><dt>報到時間</dt><dd>${esc(f.checkin)}</dd><dt>票價</dt><dd>${esc(f.fare)}・託運 1 件</dd></dl>
     </div></div>`;
@@ -991,7 +1014,8 @@ function renderShop() {
       <button class="box" role="checkbox" aria-checked="${!!x.bought}" aria-label="${esc(x.name)}" data-buy="${x.id}" ${mine ? '' : 'disabled'} style="--c:${COLORS[who]}">${ic.check}</button>
       <${mine ? 'button' : 'div'} class="body" ${mine ? `data-ed="${x.id}"` : ''}><div class="nm">${esc(x.name)}</div>
         ${x.qty || x.budget || x.note ? `<div class="sub">${x.qty ? `<span class="chip">× <span class="num">${esc(x.qty)}</span></span>` : ''}${x.budget ? `<span class="chip terra">預算 <span class="num">¥${Number(x.budget).toLocaleString()}</span></span>` : ''}${x.note ? `<span class="small muted">${esc(x.note)}</span>` : ''}</div>` : ''}
-      </${mine ? 'button' : 'div'}></div>`).join('')}
+        ${x.place ? `<div class="sub"><span class="small muted">${ic.map.replace('<svg', '<svg style="width:13px;height:13px;vertical-align:-2px"')} ${esc(x.place)}</span></div>` : ''}
+      </${mine ? 'button' : 'div'}>${x.place ? `<a class="btn sm" href="${mapsSearch(x.place)}" target="_blank" rel="noopener" aria-label="在 Google Maps 開啟 ${esc(x.place)}">${ic.map}地圖</a>` : ''}</div>`).join('')}
       ${totAll ? `<div class="totals"><span>預算合計 <b class="num">¥${totAll.toLocaleString()}</b></span><span>還沒買 <b class="num">¥${totLeft.toLocaleString()}</b></span></div>` : ''}</div>`
     : `<div class="empty">${ic.bag}${mine ? '還沒有想買的東西，按右下角新增' : `${nm(who)} 還沒有列清單`}</div>`;
   $('#main').innerHTML = `${bar}<h2 class="sec">${ic.shell.replace('<svg', '<svg class="deco"')}${mine ? '我的購物清單' : nm(who) + ' 的購物清單'}${mine ? '' : '<span class="chip" style="margin-left:auto">只能看</span>'}</h2>${list}`;
@@ -1005,18 +1029,22 @@ function renderShop() {
   if (mine) { const f = $('#fab'); f.classList.remove('hidden'); f.querySelector('span').textContent = '新增'; f.onclick = () => editShop(null); }
 }
 function editShop(x) {
-  const isNew = !x; x = x || {name: '', qty: '', budget: '', note: '', bought: false};
+  const isNew = !x; x = x || {name: '', qty: '', budget: '', note: '', place: '', bought: false};
   openSheet(`<h3>${isNew ? '新增想買的東西' : '編輯'}<button class="iconbtn x" data-close aria-label="關閉">${ic.x}</button></h3>
     <label class="f"><span>品名 <em>*</em></span><input class="in" id="sName" value="${esc(x.name)}" maxlength="200"></label>
     <div class="row2"><label class="f"><span>數量</span><input class="in" id="sQty" type="number" inputmode="numeric" min="1" value="${esc(x.qty)}"></label>
       <label class="f"><span>預算（日圓，單價）</span><input class="in" id="sBud" type="number" inputmode="decimal" min="0" value="${esc(x.budget)}"></label></div>
-    <label class="f"><span>備註</span><input class="in" id="sNote" value="${esc(x.note)}" placeholder="哪裡買、口味、幫誰買…"></label>
+    <label class="f"><span>購買地點（店家名稱或地址）</span><input class="in" id="sPlace" value="${esc(x.place || '')}" placeholder="例如 御菓子御殿 國際通松尾店"></label>
+    <p class="tiny" style="margin:-6px 2px 10px"><a id="sPlaceTest" href="#" target="_blank" rel="noopener">在 Google Maps 檢查這個地點 ›</a></p>
+    <label class="f"><span>備註</span><input class="in" id="sNote" value="${esc(x.note)}" placeholder="口味、幫誰買…"></label>
     <div class="sheet-acts">${isNew ? '' : `<button class="btn" id="sDel">${ic.trash}刪除</button>`}<button class="btn pri" id="sSave">儲存</button></div>`, s => {
     if (isNew) setTimeout(() => s.querySelector('#sName').focus(), 250);
+    const pt = () => { const q = s.querySelector('#sPlace').value.trim(); const a = s.querySelector('#sPlaceTest'); a.href = q ? mapsSearch(q) : '#'; a.style.visibility = q ? 'visible' : 'hidden'; };
+    s.querySelector('#sPlace').oninput = pt; pt();
     s.querySelector('#sSave').onclick = () => {
       const name = s.querySelector('#sName').value.trim(); if (!name) { toast('請填寫品名'); return; }
       const num = id => { const v = s.querySelector(id).value; return v === '' ? null : Number(v); };
-      const data = {name, qty: num('#sQty'), budget: num('#sBud'), note: s.querySelector('#sNote').value.trim(), updatedAt: serverTimestamp()};
+      const data = {name, qty: num('#sQty'), budget: num('#sBud'), place: s.querySelector('#sPlace').value.trim(), note: s.querySelector('#sNote').value.trim(), updatedAt: serverTimestamp()};
       const p = isNew ? setDoc(doc(collection(db, 'shopping', S.me, 'items')), {...data, bought: false, order: Date.now()})
         : updateDoc(doc(db, 'shopping', S.me, 'items', x.id), data);
       p.catch(e => toast(errMsg(e))); closeSheet(); toast('已儲存');
