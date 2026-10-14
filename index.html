@@ -71,6 +71,11 @@ a{color:var(--sea-deep)} a.btn{text-decoration:none}
   border:1.5px dashed rgba(11,116,120,.35)}
 .pill.go{background:var(--hib-light);color:#B32F3B;border-color:rgba(228,80,94,.4)}
 #meBtn{flex:none}
+.hbtn{flex:none;width:38px;height:38px;display:grid;place-items:center;border-radius:12px 13px 11px 12px;color:var(--sea-deep);background:var(--sea-wash);box-shadow:inset 0 0 0 1.5px rgba(11,116,120,.28)}
+.hbtn svg{width:21px;height:21px}
+.hbtn:active{transform:translate(1px,1px);background:var(--sea-light)}
+@media (max-width:400px){.headrow{gap:7px;padding:0 12px}.brand{gap:7px}.brand img{width:30px;height:30px}.brand b{font-size:17px}.brand small{display:none}.pill{padding:3px 8px;font-size:12.5px}}
+@media (max-width:340px){.brand>div{display:none}}
 .tabs{max-width:560px;margin:0 auto;padding:0 10px 14px;display:grid;grid-template-columns:repeat(5,1fr);gap:4px;position:relative}
 .tabs::after{content:"";position:absolute;left:16px;right:16px;bottom:0;height:6px;
   background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='6'%3E%3Cpath d='M0 3 Q10 0 20 3 T40 3' fill='none' stroke='%231BA5A8' stroke-opacity='.45' stroke-width='1.6'/%3E%3C/svg%3E") repeat-x}
@@ -486,6 +491,52 @@ ul.bd li.hint::before{content:"💡 "}
 .pickface button[aria-pressed=true]{background:var(--card);color:var(--ink);box-shadow:inset 0 0 0 2px var(--sea)}
 .pickface button[aria-pressed=true]::after{content:"";position:absolute;top:5px;right:6px;width:18px;height:18px;border-radius:50%;background:var(--sea) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12.5l4.5 4.5L19 7.5'/%3E%3C/svg%3E") center/12px no-repeat}
 
+/* ── 刷卡試算 ── */
+.kconv{display:flex;justify-content:space-between;align-items:center;gap:4px 10px;flex-wrap:wrap;font-size:12.5px;color:var(--ink-2);margin:-6px 2px 12px}
+.kconv .num{color:var(--ink)}
+.kdate{display:inline-flex;align-items:center;gap:6px}
+.kdate input{border:0;background:var(--card);box-shadow:inset 0 0 0 1.5px var(--line);border-radius:9px;padding:3px 6px;font-size:13px;min-height:30px}
+.chsel{display:flex;align-items:center;gap:9px;background:var(--card);border-radius:12px;box-shadow:inset 0 0 0 1.5px var(--line-2);padding:6px 6px 6px 11px}
+.chsel>svg{width:19px;height:19px;color:var(--terra);flex:none}
+.chsel .txt{flex:1;min-width:0;line-height:1.35}
+.chsel .txt b{font-weight:500;display:block}
+.chgrp{margin-top:10px}
+.chgrp>b{display:block;font-family:var(--f-title);font-weight:400;font-size:12.5px;color:var(--ink-3);margin:0 2px 5px}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chpick{min-height:34px;padding:0 12px;border-radius:999px;background:var(--card);box-shadow:inset 0 0 0 1.5px var(--line);font-size:13.5px;color:var(--ink);text-align:left;line-height:1.25}
+.chpick[aria-pressed=true]{background:var(--sea);color:#fff;box-shadow:2px 2px 0 rgba(11,116,120,.3)}
+.ksearch{position:relative}
+.ksearch svg{position:absolute;left:12px;top:50%;width:18px;height:18px;transform:translateY(-50%);color:var(--ink-3);pointer-events:none}
+.ksearch .in{padding-left:38px}
+.kopt{margin:2px 0 4px}
+.kres{margin-top:6px}
+.kres-h{font-family:var(--f-title);font-size:13.5px;color:var(--ink-2);margin:12px 2px 6px;display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
+.cbest{background:var(--sea-wash);border-radius:var(--r-card);box-shadow:inset 0 0 0 2px var(--sea),3px 4px 0 rgba(11,116,120,.16);padding:12px 13px 10px}
+.cbest.bad{background:#FFF6F3;box-shadow:inset 0 0 0 2px rgba(228,80,94,.55),3px 4px 0 rgba(228,80,94,.12)}
+.cbest .cb-main{display:flex;align-items:center;gap:11px;margin-top:8px}
+.cbest .cb-main .body{flex:1;min-width:0}
+.cbest .nm{font-family:var(--f-title);font-size:17px;line-height:1.3}
+.cbest .amt{text-align:right;flex:none}
+.cbest .amt b{display:block;font-family:var(--f-num);font-weight:800;font-size:26px;line-height:1.1;color:var(--sea-deep)}
+.cbest.bad .amt b{color:#B32F3B}
+.cbest .amt small{font-size:12px;color:var(--ink-2)}
+.cbest details{margin-top:6px}
+.cbest details>summary{cursor:pointer;font-size:12.5px;color:var(--sea-deep);font-family:var(--f-title)}
+.cbest .acts{display:flex;gap:8px;margin-top:10px}
+.cbest .acts .btn{flex:1}
+.krow+.krow{border-top:1px dashed var(--line)}
+.krow>.line{display:flex;align-items:center;gap:8px;width:100%;text-align:left;padding:9px 2px}
+.krow .line .txt{flex:1;min-width:0;line-height:1.3;font-size:14px}
+.krow .line .txt small{display:block;font-size:12px;color:var(--ink-2)}
+.krow .line .v{text-align:right;flex:none;line-height:1.2}
+.krow .line .v b{display:block;font-family:var(--f-num);font-weight:800;font-size:15.5px}
+.krow .line .v small{font-size:11.5px;color:var(--ink-3)}
+.krow .line .v b.neg{color:#B32F3B}
+.krow .line .chev{width:15px;height:15px;color:var(--ink-3);flex:none;transition:transform .2s}
+.krow .line[aria-expanded=true] .chev{transform:rotate(90deg)}
+.krow .detail{margin:0 0 10px;padding:8px 10px;border-radius:10px;background:var(--card);box-shadow:inset 0 0 0 1.5px var(--line)}
+.krow .detail .btn{margin-top:8px}
+
 /* ── gate screens ── */
 .gate{text-align:center;padding-top:10px}
 .gate .hero{width:min(64vw,250px);aspect-ratio:1;border-radius:22%;display:block;margin:0 auto 18px;box-shadow:0 0 0 4px var(--card),0 0 0 6px var(--ink),6px 9px 0 6px rgba(43,58,78,.12)}
@@ -510,6 +561,7 @@ ul.bd li.hint::before{content:"💡 "}
   <div class="headrow">
     <div class="brand"><img src="img/icon-192.png" alt=""><div><b>小夥伴粗國玩</b><small>琉球之旅・LITTLE BUDDIES</small></div></div>
     <span id="countdown" class="pill"></span>
+    <button id="calcBtn" class="hbtn" aria-label="刷卡試算" title="刷卡試算"></button>
     <button id="meBtn" aria-label="我的資料"></button>
   </div>
   <nav class="tabs" role="tablist" aria-label="主選單">
@@ -576,6 +628,9 @@ const ic = {
   suitcase: I('<rect x="6" y="6.5" width="12" height="13" rx="2.5"/><path d="M10 6.5V4h4v2.5M8.5 21v-1.5M15.5 21v-1.5M12 10v6"/>'),
   alert: I('<path d="M12 4l9 16H3l9-16z"/><path d="M12 10v4M12 17v.5"/>'),
   phone: I('<rect x="7" y="3" width="10" height="18" rx="2.5"/><path d="M11 18h2"/>'),
+  calc: I('<rect x="5" y="2.8" width="14" height="18.4" rx="2.6"/><path d="M8.3 6.3h7.4v3.4H8.3z"/><path d="M8.6 13h.01M12 13h.01M15.4 13h.01M8.6 16.8h.01M12 16.8h.01M15.4 16.8h.01" stroke-width="2.6"/>'),
+  search: I('<circle cx="11" cy="11" r="6.5"/><path d="M20 20l-4.2-4.2"/>'),
+  store: I('<path d="M4 9.5l1.4-5h13.2l1.4 5M4 9.5c0 1.5 1.2 2.5 2.7 2.5S9.3 11 9.3 9.5c0 1.5 1.2 2.5 2.7 2.5s2.7-1 2.7-2.5c0 1.5 1.1 2.5 2.6 2.5S20 11 20 9.5M5.5 12v8h13v-8M10 20v-4.5h4V20"/>'),
   hib: I('<path d="M12 12c-1.8-3.2-1.5-6.6 0-8.2 1.5 1.6 1.8 5 0 8.2zM12 12c3.2-1.6 6.6-1 7.9.7-1.8 1.4-5.2 1.3-7.9-.7zM12 12c2.2 2.8 2.6 6.2 1.4 8-1.9-1-3-4.3-1.4-8zM12 12c-1.4 3.2-4.6 4.8-6.6 4.3.2-2.1 3-4.4 6.6-4.3zM12 12c-3.5.2-6.4-1.6-7-3.6 2-.6 5.3.8 7 3.6z"/><circle cx="12" cy="12" r="1.2" fill="currentColor"/>'),
   shell: I('<path d="M12 20c-5 0-8-3.5-8-7.5C4 8 7.5 4 12 4s8 4 8 8.5c0 4-3 7.5-8 7.5z"/><path d="M12 20V6M12 20L7 8.5M12 20l5-11.5M12 20L4.8 11.5M12 20l7.2-8.5"/>'),
   google: '<svg viewBox="0 0 24 24"><path fill="#4285F4" d="M22.5 12.3c0-.8-.1-1.5-.2-2.3H12v4.4h5.9a5 5 0 01-2.2 3.3v2.7h3.6c2-1.9 3.2-4.7 3.2-8.1z"/><path fill="#34A853" d="M12 23c3 0 5.5-1 7.3-2.7l-3.6-2.7c-1 .7-2.2 1-3.7 1-2.8 0-5.2-1.9-6.1-4.5H2.2v2.8A11 11 0 0012 23z"/><path fill="#FBBC05" d="M5.9 14.1a6.6 6.6 0 010-4.2V7.1H2.2a11 11 0 000 9.8l3.7-2.8z"/><path fill="#EA4335" d="M12 5.4c1.6 0 3 .6 4.2 1.6l3.1-3.1A11 11 0 0012 1 11 11 0 002.2 7.1l3.7 2.8C6.8 7.3 9.2 5.4 12 5.4z"/></svg>'
@@ -818,6 +873,7 @@ function startPrivate() {
     if (!d.metadata.hasPendingWrites || !S.cardProfile) S.cardProfile = d.exists() ? (({updatedAt, ...x}) => ({cards: {}, wallets: ['googlepay'], ...x}))(d.data()) : null;
     S.profLoaded = true; S.cardVer++;
     if (['cards', 'shop', 'money'].includes(S.tab) && !$('#sheet.on') && !inputFocused()) render();
+    maybeCalcFromUrl();
   }, e => console.warn(e)));
   unsubs.push(onSnapshot(collection(db, 'cardProfiles', S.me, 'txns'), {includeMetadataChanges: true}, s => {
     S.txns = s.docs.map(d => ({id: d.id, ...d.data()}));
@@ -857,12 +913,14 @@ function startApp() {
       catch (e) { console.warn('cardCatalog', e); }
     } else { S.catalog = null; S.catMeta = null; }
     S.cardVer++; if (['cards', 'shop', 'money'].includes(S.tab) && !$('#sheet.on')) render();
+    maybeCalcFromUrl();
   });
   L(doc(db, 'settings', 'fx'), d => { S.fxManual = d.exists() ? d.data({serverTimestamps: 'estimate'}) : null; S.cardVer++; if (S.tab === 'cards' && !inputFocused()) render(); });
   fetchFx();
   L(collection(db, 'settlements'), s => { S.settlements = {}; s.docs.forEach(d => S.settlements[d.id] = d.data({serverTimestamps: 'estimate'})); if (S.tab === 'money') render(); });
   L(collection(db, 'ledger'), s => { S.ledger = {}; s.docs.forEach(d => S.ledger[d.id] = d.data()); });
   renderHeader(); render();
+  setTimeout(() => maybeCalcFromUrl(true), 5000);
   clearInterval(startApp.tick); startApp.tick = setInterval(() => { renderHeader(); if (S.tab === 'trip' && !$('#sheet.on')) render(); }, 60e3);
 }
 
@@ -1380,6 +1438,7 @@ function renderShop() {
   $('#main').querySelectorAll('[data-rec]').forEach(b => b.onclick = () => { const id = b.dataset.rec; S.recOpen.has(id) ? S.recOpen.delete(id) : S.recOpen.add(id); renderShop(); });
   $('#main').querySelectorAll('details[data-keep]').forEach(d => d.ontoggle = () => localSet('open.' + d.dataset.keep, d.open ? '1' : '0'));
   ['#toCards', '#toCards2'].forEach(k => $(k)?.addEventListener('click', goCards));
+  $('#toCalc')?.addEventListener('click', openCalc);
   $('#main').querySelectorAll('[data-copy-item]').forEach(b => b.onclick = () => {
     const x = items.find(i => i.id === b.dataset.copyItem); if (!x) return;
     copyToMine([x], who); toast(`已把「${x.name}」複製到我的清單`);
@@ -1630,24 +1689,25 @@ function renderMoney() {
   });
   const fab = $('#fab'); fab.classList.remove('hidden'); fab.querySelector('span').textContent = '記一筆'; fab.onclick = () => editExpense(null);
 }
-function editExpense(e) {
+// pre：從「刷卡試算」帶入的預設值 {cur, amount, name, channel, card, method, date}
+function editExpense(e, pre = null) {
   const isNew = !e;
-  let cur = e?.cur || localGet('lastCur') || 'JPY', payer = e?.payer || S.me, split = e ? [...e.split] : [...IDS];
+  let cur = e?.cur || pre?.cur || localGet('lastCur') || 'JPY', payer = e?.payer || S.me, split = e ? [...e.split] : [...IDS];
   let payType = isNew ? 'card' : (e.payType || null);
   const hasCat = !!S.catalog;
-  let chManual = !!(e?.channel && hasCat && e.channel !== autoChannel(e.name));
+  let chManual = !!(e?.channel && hasCat && e.channel !== autoChannel(e.name)) || !!(pre?.channel && hasCat && pre.channel !== autoChannel(pre.name));
   // 私人卡片欄位（只在自己是付款人時使用）
   const oldTx = e ? S.txns.find(t => t.id === e.id) : null;
-  const sel = {card: oldTx?.card || null, method: oldTx?.method || null, date: oldTx?.date || (e ? jstDateOf(e.createdAt) : nowJST().date), manual: !!oldTx, result: null};
+  const sel = {card: oldTx?.card || pre?.card || null, method: oldTx?.method || pre?.method || null, date: oldTx?.date || (e ? jstDateOf(e.createdAt) : pre?.date || nowJST().date), manual: !!oldTx || !!pre?.card, result: null};
   openSheet(`<h3>${isNew ? '記一筆' : '編輯記帳'}<button class="iconbtn x" data-close aria-label="關閉">${ic.x}</button></h3>
     <div id="eLock"></div>
     <div class="seg" id="eCur" style="margin-bottom:12px">${['JPY', 'TWD'].map(c => `<button type="button" data-c="${c}">${CUR[c].sym} ${CUR[c].name}</button>`).join('')}</div>
-    <label class="f"><span>總額 <em>*</em></span><input class="in big" id="eAmt" type="text" inputmode="decimal" autocomplete="off" placeholder="0" value="${e ? esc(e.amount) : ''}"></label>
+    <label class="f"><span>總額 <em>*</em></span><input class="in big" id="eAmt" type="text" inputmode="decimal" autocomplete="off" placeholder="0" value="${e ? esc(e.amount) : pre?.amount ? esc(pre.amount) : ''}"></label>
     <div class="f"><span>誰先付錢</span><div class="pick" id="ePayer"></div></div>
     <div class="f"><span>分攤的人（當分母）</span><div class="pick" id="eSplit"></div></div>
     <div class="share" id="eShare"></div>
-    <label class="f"><span>品名</span><input class="in" id="eName" value="${esc(e?.name || '')}" maxlength="100" placeholder="例如 燒肉晚餐"></label>
-    ${hasCat ? `<label class="f"><span>通路類型 <span class="tiny muted" id="eChAuto"></span></span><select class="in" id="eCh">${channelOptions(e?.channel || autoChannel(e?.name))}</select></label>` : ''}
+    <label class="f"><span>品名</span><input class="in" id="eName" value="${esc(e?.name || pre?.name || '')}" maxlength="100" placeholder="例如 燒肉晚餐"></label>
+    ${hasCat ? `<label class="f"><span>通路類型 <span class="tiny muted" id="eChAuto"></span></span><select class="in" id="eCh">${channelOptions(e?.channel || pre?.channel || autoChannel(e?.name))}</select></label>` : ''}
     <div class="f"><span>付款方式（大家都看得到）</span><div class="seg" id="ePay"><button type="button" data-p="cash">現金</button><button type="button" data-p="card">刷卡</button></div></div>
     <div id="eCardBox"></div>
     <label class="f"><span>備註</span><input class="in" id="eNote" value="${esc(e?.note || '')}" maxlength="500"></label>
@@ -1728,7 +1788,7 @@ function editExpense(e) {
       paintCard();
     };
     syncCh(); paint();
-    if (isNew) setTimeout(() => amtEl.focus(), 250);
+    if (isNew && !pre?.amount) setTimeout(() => amtEl.focus(), 250);
     amtEl.oninput = paint;
     s.querySelector('#eName').oninput = () => { syncCh(); paintCard(); };
     chSel?.addEventListener('change', () => { chManual = true; syncCh(); paintCard(); });
@@ -1970,7 +2030,9 @@ const CardEngine = (() => {
         }
       }
     }
-    out.sort((a, b) => b.net - a.net || b.netRate - a.netRate || MPREF.indexOf(a.method) - MPREF.indexOf(b.method));
+    // 回饋一樣時：實體通路優先實體卡，線上通路優先直接線上刷卡
+    const pref = isOnlineCh(tx.channel) ? ['online', ...MPREF] : MPREF;
+    out.sort((a, b) => b.net - a.net || b.netRate - a.netRate || pref.indexOf(a.method) - pref.indexOf(b.method));
     if (altBest && (!out.length || altBest.net > out[0].net + EPS)) out.altPlan = altBest;
     return out;
   }
@@ -2477,7 +2539,7 @@ function shopCardTopHTML() {
   const {ctx} = cardCtx(), date = refDate(), open = localGet('open.capMini') === '1';
   return `<details class="card mini" data-keep="capMini" ${open ? 'open' : ''}><summary>${ic.coin}<span>我的卡片剩餘額度</span><span class="tiny muted">${md(date)}</span>${ic.chev.replace('<svg', '<svg class="chev"')}</summary>
     ${own.map(c => { const rows = capRowsHTML(c, ctx, date, true); return `<div class="minicard"><div class="small">${cdot(c)} <b>${esc(cardShort(c))}</b></div>${rows || '<div class="tiny muted">沒有額度上限</div>'}</div>`; }).join('')}
-    <button class="btn sm ghost" id="toCards2" style="margin-top:6px">信用卡設定 ›</button></details>` + notesHTML('shopNotes');
+    <div style="display:flex;gap:8px;margin-top:8px"><button class="btn sm" id="toCalc">${ic.calc}刷卡試算</button><button class="btn sm ghost" id="toCards2">信用卡設定 ›</button></div></details>` + notesHTML('shopNotes');
 }
 function shopRec(x) {
   if (!S.catalog || !ownedCards().length) return null;
@@ -2498,6 +2560,164 @@ function shopRecHTML(x) {
       ${R.recs.slice(0, 3).map((r, i) => `<div class="rk"><div class="small"><b>${i + 1}. ${cdot(r.card)} ${esc(combo(r))}</b></div>${methodHow(r.card, r.method, r.channel) ? `<div class="tiny how">${esc(methodHow(r.card, r.method, r.channel))}</div>` : ''}${breakdownHTML(r, R.fx)}</div>`).join('')}
       ${R.recs.altPlan ? `<div class="tiny hintbox">💡 ${esc(cardShort(R.recs.altPlan.card))} 切換到「${esc(R.recs.altPlan.planName)}」並用 ${esc(METHOD_NAME[R.recs.altPlan.method])} 付，約 ${pctFmt(R.recs.altPlan.netRate)}。${esc(R.recs.altPlan.card.planNote || '')}</div>` : ''}
       <div class="tiny muted" style="margin-top:6px">以上皆為估算，實際以銀行帳單為準。</div></div>` : ''}</div>`;
+}
+
+/* ───────────── 刷卡試算（臨時想買東西時的快速計算機） ─────────────
+   只用自己的卡、扣掉已用額度（記帳明細＋手動調整），結果只在自己手機上，不寫進資料庫。 */
+const CALC = {cur: 'JPY', amt: '', ch: null, q: '', phys: false, date: null, pick: true, open: new Set()};
+const chShort = c => c.name.replace(/（.*?）/g, '').trim();
+const chById = id => S.catalog?.channels?.find(c => c.id === id) || null;
+function calcRecent() { try { return JSON.parse(localGet('calc.recent') || '[]').filter(chById); } catch { return []; } }
+// 打字搜尋通路：先用資料庫關鍵字精準比對，再列出名稱或關鍵字包含輸入文字的通路
+function calcSearch(q) {
+  const t = q.trim().toLowerCase(); if (!t || !S.catalog) return [];
+  const out = [], add = c => { if (c && !out.includes(c)) out.push(c); };
+  const exact = autoChannel(q); if (exact !== 'jp_other') add(chById(exact));
+  for (const c of S.catalog.channels) {
+    if (c.name.toLowerCase().includes(t) || (c.keywords || []).some(k => k.toLowerCase().includes(t))) add(c);
+  }
+  return out.slice(0, 8);
+}
+function maybeCalcFromUrl(force = false) {
+  if (!maybeCalcFromUrl.want || !S.me || $('#sheet.on')) return;
+  if (!force && !(S.catalog && S.profLoaded)) return;
+  maybeCalcFromUrl.want = false; openCalc();
+}
+maybeCalcFromUrl.want = new URLSearchParams(location.search).has('calc');
+if (maybeCalcFromUrl.want) history.replaceState(null, '', location.pathname + location.hash);
+$('#calcBtn').innerHTML = ic.calc;
+$('#calcBtn').onclick = () => openCalc();
+
+function openCalc() {
+  const head = `<h3>${ic.calc.replace('<svg', '<svg style="width:22px;height:22px;color:var(--sea)"')}刷卡試算<span class="chip sea" style="font-family:var(--f-body)">${ic.lock}${CARD_PRIVATE_NOTE}</span><button class="iconbtn x" data-close aria-label="關閉">${ic.x}</button></h3>`;
+  if (!S.catalog) return openSheet(head + `<div class="card empty">${ic.shell}${nm('qi')} 還沒匯入卡片資料庫，匯入後就能試算。</div>`);
+  if (!ownedCards().length) return openSheet(head + `<div class="card empty">${ic.shell}還沒設定自己有哪些信用卡<br><button class="btn pri" id="kGoCards" style="margin-top:12px">${ic.coin}去設定信用卡</button></div>`, s => s.querySelector('#kGoCards').onclick = goCards);
+  Object.assign(CALC, {cur: localGet('calc.cur') === 'TWD' ? 'TWD' : 'JPY', amt: '', ch: null, q: '', phys: localGet('calc.phys') === '1', date: nowJST().date, pick: true});
+  CALC.open.clear();
+  openSheet(head + `
+    <div class="seg" id="kCur" style="margin-bottom:10px">${['JPY', 'TWD'].map(c => `<button type="button" data-c="${c}">${CUR[c].sym} ${CUR[c].name}</button>`).join('')}</div>
+    <label class="f"><span>要花多少</span><input class="in big" id="kAmt" type="text" inputmode="decimal" autocomplete="off" placeholder="0"></label>
+    <div class="kconv"><span id="kConv"></span><label class="kdate">消費日<input type="date" id="kDate" value="${esc(CALC.date)}"></label></div>
+    <div class="f" style="margin-bottom:6px"><span>在哪裡買</span>
+      <div id="kChSel"></div>
+      <div id="kChPick"><div class="ksearch">${ic.search}<input class="in" id="kQ" type="search" enterkeyhint="done" autocomplete="off" placeholder="打店名，例如 唐吉、7-11、AEON、一蘭"></div><div id="kChList"></div></div>
+    </div>
+    <div id="kPhys" class="kopt"></div>
+    <div id="kRes" class="kres"></div>`, s => {
+    const amtEl = s.querySelector('#kAmt'), qEl = s.querySelector('#kQ');
+    const paintCur = () => s.querySelectorAll('#kCur [data-c]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.c === CALC.cur)));
+    const all = () => { paintConv(s); paintCh(s); paintPhys(s); paintCalcRes(s); };
+    paintCur(); all();
+    setTimeout(() => amtEl.focus(), 260);
+    s.querySelector('#kCur').onclick = ev => { const b = ev.target.closest('[data-c]'); if (!b) return; CALC.cur = b.dataset.c; localSet('calc.cur', CALC.cur); paintCur(); paintConv(s); paintCalcRes(s); };
+    amtEl.oninput = () => { CALC.amt = amtEl.value; paintConv(s); paintCalcRes(s); };
+    amtEl.onkeydown = ev => { if (ev.key !== 'Enter') return; ev.preventDefault(); if (CALC.ch) { amtEl.blur(); s.querySelector('#kRes').scrollIntoView({block: 'start', behavior: 'smooth'}); } else qEl.focus(); };
+    s.querySelector('#kDate').onchange = ev => { CALC.date = ev.target.value || nowJST().date; paintCalcRes(s); };
+    qEl.oninput = () => { CALC.q = qEl.value; paintChList(s); };
+    qEl.onkeydown = ev => { if (ev.key !== 'Enter') return; ev.preventDefault(); const h = calcSearch(CALC.q)[0]; if (h) pickCh(s, h.id); else qEl.blur(); };
+    s.querySelector('#kChList').onclick = ev => { const b = ev.target.closest('[data-ch]'); if (b) pickCh(s, b.dataset.ch); };
+    s.querySelector('#kChSel').onclick = ev => { if (!ev.target.closest('#kChChange')) return; CALC.pick = true; paintCh(s); qEl.focus(); };
+    s.querySelector('#kPhys').onclick = ev => { if (!ev.target.closest('[data-phys]')) return; CALC.phys = !CALC.phys; localSet('calc.phys', CALC.phys ? '1' : '0'); paintPhys(s); paintCalcRes(s); };
+    s.querySelector('#kRes').onclick = ev => {
+      const t = ev.target.closest('[data-krow]');
+      if (t) { const k = t.dataset.krow; CALC.open.has(k) ? CALC.open.delete(k) : CALC.open.add(k); paintCalcRes(s); return; }
+      const r = ev.target.closest('[data-krec]'); if (r) { const [card, method] = r.dataset.krec.split('|'); calcRecord(card, method); return; }
+      if (ev.target.closest('#kGoCards2')) goCards();
+    };
+  });
+}
+function calcTwd() {
+  const a = parseAmt(CALC.amt), fx = fxNow().rate;
+  return {a, fx, twd: a ? (CALC.cur === 'TWD' ? a : r2(a * fx)) : 0};
+}
+function paintConv(s) {
+  const {a, fx, twd} = calcTwd(), f = fxNow();
+  s.querySelector('#kConv').innerHTML = CALC.cur === 'JPY'
+    ? `${a ? `≈ <b class="num">${twdFmt(twd)}</b>・` : ''}匯率 ${fx.toFixed(4)}${f.src === 'live' ? '' : f.src === 'cache' ? '（離線・上次的匯率）' : f.src === 'manual' ? '（手動匯率）' : '（預設匯率）'}`
+    : (a ? `≈ <b class="num">¥${Math.round(a / fx).toLocaleString()}</b>` : '台幣金額直接計算');
+}
+function paintCh(s) {
+  const c = chById(CALC.ch), show = CALC.pick || !c;
+  s.querySelector('#kChSel').innerHTML = c && !show ? `<div class="chsel">${ic.store}<span class="txt"><b>${esc(c.name)}</b><span class="tiny muted">${esc(c.group)}</span></span><button type="button" class="btn sm ghost" id="kChChange">換通路</button></div>` : '';
+  s.querySelector('#kChPick').classList.toggle('hidden', !show);
+  if (show) paintChList(s);
+}
+function chChip(c) { return `<button type="button" class="chpick" data-ch="${esc(c.id)}" aria-pressed="${c.id === CALC.ch}" title="${esc(c.name)}">${esc(chShort(c))}</button>`; }
+function paintChList(s) {
+  const q = CALC.q.trim(), el = s.querySelector('#kChList');
+  if (q) {
+    const hits = calcSearch(q), other = chById('jp_other');
+    el.innerHTML = hits.length ? `<div class="chgrp"><b>符合「${esc(q)}」</b><div class="chips">${hits.map(chChip).join('')}</div></div>`
+      : `<div class="chgrp"><b>找不到「${esc(q)}」，可以選</b><div class="chips">${other ? chChip(other) : ''}</div><p class="tiny muted" style="margin:6px 2px 0">或清掉搜尋文字，從分類裡挑。</p></div>`;
+    return;
+  }
+  const groups = [], recent = calcRecent();
+  for (const c of S.catalog.channels) { let g = groups.find(x => x[0] === c.group); if (!g) groups.push(g = [c.group, []]); g[1].push(c); }
+  el.innerHTML = (recent.length ? `<div class="chgrp"><b>最近選過</b><div class="chips">${recent.map(id => chChip(chById(id))).join('')}</div></div>` : '')
+    + groups.map(([g, cs]) => `<div class="chgrp"><b>${esc(g)}</b><div class="chips">${cs.map(chChip).join('')}</div></div>`).join('');
+}
+function pickCh(s, id) {
+  CALC.ch = id; CALC.pick = false; CALC.q = ''; CALC.open.clear();
+  const qEl = s.querySelector('#kQ'); qEl.value = ''; qEl.blur();
+  localSet('calc.recent', JSON.stringify([id, ...calcRecent().filter(x => x !== id)].slice(0, 4)));
+  paintCh(s); paintPhys(s); paintCalcRes(s);
+  if (!parseAmt(CALC.amt)) s.querySelector('#kAmt').focus();
+  else setTimeout(() => s.querySelector('#kRes')?.scrollIntoView({block: 'start', behavior: 'smooth'}), 60);
+}
+function paintPhys(s) {
+  const online = CardEngine.isOnlineCh(CALC.ch || 'jp_other');
+  s.querySelector('#kPhys').innerHTML = online ? '' : `<button class="opt" role="checkbox" aria-checked="${CALC.phys}" data-phys><span class="box" style="--c:var(--terra)" aria-hidden="true">${ic.check}</span><span class="txt">這家店不能用手機付<span class="tiny muted" style="display:block">只算刷實體卡（不推薦 Google Pay、Apple Pay、PayPay）</span></span></button>`;
+}
+// 每張卡取最划算的付法，依淨回饋排序
+function calcCompute() {
+  const {fx, twd} = calcTwd(), channel = CALC.ch || 'jp_other', has = twd > 0;
+  const online = CardEngine.isOnlineCh(channel), ok = m => online || !CALC.phys || m === 'card';
+  const recs = CardEngine.recommend(cardCtx().ctx, {twd: has ? twd : 1000, channel, date: CALC.date});
+  const by = new Map();
+  for (const r of recs) if (ok(r.method)) { if (!by.has(r.cardId)) by.set(r.cardId, []); by.get(r.cardId).push(r); }
+  const rows = [...by.values()];
+  const alt = recs.altPlan && ok(recs.altPlan.method) && (!rows.length || recs.altPlan.net > rows[0][0].net + 1e-9) ? recs.altPlan : null;
+  return {rows, has, twd, fx, channel, alt};
+}
+function calcAmt(n, R) {
+  const sg = n < -0.004 ? '−' : '', v = Math.abs(n);
+  return CALC.cur === 'JPY' ? `${sg}¥${Math.round(v / R.fx).toLocaleString()}` : `${sg}${twdFmt(v)}`;
+}
+function paintCalcRes(s) {
+  const R = calcCompute(), el = s.querySelector('#kRes');
+  if (!R.rows.length) { el.innerHTML = `<p class="tiny muted">沒有可以用的卡。</p>`; return; }
+  const top = R.rows[0][0], bad = top.net <= 0, yenFx = CALC.cur === 'JPY' ? R.fx : null;
+  const sub = n => CALC.cur === 'JPY' ? `≈ ${n < -0.004 ? '−' : ''}${twdFmt(Math.abs(n))}・${pctFmt(R.has ? n / R.twd * 100 : 0)}` : pctFmt(R.twd ? n / R.twd * 100 : 0);
+  const val = r => R.has ? `<b class="num ${r.net < -0.004 ? 'neg' : ''}">${calcAmt(r.net, R)}</b><small>${pctFmt(r.netRate)}</small>` : `<b class="num ${r.netRate < 0 ? 'neg' : ''}">${pctFmt(r.netRate)}</b>`;
+  const how = r => methodHow(r.card, r.method, r.channel);
+  const otherWays = list => list.length > 1 ? `<div class="tiny muted" style="margin-top:6px">其他付法：${list.slice(1).map(o => `${esc(METHOD_NAME[o.method] || o.method)} ${R.has ? calcAmt(o.net, R) + '・' : ''}${pctFmt(o.netRate)}`).join('；')}</div>` : '';
+  const chName = chById(R.channel)?.name || '其他日本實體消費';
+  el.innerHTML = `<div class="kres-h"><span>${R.has ? `花 ${CALC.cur === 'JPY' ? '¥' + parseAmt(CALC.amt).toLocaleString() : twdFmt(R.twd)}` : '回饋率（輸入金額後顯示回饋金額）'}</span><span class="tiny muted">${esc(CALC.ch ? chName : '還沒選通路，先以「其他日本實體消費」計算')}</span></div>
+    <div class="cbest ${bad ? 'bad' : ''}">
+      <div><span class="chip ${bad ? 'hib' : 'sea'}">${bad ? '每張卡扣掉手續費都沒回饋・損失最少的是' : '推薦刷這張'}</span></div>
+      <div class="cb-main">${cardArt(top.card)}<div class="body"><div class="nm">${esc(cardShort(top.card))}</div><div class="small muted">用 ${esc(METHOD_NAME[top.method] || top.method)} 付</div></div>
+        <div class="amt">${R.has ? `<b>${calcAmt(top.net, R)}</b><small>${sub(top.net)}</small>` : `<b>${pctFmt(top.netRate)}</b><small>淨回饋率</small>`}</div></div>
+      ${how(top) ? `<div class="tiny how" style="margin-top:6px">${esc(how(top))}</div>` : ''}
+      ${top.items.some(i => i.capped) ? `<div class="tiny warnline" style="margin-top:4px">部分加碼額度不夠，超過的部分只算基本回饋（明細裡有寫）</div>` : ''}
+      ${top.hints.length ? `<ul class="bd">${breakdownHTML(top, yenFx).match(/<li class="hint">[\s\S]*?<\/li>/g)?.join('') || ''}</ul>` : ''}
+      <details><summary>看計算明細</summary>${breakdownHTML(top, yenFx)}${otherWays(R.rows[0])}</details>
+      ${R.has ? `<div class="acts"><button class="btn pri" data-krec="${esc(top.cardId)}|${esc(top.method)}">${ic.edit}刷了，記一筆</button></div>` : ''}
+    </div>
+    ${R.alt ? `<div class="tiny hintbox">💡 ${esc(cardShort(R.alt.card))} 切換到「${esc(R.alt.planName)}」並用 ${esc(METHOD_NAME[R.alt.method])} 付，約 ${R.has ? calcAmt(R.alt.net, R) + '・' : ''}${pctFmt(R.alt.netRate)}。${esc(R.alt.card.planNote || '')}</div>` : ''}
+    ${R.rows.length > 1 ? `<div class="kres-h">其他卡片</div><div class="card" style="padding:2px 12px">${R.rows.slice(1).map(list => {
+      const r = list[0], open = CALC.open.has(r.cardId);
+      return `<div class="krow"><button type="button" class="line" data-krow="${esc(r.cardId)}" aria-expanded="${open}">${cdot(r.card)}<span class="txt">${esc(cardShort(r.card))}<small>${esc(METHOD_NAME[r.method] || r.method)}${r.items.some(i => i.capped) ? '・加碼額度不夠' : ''}</small></span><span class="v">${val(r)}</span>${ic.chev.replace('<svg', '<svg class="chev"')}</button>
+        ${open ? `<div class="detail">${how(r) ? `<div class="tiny how">${esc(how(r))}</div>` : ''}${breakdownHTML(r, yenFx)}${otherWays(list)}
+          ${R.has ? `<button class="btn sm full" data-krec="${esc(r.cardId)}|${esc(r.method)}">${ic.edit}改刷這張，記一筆</button>` : ''}</div>` : ''}</div>`;
+    }).join('')}</div>` : ''}
+    <p class="tiny muted" style="margin:10px 2px 0">以上皆為估算，已扣掉記帳累積和手動調整的已用額度；實際以銀行帳單為準。只看得到自己的卡。</p>
+    <button type="button" class="btn sm ghost" id="kGoCards2" style="margin-top:2px">信用卡設定・剩餘額度 ›</button>`;
+}
+function calcRecord(cardId, method) {
+  const a = parseAmt(CALC.amt); if (!a) { toast('請先輸入金額'); return; }
+  const c = chById(CALC.ch);
+  const pre = {cur: CALC.cur, amount: a, channel: CALC.ch || 'jp_other', card: cardId, method, date: CALC.date, name: c && c.id !== 'jp_other' ? chShort(c) : ''};
+  closeSheet(); setTimeout(() => editExpense(null, pre), 280);
 }
 
 /* ───────────── service worker ───────────── */

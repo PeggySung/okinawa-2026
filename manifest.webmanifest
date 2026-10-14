@@ -1,7 +1,7 @@
 {
   "name": "小夥伴粗國玩：琉球之旅 Little Buddies, Big Adventures in Ryukyu",
   "short_name": "小夥伴粗國玩",
-  "description": "2026 沖繩旅行：行程、航班、行前準備、購物清單、記帳",
+  "description": "2026 沖繩旅行：行程、航班、行前準備、購物清單、記帳、刷卡試算",
   "lang": "zh-Hant",
   "start_url": "./",
   "scope": "./",
@@ -12,5 +12,9 @@
     {"src": "img/icon-192.png", "sizes": "192x192", "type": "image/png"},
     {"src": "img/icon-512.png", "sizes": "512x512", "type": "image/png"},
     {"src": "img/icon-maskable.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable"}
+  ],
+  "shortcuts": [
+    {"name": "刷卡試算", "short_name": "刷卡試算", "description": "輸入金額和通路，算出哪張卡回饋最多", "url": "./?calc=1",
+      "icons": [{"src": "img/icon-192.png", "sizes": "192x192", "type": "image/png"}]}
   ]
 }
