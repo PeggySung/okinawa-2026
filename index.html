@@ -411,7 +411,9 @@ details.notes li+li{margin-top:5px}
 .rrow+.rrow{border-top:1px dashed var(--line)}
 .rrow>.cart{margin-top:3px}
 .rrow .body{flex:1;min-width:0}
-.rrow .acts{display:flex;flex-wrap:wrap;gap:6px;margin-top:7px}
+.rrow .acts{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}
+.rrow .acts .btn{width:100%;padding:0 8px}
+.rrow .acts .wide{grid-column:1 / -1}
 .fx .row{display:flex;align-items:center;justify-content:space-between;gap:10px}
 .fx .big{font-size:20px}
 .cardx>summary{list-style:none;display:flex;align-items:flex-start;gap:12px;cursor:pointer}
@@ -452,7 +454,7 @@ ul.src li+li{margin-top:3px}
 .sh.has-rec{flex-wrap:wrap}
 .rec{flex-basis:100%;margin:-2px 0 2px 38px;min-width:0}
 .rec .line{display:flex;align-items:center;gap:7px;width:100%;text-align:left;font-size:13px;line-height:1.4;color:var(--sea-deep);background:var(--sea-wash);border-radius:10px;padding:6px 9px}
-.rec .line span{flex:1;min-width:0}
+.rec .line .txt{flex:1;min-width:0}
 .rec .line .chev{width:15px;height:15px;color:var(--ink-3);flex:none;transition:transform .2s}
 .rec .line[aria-expanded=true] .chev{transform:rotate(90deg)}
 .how{color:var(--terra);margin:3px 2px 0}
@@ -476,7 +478,9 @@ ul.bd li.hint::before{content:"💡 "}
 .pend{display:flex;align-items:center;gap:10px;background:#FFF6F3;box-shadow:inset 0 0 0 1.5px rgba(228,80,94,.4),var(--shadow);margin-bottom:6px}
 .pend svg{width:22px;height:22px;color:var(--hib);flex:none}
 .pend .body{flex:1;font-size:14px}
-.ex .sub{flex-wrap:wrap}
+.ex{flex-wrap:wrap}
+.ex .extra{flex-basis:100%;display:flex;flex-wrap:wrap;gap:6px;padding-left:56px;margin-top:-2px}
+.ex .extra .chip{white-space:normal;text-align:left}
 .pickface{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:6px}
 .pickface button{display:flex;flex-direction:column;align-items:center;gap:6px;padding:10px 4px 8px;border-radius:14px;font-family:var(--f-title);font-size:12.5px;color:var(--ink-2);position:relative}
 .pickface button[aria-pressed=true]{background:var(--card);color:var(--ink);box-shadow:inset 0 0 0 2px var(--sea)}
@@ -1596,9 +1600,9 @@ function renderMoney() {
     rows += `<button class="card ex" data-ex="${e.id}">${avatar(e.payer, 'l').replace('data-profile', 'data-x')}
       <div class="body"><div class="nm">${esc(e.name || '（未命名）')}</div>
         <div class="sub">${nm(e.payer)} 先付・分給 <span class="avs">${e.split.map(m => avatar(m, 's').replace('data-profile', 'data-x')).join('')}</span>${isLocked(e.cur) ? ic.lock.replace('<svg', '<svg style="width:14px;height:14px;color:#B32F3B"') : ''}</div>
-        ${payTag ? `<div class="sub">${payTag}</div>` : ''}
+
         ${e.note ? `<div class="tiny muted" style="margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(e.note)}</div>` : ''}</div>
-      <div class="amt"><b class="num">${money(cents(e.amount), e.cur)}</b><small>每人 <span class="num">${money(base, e.cur)}</span>${rem ? '…' : ''}</small></div></button>`;
+      <div class="amt"><b class="num">${money(cents(e.amount), e.cur)}</b><small>每人 <span class="num">${money(base, e.cur)}</span>${rem ? '…' : ''}</small></div>${payTag ? `<div class="extra">${payTag}</div>` : ''}</button>`;
   }
   const pend = pendingCardExps();
   $('#main').innerHTML = `${pend.length ? `<div class="card pend">${ic.coin}<div class="body">有 <b class="num">${pend.length}</b> 筆你付的刷卡還沒填是哪張卡<div class="tiny muted">只有你看得到，用來計算回饋和剩餘額度</div></div><button class="btn sm pri" id="pendGo">補填</button></div>` : ''}<h2 class="sec">${ic.coin.replace('<svg', '<svg class="deco"')}結算</h2>
@@ -2263,7 +2267,7 @@ function remindersHTML() {
         <div class="tiny muted">${upcoming ? `<span class="chip terra">即將開放 ${opensFmt(opens)}</span> ` : '<span class="chip hib">還沒登錄</span> '}${g.quota ? `限量 ${g.quota.toLocaleString()} 名・` : ''}${esc(g.note || '')}</div>
         <div class="acts">${g.url ? `<a class="btn sm" href="${esc(g.url)}" target="_blank" rel="noopener">登錄頁面 ›</a>` : ''}
           <button class="btn sm" data-task="${esc(c.id)}|${esc(r.id)}|${esc(p.key)}" ${inList ? 'disabled' : ''}>${inList ? ic.check + '已在準備清單' : ic.plus + '加入準備清單'}</button>
-          <button class="btn sm ghost" data-opt="reg:${esc(c.id)}:${esc(p.key)}">我已登錄</button></div></div></div>`;
+          <button class="btn sm wide" data-opt="reg:${esc(c.id)}:${esc(p.key)}">${ic.check}我已登錄${p.label ? `（${esc(p.label)}）` : ''}</button></div></div></div>`;
     }).join('')}</div>`;
 }
 function fxCardHTML() {
@@ -2488,7 +2492,7 @@ function shopRecHTML(x) {
   const top = R.recs[0], open = S.recOpen.has(x.id);
   const line = R.hasBud ? recText(top, R.fx) : `${top.net > 0 ? '推薦' : '沒有划算的卡：最好是'} ${esc(combo(top))}（約 ${pctFmt(top.netRate)}）・填預算可估金額`;
   const how = methodHow(top.card, top.method, top.channel);
-  return `<div class="rec"><button class="line" data-rec="${x.id}" aria-expanded="${open}">${cdot(top.card)}<span>${line}</span>${ic.chev.replace('<svg', '<svg class="chev"')}</button>
+  return `<div class="rec"><button class="line" data-rec="${x.id}" aria-expanded="${open}">${cdot(top.card)}<span class="txt">${line}</span>${ic.chev.replace('<svg', '<svg class="chev"')}</button>
     ${how ? `<div class="how tiny">${esc(how)}</div>` : ''}
     ${open ? `<div class="detail"><div class="tiny muted">通路：${esc(channelName(R.channel))}・${R.hasBud ? `約 ${twdFmt(R.twd)}` : '以 NT$1,000 試算'}・匯率 ${R.fx.toFixed(4)}</div>
       ${R.recs.slice(0, 3).map((r, i) => `<div class="rk"><div class="small"><b>${i + 1}. ${cdot(r.card)} ${esc(combo(r))}</b></div>${methodHow(r.card, r.method, r.channel) ? `<div class="tiny how">${esc(methodHow(r.card, r.method, r.channel))}</div>` : ''}${breakdownHTML(r, R.fx)}</div>`).join('')}
