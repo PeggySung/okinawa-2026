@@ -666,10 +666,10 @@ function toast(msg) {
   const t = $('#toast'); t.textContent = msg; t.classList.add('on');
   clearTimeout(toast.h); toast.h = setTimeout(() => t.classList.remove('on'), 2400);
 }
-function confirmDialog({title, body = '', ok = '確定', danger = false}) {
+function confirmDialog({title, body = '', ok = '確定', no = '取消', danger = false}) {
   return new Promise(res => {
     const d = $('#dlg');
-    d.innerHTML = `<h4>${esc(title)}</h4><p>${esc(body)}</p><div class="sheet-acts"><button class="btn" data-a="no">取消</button><button class="btn ${danger ? 'hot' : 'pri'}" data-a="ok">${esc(ok)}</button></div>`;
+    d.innerHTML = `<h4>${esc(title)}</h4><p>${esc(body)}</p><div class="sheet-acts"><button class="btn" data-a="no">${esc(no)}</button><button class="btn ${danger ? 'hot' : 'pri'}" data-a="ok">${esc(ok)}</button></div>`;
     const veilWasOn = $('#veil').classList.contains('on');
     $('#veil').classList.add('on'); d.classList.add('on');
     d.querySelector('[data-a=ok]').focus();
@@ -1434,6 +1434,7 @@ function renderShop() {
     const x = S.shopping[S.me].find(i => i.id === b.dataset.buy); if (!x) return;
     x.bought = !x.bought; renderShop();
     updateDoc(doc(db, 'shopping', S.me, 'items', x.id), {bought: x.bought}).catch(e => toast(errMsg(e)));
+    if (x.bought) askShopExpense(x);
   });
   $('#main').querySelectorAll('[data-ed]').forEach(b => b.onclick = () => editShop(S.shopping[S.me].find(i => i.id === b.dataset.ed)));
   $('#main').querySelectorAll('[data-rec]').forEach(b => b.onclick = () => { const id = b.dataset.rec; S.recOpen.has(id) ? S.recOpen.delete(id) : S.recOpen.add(id); renderShop(); });
@@ -1450,6 +1451,17 @@ function renderShop() {
     copyToMine(copyable, who); toast(`已複製 ${copyable.length} 項`);
   });
   if (mine) { const f = $('#fab'); f.classList.remove('hidden'); f.querySelector('span').textContent = '新增'; f.onclick = () => editShop(null); }
+}
+// 勾選「已買」後，問要不要順便記帳：帶入品名、預算×數量（日圓）、通路、今天日期，刷哪張卡自動用推薦第一名
+async function askShopExpense(x) {
+  if (x.expenseId && S.expenses.some(e => e.id === x.expenseId)) return; // 這項已經記過帳了
+  const qty = Number(x.qty) || 1, amt = Number(x.budget) > 0 ? r2(Number(x.budget) * qty) : null;
+  const ok = await confirmDialog({title: '要記一筆帳嗎？', ok: '記一筆', no: '先不用',
+    body: `「${x.name}」已買好。\n會帶入品名${amt ? `、金額 ¥${amt.toLocaleString()}（預算${qty > 1 ? ` × ${qty}` : ''}）` : ''}和推薦的刷卡方式，分攤預設只有自己，存檔前都可以改。`});
+  if (!ok) return;
+  editExpense(null, {cur: 'JPY', amount: amt, name: x.name, channel: S.catalog ? (x.channel || autoChannel(x.place, x.name)) : null,
+    date: localDateOf(Date.now()), split: [S.me],
+    onSaved: id => updateDoc(doc(db, 'shopping', S.me, 'items', x.id), {expenseId: id}).catch(() => {})});
 }
 const normName = v => String(v || '').trim().toLowerCase();
 const sameItem = (a, b) => normName(a.name) === normName(b.name) && normName(a.place) === normName(b.place);
@@ -1698,7 +1710,7 @@ function renderMoney() {
 // pre：從「刷卡試算」帶入的預設值 {cur, amount, name, channel, card, method, date}
 function editExpense(e, pre = null) {
   const isNew = !e;
-  let cur = e?.cur || pre?.cur || localGet('lastCur') || 'JPY', payer = e?.payer || S.me, split = e ? [...e.split] : [...IDS];
+  let cur = e?.cur || pre?.cur || localGet('lastCur') || 'JPY', payer = e?.payer || S.me, split = e ? [...e.split] : pre?.split ? [...pre.split] : [...IDS];
   let payType = isNew ? 'card' : (e.payType || null);
   const hasCat = !!S.catalog;
   let chManual = !!(e?.channel && hasCat && e.channel !== autoChannel(e.name)) || !!(pre?.channel && hasCat && pre.channel !== autoChannel(pre.name));
@@ -1813,7 +1825,7 @@ function editExpense(e, pre = null) {
       if (chSel) data.channel = chSel.value;
       const btn = s.querySelector('#eSave'); btn.disabled = true;
       let id;
-      try { id = await saveExpense(e, data); localSet('lastCur', cur); }
+      try { id = await saveExpense(e, data); localSet('lastCur', cur); pre?.onSaved?.(id); }
       catch (err) { toast(errMsg(err)); btn.disabled = false; return; }
       closeSheet();
       try { await syncMyTxn(id, data, boxMode === 'mine' ? sel : null, e); toast(isNew ? '已記帳' : '已更新'); }
