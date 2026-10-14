@@ -366,6 +366,109 @@ select.in{-webkit-appearance:none;appearance:none;padding-right:42px;cursor:poin
   background:var(--ink);color:#fff;padding:9px 16px;border-radius:12px;font-size:14px;max-width:calc(100% - 40px);text-align:center}
 #toast.on{opacity:1;transform:translate(-50%,0)}
 
+/* ── credit cards ── */
+.cdot{--cc:#999;display:inline-block;width:15px;height:10px;border-radius:2.5px;background:var(--cc);box-shadow:inset 0 0 0 1px rgba(0,0,0,.14);vertical-align:-1px;flex:none}
+.cswatch{--cc:#999;position:relative;flex:none;width:40px;height:26px;border-radius:6px;background:var(--cc);box-shadow:inset 0 0 0 1.5px rgba(0,0,0,.12),2px 2px 0 rgba(43,58,78,.12)}
+.cswatch::after{content:"";position:absolute;left:6px;top:8px;width:9px;height:7px;border-radius:2px;background:#E9C978;box-shadow:inset 0 0 0 1px rgba(0,0,0,.15)}
+.pagehead{display:flex;align-items:center;gap:8px;margin:0 0 6px}
+.pagehead h2{flex:1;margin:0;font-family:var(--f-title);font-weight:400;font-size:22px}
+.pagehead .btn svg{width:16px;height:16px}
+.opt{display:flex;align-items:flex-start;gap:10px;width:100%;text-align:left;padding:8px 0}
+.opt+.opt{border-top:1px dashed var(--line)}
+.opt .box{width:24px;height:24px;border-radius:8px 7px 9px 7px}
+.opt .box svg{width:15px;height:15px}
+.opt[aria-checked=true] .box{background:var(--c);box-shadow:none}
+.opt[aria-checked=true] .box svg{opacity:1}
+.opt .txt{flex:1;min-width:0;font-size:14px;line-height:1.45}
+details.mini{padding:10px 14px}
+details.mini>summary,button.mini{list-style:none;display:flex;align-items:center;gap:8px;cursor:pointer;font-family:var(--f-title);font-size:15px;width:100%;text-align:left}
+details.mini>summary::-webkit-details-marker{display:none}
+details.mini>summary>svg:first-child,button.mini>svg:first-child{width:19px;height:19px;color:var(--terra);flex:none}
+details.mini>summary>span:first-of-type,button.mini>span{flex:1}
+details.mini .chev{width:17px;height:17px;color:var(--ink-3);transition:transform .2s;flex:none}
+details.mini[open]>summary .chev{transform:rotate(90deg)}
+button.mini{padding:12px 14px;color:var(--sea-deep)}
+button.mini>svg:last-child{width:16px;height:16px;flex:none}
+details.notes ul{margin:8px 0 2px;padding-left:18px;font-size:13px;color:var(--ink-2)}
+details.notes li+li{margin-top:5px}
+.mini+.mini,.mini+.whobar,.mini+h2.sec{margin-top:12px}
+.minicard{padding:8px 0 2px}.minicard+.minicard{border-top:1px dashed var(--line)}
+.remind{background:#FFF6F3;box-shadow:inset 0 0 0 1.5px rgba(228,80,94,.4),var(--shadow);margin-bottom:4px}
+.remind .rh{display:flex;align-items:center;gap:8px;font-family:var(--f-title)}
+.remind .rh svg{width:19px;height:19px;color:var(--hib)}
+.remind .rh b{font-weight:400;font-size:16px}
+.rrow{display:flex;gap:9px;padding:10px 0 4px}
+.rrow+.rrow{border-top:1px dashed var(--line)}
+.rrow .cdot{margin-top:5px}
+.rrow .body{flex:1;min-width:0}
+.rrow .acts{display:flex;flex-wrap:wrap;gap:6px;margin-top:7px}
+.fx .row{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.fx .big{font-size:20px}
+.cardx>summary{list-style:none;display:flex;align-items:flex-start;gap:12px;cursor:pointer}
+.cardx>summary::-webkit-details-marker{display:none}
+.cardx>summary .body{flex:1;min-width:0}
+.cardx>summary .nm{font-family:var(--f-title);font-size:16.5px;line-height:1.3}
+.cardx>summary .sub{display:flex;flex-wrap:wrap;gap:5px;margin-top:4px}
+.cardx>summary .chev{width:18px;height:18px;color:var(--ink-3);transition:transform .2s;margin-top:4px;flex:none}
+.cardx[open]>summary .chev{transform:rotate(90deg)}
+.cardx{box-shadow:inset 4px 0 0 var(--cc),inset 0 0 0 1.5px var(--line-2),var(--shadow)}
+.cbody{margin-top:10px;padding-top:4px;border-top:1.5px dashed var(--line)}
+.sub-h{font-family:var(--f-title);font-size:14.5px;margin:14px 0 4px;display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
+.regrow{display:flex;align-items:flex-start;gap:8px}
+.regrow+.regrow{border-top:1px dashed var(--line)}
+.regrow .opt{flex:1}.regrow .btn{margin-top:6px;flex:none}
+.caprow{padding:9px 0 6px;position:relative}
+.caprow+.caprow{border-top:1px dashed var(--line)}
+.caprow .top{display:flex;justify-content:space-between;gap:10px;font-size:13.5px}
+.caprow .top .num{white-space:nowrap}
+.caprow .sub{display:flex;flex-wrap:wrap;gap:5px;margin-top:4px}
+.caprow.full,.caprow.off{color:var(--ink-3)}
+.caprow.full .prog i,.caprow.off .prog i{background:#B9C0C8}
+.caprow .adjbtn{min-height:30px;padding:0 6px;font-size:12.5px;margin-top:2px}
+.caprow .adjbtn svg{width:14px;height:14px}
+.prog.s{height:8px;margin:5px 0 4px}
+.prog.th i{background:var(--terra)}
+details.rules{margin-top:12px}
+details.rules>summary{cursor:pointer;color:var(--sea-deep);font-family:var(--f-title)}
+ul.rl{list-style:none;margin:6px 0 0;padding:0}
+ul.rl li{padding:7px 0}ul.rl li+li{border-top:1px dashed var(--line)}
+ul.rl .top{display:flex;justify-content:space-between;gap:8px;font-size:13.5px}
+ul.src{margin:4px 0 0;padding-left:18px;font-size:13px}
+ul.src li+li{margin-top:3px}
+.addrow{display:flex;align-items:center;gap:12px;padding:9px 0}
+.addrow+.addrow{border-top:1px dashed var(--line)}
+.addrow .body{flex:1;min-width:0}
+.addrow .nm{font-family:var(--f-title);font-size:15px}
+.sh.has-rec{flex-wrap:wrap}
+.rec{flex-basis:100%;margin:-2px 0 2px 38px;min-width:0}
+.rec .line{display:flex;align-items:center;gap:7px;width:100%;text-align:left;font-size:13px;line-height:1.4;color:var(--sea-deep);background:var(--sea-wash);border-radius:10px;padding:6px 9px}
+.rec .line span{flex:1;min-width:0}
+.rec .line .chev{width:15px;height:15px;color:var(--ink-3);flex:none;transition:transform .2s}
+.rec .line[aria-expanded=true] .chev{transform:rotate(90deg)}
+.how{color:var(--terra);margin:3px 2px 0}
+.rec .detail{margin-top:6px;padding:8px 10px;border-radius:10px;background:var(--card);box-shadow:inset 0 0 0 1.5px var(--line)}
+.rk{padding:8px 0}.rk+.rk{border-top:1px dashed var(--line)}
+ul.bd{list-style:none;margin:5px 0 0;padding:0;font-size:12.5px;color:var(--ink-2)}
+ul.bd li{display:flex;flex-wrap:wrap;justify-content:space-between;gap:2px 8px;padding:1px 0}
+ul.bd li>.tiny{flex-basis:100%}
+ul.bd .neg{color:#B32F3B}
+ul.bd li.tot{border-top:1px solid var(--line);margin-top:3px;padding-top:4px;color:var(--ink)}
+ul.bd li.hint{display:block;color:var(--terra)}
+ul.bd li.hint::before{content:"💡 "}
+.warnline{color:#B32F3B}
+.hintbox{margin-top:6px;padding:6px 9px;border-radius:9px;background:var(--terra-light);color:var(--terra)}
+.cardbox{background:var(--card);border-radius:14px;box-shadow:inset 0 0 0 1.5px var(--line-2);padding:10px 12px;margin:-2px 0 12px}
+.cardbox .lbl{font-family:var(--f-title);font-size:13.5px;color:var(--ink-2);display:flex;align-items:center;gap:6px;margin-bottom:6px}
+.cardbox .lbl svg{width:14px;height:14px}
+.cardbox .row2{gap:8px}
+.cardbox select.in,.cardbox input.in{min-height:42px;font-size:15px}
+.cardbox .est{margin-top:8px;font-size:13px}
+.pend{display:flex;align-items:center;gap:10px;background:#FFF6F3;box-shadow:inset 0 0 0 1.5px rgba(228,80,94,.4),var(--shadow);margin-bottom:6px}
+.pend svg{width:22px;height:22px;color:var(--hib);flex:none}
+.pend .body{flex:1;font-size:14px}
+.ex .sub{flex-wrap:wrap}
+.chip .cdot{width:12px;height:8px}
+
 /* ── gate screens ── */
 .gate{text-align:center;padding-top:10px}
 .gate .hero{width:min(64vw,250px);aspect-ratio:1;border-radius:22%;display:block;margin:0 auto 18px;box-shadow:0 0 0 4px var(--card),0 0 0 6px var(--ink),6px 9px 0 6px rgba(43,58,78,.12)}
@@ -539,8 +642,12 @@ const S = {
   user: null, me: null, members: {}, itinerary: [], flights: {}, booking: null, checklist: [],
   shopping: {qi: [], xuan: [], yun: [], yue: []}, expenses: [], settlements: {}, ledger: {},
   tab: localGet('tab') || 'trip', day: null, prepView: 'mine', shopWho: null, exFilter: 'all',
-  openCats: new Set(JSON.parse(localGet('openCats') || '[]')), loaded: {}
+  openCats: new Set(JSON.parse(localGet('openCats') || '[]')), loaded: {},
+  // 信用卡
+  catalog: null, catMeta: null, cardProfile: null, profLoaded: false, txns: [], fxManual: null, cardVer: 0,
+  cardOpen: new Set(), recOpen: new Set(), expSynced: false, txSynced: false, prevTab: null
 };
+if (S.tab === 'cards') S.tab = 'shop';
 function localGet(k) { try { return localStorage.getItem('rlc.' + k); } catch { return null; } }
 function localSet(k, v) { try { localStorage.setItem('rlc.' + k, v); } catch {} }
 
@@ -667,7 +774,7 @@ async function importSeed(j, cont) {
 
 /* ───────────── auth flow ───────────── */
 let unsubs = [];
-function stopListeners() { unsubs.forEach(u => u()); unsubs = []; }
+function stopListeners() { unsubs.forEach(u => u()); unsubs = []; startPrivate.me = null; S.cardProfile = null; S.profLoaded = false; S.txns = []; S.expSynced = S.txSynced = false; }
 
 if (!configured) showSetupNeeded();
 else onAuthStateChanged(auth, async user => {
@@ -686,6 +793,23 @@ else onAuthStateChanged(auth, async user => {
   startApp();
 });
 
+// 自己的信用卡設定與刷卡明細：只有本人能讀，知道自己是誰之後才開始監聽
+function startPrivate() {
+  if (!S.me || startPrivate.me === S.me) return;
+  startPrivate.me = S.me;
+  unsubs.push(onSnapshot(doc(db, 'cardProfiles', S.me), d => {
+    if (!d.metadata.hasPendingWrites || !S.cardProfile) S.cardProfile = d.exists() ? (({updatedAt, ...x}) => ({cards: {}, wallets: ['googlepay'], ...x}))(d.data()) : null;
+    S.profLoaded = true; S.cardVer++;
+    if (['cards', 'shop', 'money'].includes(S.tab) && !$('#sheet.on') && !inputFocused()) render();
+  }, e => console.warn(e)));
+  unsubs.push(onSnapshot(collection(db, 'cardProfiles', S.me, 'txns'), {includeMetadataChanges: true}, s => {
+    S.txns = s.docs.map(d => ({id: d.id, ...d.data()}));
+    if (!s.metadata.fromCache) S.txSynced = true;
+    S.cardVer++; reconcileTxns();
+    if (['shop', 'money'].includes(S.tab) && !$('#sheet.on')) render();
+  }, e => console.warn(e)));
+}
+const inputFocused = () => !!document.activeElement?.closest?.('#main input, #main select, #main textarea');
 function startApp() {
   bare(false); scrollTo(0, 0);
   const L = (ref, fn) => unsubs.push(onSnapshot(ref, fn, e => console.warn(e)));
@@ -693,7 +817,7 @@ function startApp() {
     S.members = {}; s.docs.forEach(d => S.members[d.id] = d.data());
     const mine = Object.values(S.members).find(m => m.email?.toLowerCase() === S.user.email.toLowerCase());
     S.me = mine?.id || null; S.shopWho = S.shopWho || S.me;
-    S.loaded.members = true; renderHeader(); render();
+    S.loaded.members = true; startPrivate(); renderHeader(); render();
   });
   L(collection(db, 'itinerary'), s => { S.itinerary = s.docs.map(d => ({id: d.id, ...d.data()})); S.loaded.itinerary = true; if (S.tab === 'trip') render(); });
   L(collection(db, 'flights'), s => {
@@ -704,7 +828,21 @@ function startApp() {
   for (const id of IDS) L(collection(db, 'shopping', id, 'items'), s => {
     S.shopping[id] = s.docs.map(d => ({id: d.id, ...d.data({serverTimestamps: 'estimate'})})); if (S.tab === 'shop') render();
   });
-  L(collection(db, 'expenses'), s => { S.expenses = s.docs.map(d => ({id: d.id, ...d.data({serverTimestamps: 'estimate'})})); if (S.tab === 'money') render(); });
+  unsubs.push(onSnapshot(collection(db, 'expenses'), {includeMetadataChanges: true}, s => {
+    S.expenses = s.docs.map(d => ({id: d.id, ...d.data({serverTimestamps: 'estimate'})}));
+    if (!s.metadata.fromCache) S.expSynced = true;
+    reconcileTxns(); if (S.tab === 'money') render();
+  }, e => console.warn(e)));
+  L(doc(db, 'cardCatalog', 'current'), d => {
+    if (d.exists()) {
+      const x = d.data({serverTimestamps: 'estimate'});
+      try { S.catalog = JSON.parse(x.json); S.catMeta = {version: x.version, importedBy: x.importedBy, importedAt: x.importedAt}; }
+      catch (e) { console.warn('cardCatalog', e); }
+    } else { S.catalog = null; S.catMeta = null; }
+    S.cardVer++; if (['cards', 'shop', 'money'].includes(S.tab) && !$('#sheet.on')) render();
+  });
+  L(doc(db, 'settings', 'fx'), d => { S.fxManual = d.exists() ? d.data({serverTimestamps: 'estimate'}) : null; S.cardVer++; if (S.tab === 'cards' && !inputFocused()) render(); });
+  fetchFx();
   L(collection(db, 'settlements'), s => { S.settlements = {}; s.docs.forEach(d => S.settlements[d.id] = d.data({serverTimestamps: 'estimate'})); if (S.tab === 'money') render(); });
   L(collection(db, 'ledger'), s => { S.ledger = {}; s.docs.forEach(d => S.ledger[d.id] = d.data()); });
   renderHeader(); render();
@@ -752,7 +890,7 @@ const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
 let sw = null;
 document.addEventListener('touchstart', e => {
   sw = null;
-  if (e.touches.length !== 1 || document.body.classList.contains('bare')) return;
+  if (e.touches.length !== 1 || document.body.classList.contains('bare') || S.tab === 'cards') return;
   if ($('#sheet.on') || $('#dlg.on') || $('#lightbox.on')) return;
   const t = e.touches[0], el = e.target;
   if (t.clientX < 24 || t.clientX > innerWidth - 24) return;
@@ -797,7 +935,7 @@ addEventListener('online', syncNet); addEventListener('offline', syncNet); syncN
 function render() {
   if (!S.me) { $('#main').innerHTML = '<p class="empty">載入中…</p>'; return; }
   const fab = $('#fab'); fab.classList.add('hidden'); fab.onclick = null;
-  ({trip: renderTrip, flight: renderFlight, prep: renderPrep, shop: renderShop, money: renderMoney})[S.tab]();
+  ({trip: renderTrip, flight: renderFlight, prep: renderPrep, shop: renderShop, money: renderMoney, cards: renderCards})[S.tab]();
 }
 
 /* avatar preview (tap to see the full picture) */
@@ -829,8 +967,9 @@ function openProfile(id) {
     <div class="nm">${esc(m.short)}</div><div class="full">${esc(m.full)}</div>
     <div class="ttl">${esc(m.title)}</div>
     <blockquote>「${esc(m.quote)}」</blockquote>
-    ${id === S.me ? `<p class="tiny muted">${esc(S.user.email)}</p><button class="btn full" id="logout">登出</button>` : ''}
+    ${id === S.me ? `<button class="btn pri full" id="toCardsP" style="margin-bottom:10px">${ic.coin}信用卡設定</button><p class="tiny muted">${esc(S.user.email)}</p><button class="btn full" id="logout">登出</button>` : ''}
     <button class="btn ghost full" data-close>關閉</button></div>`, s => {
+    s.querySelector('#toCardsP')?.addEventListener('click', goCards);
     s.querySelector('#logout')?.addEventListener('click', async () => {
       if (await confirmDialog({title: '要登出嗎？', ok: '登出'})) { closeSheet(); signOut(auth); }
     });
@@ -1202,16 +1341,18 @@ function renderShop() {
   const bar = `<div class="whobar">${IDS.map(m => `<button aria-pressed="${m === who}" data-w="${m}" style="--c:${COLORS[m]}">${avatar(m).replace('data-profile', 'data-x')}${nm(m)}<span class="tiny muted">${(S.shopping[m] || []).length} 項</span></button>`).join('')}</div>`;
   const totAll = items.reduce((s, x) => s + (Number(x.budget) || 0) * (Number(x.qty) || 1), 0);
   const totLeft = items.filter(x => !x.bought).reduce((s, x) => s + (Number(x.budget) || 0) * (Number(x.qty) || 1), 0);
-  const list = items.length ? `<div class="card">${items.map(x => `<div class="sh ${x.bought ? 'done' : ''}">
+  const recs = {}; if (mine) for (const x of items) if (!x.bought) recs[x.id] = shopRecHTML(x);
+  const list = items.length ? `<div class="card">${items.map(x => `<div class="sh ${x.bought ? 'done' : ''} ${recs[x.id] ? 'has-rec' : ''}">
       <button class="box" role="checkbox" aria-checked="${!!x.bought}" aria-label="${esc(x.name)}" data-buy="${x.id}" ${mine ? '' : 'disabled'} style="--c:${COLORS[who]}">${ic.check}</button>
       <${mine ? 'button' : 'div'} class="body" ${mine ? `data-ed="${x.id}"` : ''}><div class="nm">${esc(x.name)}</div>
         ${x.day || x.qty || x.budget || x.note ? `<div class="sub">${x.day ? `<span class="chip sea">${dayLabel(x.day)}</span>` : ''}${x.qty ? `<span class="chip">× <span class="num">${esc(x.qty)}</span></span>` : ''}${x.budget ? `<span class="chip terra">預算 <span class="num">¥${Number(x.budget).toLocaleString()}</span></span>` : ''}${x.note ? `<span class="small muted">${esc(x.note)}</span>` : ''}</div>` : ''}
         ${x.fromWho && COLORS[x.fromWho] ? `<div class="sub"><span class="chip">${avatar(x.fromWho, 's').replace('data-profile', 'data-x')} 來自 ${nm(x.fromWho)}</span></div>` : ''}
         ${x.place ? `<div class="sub"><span class="small muted">${ic.map.replace('<svg', '<svg style="width:13px;height:13px;vertical-align:-2px"')} ${esc(x.place)}</span></div>` : ''}
-      </${mine ? 'button' : 'div'}>${x.place || !mine ? `<div class="acts">${x.place ? `<a class="btn sm" href="${mapsSearch(x.place)}" target="_blank" rel="noopener" aria-label="在 Google Maps 開啟 ${esc(x.place)}">${ic.map}地圖</a>` : ''}${mine ? '' : have(x) ? `<button class="btn sm" disabled>${ic.check}已有</button>` : `<button class="btn sm" data-copy-item="${x.id}" aria-label="複製 ${esc(x.name)} 到我的清單">${ic.copy}複製</button>`}</div>` : ''}</div>`).join('')}
+        ${S.catalog && (x.channel || mine) ? `<div class="sub"><span class="chip">${esc(channelName(x.channel || autoChannel(x.place, x.name)))}</span></div>` : ''}
+      </${mine ? 'button' : 'div'}>${x.place || !mine ? `<div class="acts">${x.place ? `<a class="btn sm" href="${mapsSearch(x.place)}" target="_blank" rel="noopener" aria-label="在 Google Maps 開啟 ${esc(x.place)}">${ic.map}地圖</a>` : ''}${mine ? '' : have(x) ? `<button class="btn sm" disabled>${ic.check}已有</button>` : `<button class="btn sm" data-copy-item="${x.id}" aria-label="複製 ${esc(x.name)} 到我的清單">${ic.copy}複製</button>`}</div>` : ''}${recs[x.id] || ''}</div>`).join('')}
       ${totAll ? `<div class="totals"><span>預算合計 <b class="num">¥${totAll.toLocaleString()}</b></span><span>還沒買 <b class="num">¥${totLeft.toLocaleString()}</b></span></div>` : ''}</div>`
     : `<div class="empty">${ic.bag}${mine ? '還沒有想買的東西，按右下角新增' : `${nm(who)} 還沒有列清單`}</div>`;
-  $('#main').innerHTML = `${bar}<h2 class="sec">${ic.shell.replace('<svg', '<svg class="deco"')}${mine ? '我的購物清單' : nm(who) + ' 的購物清單'}${mine ? '' : '<span class="chip" style="margin-left:auto">只能看</span>'}</h2>${!mine && copyable.length ? `<button class="btn full" id="copyAll" style="margin-bottom:12px">${ic.copy}把 ${copyable.length} 項全部複製到我的清單</button>` : ''}${list}`;
+  $('#main').innerHTML = `${bar}${mine ? shopCardTopHTML() : ''}<h2 class="sec">${ic.shell.replace('<svg', '<svg class="deco"')}${mine ? '我的購物清單' : nm(who) + ' 的購物清單'}${mine ? '' : '<span class="chip" style="margin-left:auto">只能看</span>'}</h2>${!mine && copyable.length ? `<button class="btn full" id="copyAll" style="margin-bottom:12px">${ic.copy}把 ${copyable.length} 項全部複製到我的清單</button>` : ''}${list}`;
   $('#main').querySelector('.whobar').onclick = e => { const b = e.target.closest('[data-w]'); if (b) { S.shopWho = b.dataset.w; renderShop(); } };
   $('#main').querySelectorAll('[data-buy]').forEach(b => b.onclick = () => {
     const x = S.shopping[S.me].find(i => i.id === b.dataset.buy); if (!x) return;
@@ -1219,6 +1360,9 @@ function renderShop() {
     updateDoc(doc(db, 'shopping', S.me, 'items', x.id), {bought: x.bought}).catch(e => toast(errMsg(e)));
   });
   $('#main').querySelectorAll('[data-ed]').forEach(b => b.onclick = () => editShop(S.shopping[S.me].find(i => i.id === b.dataset.ed)));
+  $('#main').querySelectorAll('[data-rec]').forEach(b => b.onclick = () => { const id = b.dataset.rec; S.recOpen.has(id) ? S.recOpen.delete(id) : S.recOpen.add(id); renderShop(); });
+  $('#main').querySelectorAll('details[data-keep]').forEach(d => d.ontoggle = () => localSet('open.' + d.dataset.keep, d.open ? '1' : '0'));
+  ['#toCards', '#toCards2'].forEach(k => $(k)?.addEventListener('click', goCards));
   $('#main').querySelectorAll('[data-copy-item]').forEach(b => b.onclick = () => {
     const x = items.find(i => i.id === b.dataset.copyItem); if (!x) return;
     copyToMine([x], who); toast(`已把「${x.name}」複製到我的清單`);
@@ -1234,7 +1378,7 @@ const sameItem = (a, b) => normName(a.name) === normName(b.name) && normName(a.p
 function copyToMine(list, from) {
   const b = writeBatch(db), now = Date.now();
   list.forEach((x, i) => b.set(doc(collection(db, 'shopping', S.me, 'items')), {
-    name: x.name, qty: x.qty ?? null, budget: x.budget ?? null, place: x.place || '', day: x.day || 0, note: x.note || '',
+    name: x.name, qty: x.qty ?? null, budget: x.budget ?? null, place: x.place || '', day: x.day || 0, note: x.note || '', channel: x.channel || null,
     bought: false, fromWho: from, order: now + i, updatedAt: serverTimestamp()}));
   b.commit().catch(e => toast(errMsg(e)));
 }
@@ -1249,16 +1393,27 @@ function editShop(x) {
     <div class="f"><span>預計哪天買</span><div class="seg" id="sDay" style="flex-wrap:wrap">${[0, ...DAYS.map(d => d.d)].map(d => `<button type="button" data-d="${d}" aria-pressed="${day === d}">${d ? 'Day ' + d : '未定'}</button>`).join('')}</div></div>
     <label class="f"><span>購買地點（店家名稱或地址）</span><input class="in" id="sPlace" value="${esc(x.place || '')}" placeholder="例如 御菓子御殿 國際通松尾店"></label>
     <p class="tiny" style="margin:-6px 2px 10px"><a id="sPlaceTest" href="#" target="_blank" rel="noopener">在 Google Maps 檢查這個地點 ›</a></p>
+    ${S.catalog ? `<label class="f"><span>通路類型 <span class="tiny muted" id="sChAuto"></span></span><select class="in" id="sCh">${channelOptions(x.channel || autoChannel(x.place, x.name))}</select></label>` : ''}
     <label class="f"><span>備註</span><input class="in" id="sNote" value="${esc(x.note)}" placeholder="口味、幫誰買…"></label>
     <div class="sheet-acts">${isNew ? '' : `<button class="btn" id="sDel">${ic.trash}刪除</button>`}<button class="btn pri" id="sSave">儲存</button></div>`, s => {
     if (isNew) setTimeout(() => s.querySelector('#sName').focus(), 250);
     const pt = () => { const q = s.querySelector('#sPlace').value.trim(); const a = s.querySelector('#sPlaceTest'); a.href = q ? mapsSearch(q) : '#'; a.style.visibility = q ? 'visible' : 'hidden'; };
-    s.querySelector('#sPlace').oninput = pt; pt();
+    const chSel = s.querySelector('#sCh');
+    let chManual = !!(chSel && x.channel && x.channel !== autoChannel(x.place, x.name));
+    const syncCh = () => {
+      if (!chSel) return;
+      const a = autoChannel(s.querySelector('#sPlace').value, s.querySelector('#sName').value);
+      if (!chManual) chSel.value = a;
+      s.querySelector('#sChAuto').textContent = chManual ? '（手動選擇）' : '（依地點和品名自動判斷，可改）';
+    };
+    chSel?.addEventListener('change', () => { chManual = true; syncCh(); });
+    s.querySelector('#sPlace').oninput = () => { pt(); syncCh(); }; s.querySelector('#sName').oninput = syncCh; pt(); syncCh();
     s.querySelector('#sDay').onclick = e => { const b = e.target.closest('[data-d]'); if (!b) return; day = +b.dataset.d; s.querySelectorAll('#sDay [data-d]').forEach(x => x.setAttribute('aria-pressed', String(+x.dataset.d === day))); };
     s.querySelector('#sSave').onclick = () => {
       const name = s.querySelector('#sName').value.trim(); if (!name) { toast('請填寫品名'); return; }
       const num = id => { const v = s.querySelector(id).value; return v === '' ? null : Number(v); };
       const data = {name, qty: num('#sQty'), budget: num('#sBud'), place: s.querySelector('#sPlace').value.trim(), day, note: s.querySelector('#sNote').value.trim(), updatedAt: serverTimestamp()};
+      if (chSel) data.channel = chSel.value;
       const p = isNew ? setDoc(doc(collection(db, 'shopping', S.me, 'items')), {...data, bought: false, order: Date.now()})
         : updateDoc(doc(db, 'shopping', S.me, 'items', x.id), data);
       p.catch(e => toast(errMsg(e))); closeSheet(); toast('已儲存');
@@ -1340,6 +1495,7 @@ async function setPaid(cur, i, val) {
 }
 async function saveExpense(old, data) {
   requireOnline();
+  let id = null;
   const moneyChanged = !old || old.cur !== data.cur || cents(old.amount) !== cents(data.amount) || old.payer !== data.payer || !sameSet(old.split, data.split);
   const curs = [...new Set([data.cur, old?.cur].filter(Boolean))];
   await runTransaction(db, async tx => {
@@ -1353,9 +1509,11 @@ async function saveExpense(old, data) {
     const stamp = {updatedBy: S.me, updatedAt: serverTimestamp()};
     if (!old) tx.set(ref, {...data, ...stamp, createdBy: S.me, createdAt: serverTimestamp()});
     else if (moneyChanged) tx.update(ref, {...data, ...stamp});
-    else tx.update(ref, {name: data.name, note: data.note, ...stamp});
+    else tx.update(ref, {name: data.name, note: data.note, ...('payType' in data ? {payType: data.payType} : {}), ...('channel' in data ? {channel: data.channel} : {}), ...stamp});
     if (moneyChanged) for (const c of curs) bump(tx, c, reads[c]);
+    id = ref.id;
   });
+  return id;
 }
 function bump(tx, c, {l, s}) {
   if (l.exists()) tx.update(l.ref, {v: (l.data().v || 0) + 1}); else tx.set(l.ref, {v: 1});
@@ -1368,6 +1526,19 @@ async function deleteExpense(e) {
     if (s.exists() && anyPaid(s.data())) throw new AppError('locked');
     tx.delete(doc(db, 'expenses', e.id)); bump(tx, e.cur, {l, s});
   });
+  if (S.txns.some(t => t.id === e.id)) deleteDoc(doc(db, 'cardProfiles', S.me, 'txns', e.id)).catch(() => {});
+}
+// 付款人自己的私人刷卡明細：寫入或刪除
+async function syncMyTxn(id, data, sel, old) {
+  const ref = doc(db, 'cardProfiles', S.me, 'txns', id), had = S.txns.find(t => t.id === id);
+  if (data.payer !== S.me || data.payType !== 'card' || !sel?.card) { if (had && (data.payer !== S.me || data.payType !== 'card')) await deleteDoc(ref); return; }
+  const same = had && had.cur === data.cur && cents(had.amount) === cents(data.amount);
+  const fx = data.cur === 'TWD' ? 1 : (same ? had.fx : fxNow().rate);
+  const twd = same ? had.twd : r2(data.amount * fx);
+  const at = tsDate(old?.createdAt)?.getTime() || Date.now();
+  const res = sel.result;
+  await setDoc(ref, {card: sel.card, method: sel.method, channel: data.channel || 'jp_other', twd, date: sel.date, cur: data.cur, amount: data.amount, fx, at,
+    rewards: Object.fromEntries((res?.items || []).map(i => [i.rule.id, r2(i.reward)])), net: r2(res?.net || 0), updatedAt: serverTimestamp()});
 }
 
 function renderMoney() {
@@ -1384,7 +1555,7 @@ function renderMoney() {
         <span class="amt num">${money(t.amount, cur)}</span>
         <button class="paidbtn" aria-pressed="${!!t.paid}" data-paid="${cur}:${i}">${t.paid ? '✓ 已轉帳' : '已轉帳？'}</button></div>`).join('')}</div>
       <p class="tiny muted" style="margin:6px 0 0">${esc(nm(st.by))} 於 ${fmtTime(st.at)} 結算・${st.count ?? exps.length} 筆記帳${st.transfers.some(t => t.amount % 100) ? '・有小數的零頭可自行決定要不要收' : ''}</p>
-      ${locked ? `<div class="lock">${ic.lock}<span>已有轉帳紀錄，${CUR[cur].name}帳目已鎖定：不能新增、刪除，也不能改金額（品名和備註可以改）。把「已轉帳」全部取消就會解鎖。</span></div>`
+      ${locked ? `<div class="lock">${ic.lock}<span>已有轉帳紀錄，${CUR[cur].name}帳目已鎖定：不能新增、刪除，也不能改金額（品名、備註、通路、付款方式和卡片可以改）。把「已轉帳」全部取消就會解鎖。</span></div>`
         : `<button class="btn sm ghost" data-settle="${cur}" style="margin-top:4px">重新結算</button>`}`;
     return `<div class="card settle"><h3><span class="cur-badge">${CUR[cur].sym}</span>${CUR[cur].name}${locked ? `<span class="chip hib" style="margin-left:auto">${ic.lock}鎖定中</span>` : ''}</h3>
       <div class="small muted" style="margin-top:4px">共 ${exps.length} 筆・總支出 <b class="num" style="color:var(--ink)">${money(total, cur)}</b></div>
@@ -1395,23 +1566,36 @@ function renderMoney() {
   const f = S.exFilter, exps = S.expenses.filter(e => f === 'all' || e.cur === f)
     .sort((a, b) => (tsDate(b.createdAt)?.getTime() || 0) - (tsDate(a.createdAt)?.getTime() || 0));
   let lastDay = '', rows = '';
+  const txRes = S.catalog ? cardCtx() : null;
   for (const e of exps) {
     const d = tsDate(e.createdAt), key = d ? `${d.getMonth() + 1}/${d.getDate()}（${'日一二三四五六'[d.getDay()]}）` : '剛剛';
     if (key !== lastDay) { rows += `<div class="exday">${key}</div>`; lastDay = key; }
     const {base, rem} = shareInfo(e.amount, e.split.length);
+    let payTag = '';
+    if (e.payType === 'cash') payTag = '<span class="chip">現金</span>';
+    else if (e.payType === 'card') {
+      payTag = '<span class="chip">刷卡</span>';
+      if (e.payer === S.me && S.catalog) {
+        const t = S.txns.find(x => x.id === e.id), res = t && txRes?.results[t.id];
+        payTag += t ? `<span class="chip sea">${cdot(cardById(t.card))}${esc(cardShort(cardById(t.card)))}${res ? `・估回饋 ${twdFmt(res.net)}` : ''}</span>` : (S.txSynced ? '<span class="chip hib">待填卡片</span>' : '');
+      }
+    }
     rows += `<button class="card ex" data-ex="${e.id}">${avatar(e.payer, 'l').replace('data-profile', 'data-x')}
       <div class="body"><div class="nm">${esc(e.name || '（未命名）')}</div>
         <div class="sub">${nm(e.payer)} 先付・分給 <span class="avs">${e.split.map(m => avatar(m, 's').replace('data-profile', 'data-x')).join('')}</span>${isLocked(e.cur) ? ic.lock.replace('<svg', '<svg style="width:14px;height:14px;color:#B32F3B"') : ''}</div>
+        ${payTag ? `<div class="sub">${payTag}</div>` : ''}
         ${e.note ? `<div class="tiny muted" style="margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(e.note)}</div>` : ''}</div>
       <div class="amt"><b class="num">${money(cents(e.amount), e.cur)}</b><small>每人 <span class="num">${money(base, e.cur)}</span>${rem ? '…' : ''}</small></div></button>`;
   }
-  $('#main').innerHTML = `<h2 class="sec">${ic.coin.replace('<svg', '<svg class="deco"')}結算</h2>
+  const pend = pendingCardExps();
+  $('#main').innerHTML = `${pend.length ? `<div class="card pend">${ic.coin}<div class="body">有 <b class="num">${pend.length}</b> 筆你付的刷卡還沒填是哪張卡<div class="tiny muted">只有你看得到，用來計算回饋和剩餘額度</div></div><button class="btn sm pri" id="pendGo">補填</button></div>` : ''}<h2 class="sec">${ic.coin.replace('<svg', '<svg class="deco"')}結算</h2>
     ${cards || `<div class="card empty">${ic.shell}還沒有任何記帳，按右下角「記一筆」開始</div>`}
     <h2 class="sec">${ic.hib.replace('<svg', '<svg class="deco"')}記帳明細</h2>
     <div class="seg" style="margin-bottom:6px">${[['all', '全部'], ['JPY', '日圓'], ['TWD', '台幣']].map(([k, t]) => `<button aria-pressed="${f === k}" data-f="${k}">${t}</button>`).join('')}</div>
     ${rows || '<p class="empty">沒有記帳</p>'}`;
   $('#main').querySelector('.seg').onclick = e => { const b = e.target.closest('[data-f]'); if (b) { S.exFilter = b.dataset.f; renderMoney(); } };
   $('#main').querySelectorAll('[data-ex]').forEach(b => b.onclick = () => editExpense(S.expenses.find(e => e.id === b.dataset.ex)));
+  $('#pendGo')?.addEventListener('click', () => editExpense(pend.sort((a, b) => (tsDate(a.createdAt)?.getTime() || 0) - (tsDate(b.createdAt)?.getTime() || 0))[0]));
   $('#main').querySelectorAll('[data-settle]').forEach(b => b.onclick = async () => {
     b.disabled = true;
     try { await doSettle(b.dataset.settle); toast('結算完成'); } catch (e) { toast(errMsg(e)); b.disabled = false; }
@@ -1432,6 +1616,12 @@ function renderMoney() {
 function editExpense(e) {
   const isNew = !e;
   let cur = e?.cur || localGet('lastCur') || 'JPY', payer = e?.payer || S.me, split = e ? [...e.split] : [...IDS];
+  let payType = isNew ? 'card' : (e.payType || null);
+  const hasCat = !!S.catalog;
+  let chManual = !!(e?.channel && hasCat && e.channel !== autoChannel(e.name));
+  // 私人卡片欄位（只在自己是付款人時使用）
+  const oldTx = e ? S.txns.find(t => t.id === e.id) : null;
+  const sel = {card: oldTx?.card || null, method: oldTx?.method || null, date: oldTx?.date || (e ? jstDateOf(e.createdAt) : nowJST().date), manual: !!oldTx, result: null};
   openSheet(`<h3>${isNew ? '記一筆' : '編輯記帳'}<button class="iconbtn x" data-close aria-label="關閉">${ic.x}</button></h3>
     <div id="eLock"></div>
     <div class="seg" id="eCur" style="margin-bottom:12px">${['JPY', 'TWD'].map(c => `<button type="button" data-c="${c}">${CUR[c].sym} ${CUR[c].name}</button>`).join('')}</div>
@@ -1440,38 +1630,109 @@ function editExpense(e) {
     <div class="f"><span>分攤的人（當分母）</span><div class="pick" id="eSplit"></div></div>
     <div class="share" id="eShare"></div>
     <label class="f"><span>品名</span><input class="in" id="eName" value="${esc(e?.name || '')}" maxlength="100" placeholder="例如 燒肉晚餐"></label>
+    ${hasCat ? `<label class="f"><span>通路類型 <span class="tiny muted" id="eChAuto"></span></span><select class="in" id="eCh">${channelOptions(e?.channel || autoChannel(e?.name))}</select></label>` : ''}
+    <div class="f"><span>付款方式（大家都看得到）</span><div class="seg" id="ePay"><button type="button" data-p="cash">現金</button><button type="button" data-p="card">刷卡</button></div></div>
+    <div id="eCardBox"></div>
     <label class="f"><span>備註</span><input class="in" id="eNote" value="${esc(e?.note || '')}" maxlength="500"></label>
     ${e ? `<div class="audit">建立：${esc(nm(e.createdBy))}・${fmtTime(e.createdAt)}<br>最後修改：${esc(nm(e.updatedBy))}・${fmtTime(e.updatedAt)}</div>` : ''}
     <div class="sheet-acts">${isNew ? '' : `<button class="btn" id="eDel">${ic.trash}刪除</button>`}<button class="btn pri" id="eSave">儲存</button></div>`, s => {
-    const amtEl = s.querySelector('#eAmt');
+    const amtEl = s.querySelector('#eAmt'), chSel = s.querySelector('#eCh'), box = s.querySelector('#eCardBox');
+    const channel = () => chSel ? chSel.value : (e?.channel || null);
+    const syncCh = () => {
+      if (!chSel) return;
+      if (!chManual) chSel.value = autoChannel(s.querySelector('#eName').value);
+      s.querySelector('#eChAuto').textContent = chManual ? '（手動選擇）' : '（依品名自動判斷，可改）';
+    };
+    // 卡片區：選單只在付款人／付款方式改變時重畫，金額、通路、日期變動只更新估算
+    let boxMode = null;
+    const ctxEx = () => cardCtx(e?.id || '__new__').ctx;
+    const curTwd = () => {
+      const a = parseAmt(amtEl.value) || 0; if (cur === 'TWD') return a;
+      return oldTx && oldTx.cur === 'JPY' && cents(oldTx.amount) === cents(a) ? oldTx.twd : a * fxNow().rate;
+    };
+    const fillMethods = () => {
+      const card = cardById(sel.card), ms = box.querySelector('#eMethod'); if (!card || !ms) return;
+      const list = CardEngine.methodsFor(card, channel() || 'jp_other', WALLETS.map(w => w[0]));
+      if (sel.method && !list.includes(sel.method)) list.push(sel.method);
+      if (!list.includes(sel.method)) sel.method = list[0];
+      ms.innerHTML = list.map(m => `<option value="${m}" ${m === sel.method ? 'selected' : ''}>${METHOD_NAME[m] || m}</option>`).join('');
+    };
+    const est = () => {
+      const el = box.querySelector('#eEst'); if (!el) return;
+      const twd = curTwd(), ch = channel() || 'jp_other', ctx = ctxEx();
+      const recs = twd > 0 ? CardEngine.recommend(ctx, {twd, channel: ch, date: sel.date}) : [];
+      if (!sel.manual && recs[0]) { sel.card = recs[0].cardId; sel.method = recs[0].method; }
+      if (!sel.card) sel.card = ownedCards()[0]?.id;
+      box.querySelector('#eCard').value = sel.card; fillMethods();
+      if (!(twd > 0)) { el.innerHTML = '<span class="muted">輸入總額後顯示估算回饋</span>'; sel.result = null; return; }
+      const r = CardEngine.calc(ctx, sel.card, sel.method, {twd, channel: ch, date: sel.date}, {mode: 'project'});
+      sel.result = r;
+      const top = recs[0], isTop = top && r && top.cardId === sel.card && top.method === sel.method;
+      el.innerHTML = r ? `<div><b>估算回饋 ${r.net < 0 ? '−' : ''}${twdFmt(Math.abs(r.net))}</b>（${pctFmt(r.netRate)}）<span class="tiny muted">・約 ${twdFmt(twd)}</span></div>
+        ${methodHow(r.card, r.method) ? `<div class="tiny how">${esc(methodHow(r.card, r.method))}</div>` : ''}
+        ${breakdownHTML(r, null)}
+        ${top && !isTop ? `<div class="tiny hintbox">推薦第一名：${esc(combo(top))}（${pctFmt(top.netRate)}）</div>` : top ? '<div class="tiny" style="color:var(--sea-deep);margin-top:4px">✓ 這是目前最划算的刷法</div>' : ''}` : '';
+    };
+    const paintCard = () => {
+      const mode = payType !== 'card' ? 'none' : payer !== S.me ? 'other' : !hasCat ? 'nocat' : !ownedCards().length ? 'nocards' : 'mine';
+      if (mode !== boxMode) {
+        boxMode = mode;
+        if (mode === 'none') box.innerHTML = '';
+        else if (mode === 'other') box.innerHTML = `<div class="cardbox"><div class="tiny muted">${ic.lock.replace('<svg', '<svg style="width:13px;height:13px;vertical-align:-2px"')} 刷哪張卡由 ${nm(payer)} 自己補填，其他人看不到。</div></div>`;
+        else if (mode === 'nocat') box.innerHTML = `<div class="cardbox"><div class="tiny muted">${nm('qi')} 還沒匯入卡片資料庫，之後可以再補填卡片。</div></div>`;
+        else if (mode === 'nocards') box.innerHTML = `<div class="cardbox"><div class="tiny muted">還沒設定自己的信用卡。</div><button type="button" class="btn sm" id="eToCards" style="margin-top:6px">${ic.coin}去設定信用卡</button></div>`;
+        else box.innerHTML = `<div class="cardbox"><div class="lbl">${ic.lock}刷哪張卡（只有你看得到）</div>
+          <select class="in" id="eCard" aria-label="哪張卡">${ownedCards().map(c => `<option value="${esc(c.id)}">${esc(cardShort(c))}</option>`).join('')}${sel.card && !myProf().cards[sel.card] ? `<option value="${esc(sel.card)}">${esc(cardShort(cardById(sel.card)))}（已移除）</option>` : ''}</select>
+          <div class="row2" style="margin-top:8px"><select class="in" id="eMethod" aria-label="付款方式"></select><input class="in" id="eDate" type="date" value="${esc(sel.date)}" aria-label="消費日"></div>
+          <div class="est" id="eEst"></div></div>`;
+        box.querySelector('#eToCards')?.addEventListener('click', goCards);
+        const cs = box.querySelector('#eCard');
+        if (cs) {
+          cs.onchange = () => { sel.card = cs.value; sel.manual = true; sel.method = null; est(); };
+          box.querySelector('#eMethod').onchange = ev => { sel.method = ev.target.value; sel.manual = true; est(); };
+          box.querySelector('#eDate').onchange = ev => { sel.date = ev.target.value || sel.date; est(); };
+        }
+      }
+      if (mode === 'mine') est();
+    };
     const paint = () => {
-      const lockedNow = isLocked(cur) || (e && isLocked(e.cur));
-      const moneyLocked = !!lockedNow;
-      s.querySelector('#eLock').innerHTML = moneyLocked ? `<div class="warn">${ic.lock.replace('<svg', '<svg style="width:15px;height:15px;vertical-align:-2px"')} ${CUR[isLocked(cur) ? cur : e.cur].name}帳目已鎖定${isNew ? '，不能新增記帳。' : '，只能修改品名和備註。'}</div>` : '';
+      const moneyLocked = !!(isLocked(cur) || (e && isLocked(e.cur)));
+      s.querySelector('#eLock').innerHTML = moneyLocked ? `<div class="warn">${ic.lock.replace('<svg', '<svg style="width:15px;height:15px;vertical-align:-2px"')} ${CUR[isLocked(cur) ? cur : e.cur].name}帳目已鎖定${isNew ? '，不能新增記帳。' : '，只能修改品名、備註、通路、付款方式和卡片。'}</div>` : '';
       s.querySelectorAll('#eCur [data-c]').forEach(b => { b.setAttribute('aria-pressed', String(b.dataset.c === cur)); b.disabled = !isNew && moneyLocked; });
       amtEl.disabled = moneyLocked;
       s.querySelector('#ePayer').innerHTML = IDS.map(m => `<button type="button" data-m="${m}" aria-pressed="${payer === m}" style="--c:${COLORS[m]}" ${moneyLocked ? 'disabled' : ''}>${avatar(m)}${nm(m)}</button>`).join('');
       s.querySelector('#eSplit').innerHTML = IDS.map(m => `<button type="button" data-m="${m}" aria-pressed="${split.includes(m)}" style="--c:${COLORS[m]}" ${moneyLocked ? 'disabled' : ''}>${avatar(m)}${nm(m)}</button>`).join('');
+      s.querySelectorAll('#ePay [data-p]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.p === payType)));
       const a = parseAmt(amtEl.value);
       const {base, rem} = shareInfo(a || 0, split.length);
       s.querySelector('#eShare').innerHTML = split.length && a ? `<span>${split.length} 人分攤，每人</span><b class="num">${money(base, cur)}${rem ? ` <span class="tiny muted">（零頭 ${money(rem, cur)}）</span>` : ''}</b>` : `<span>${split.length ? '輸入總額後顯示每人金額' : '至少要勾一位分攤的人'}</span>`;
       s.querySelector('#eSave').disabled = isNew && moneyLocked;
       const del = s.querySelector('#eDel'); if (del) del.disabled = moneyLocked;
+      paintCard();
     };
-    paint();
+    syncCh(); paint();
     if (isNew) setTimeout(() => amtEl.focus(), 250);
     amtEl.oninput = paint;
+    s.querySelector('#eName').oninput = () => { syncCh(); paintCard(); };
+    chSel?.addEventListener('change', () => { chManual = true; syncCh(); paintCard(); });
     s.querySelector('#eCur').onclick = ev => { const b = ev.target.closest('[data-c]'); if (b && !b.disabled) { cur = b.dataset.c; paint(); } };
     s.querySelector('#ePayer').onclick = ev => { const b = ev.target.closest('[data-m]'); if (b && !b.disabled) { payer = b.dataset.m; paint(); } };
+    s.querySelector('#ePay').onclick = ev => { const b = ev.target.closest('[data-p]'); if (b) { payType = b.dataset.p; paint(); } };
     s.querySelector('#eSplit').onclick = ev => { const b = ev.target.closest('[data-m]'); if (!b || b.disabled) return; const m = b.dataset.m; split = split.includes(m) ? split.filter(x => x !== m) : IDS.filter(x => x === m || split.includes(x)); paint(); };
     s.querySelector('#eSave').onclick = async () => {
       const amount = parseAmt(amtEl.value);
       if (!amount || amount <= 0) { toast('請輸入總額'); return; }
       if (!split.length) { toast('至少要勾一位分攤的人'); return; }
       const data = {cur, amount, payer, split, name: s.querySelector('#eName').value.trim(), note: s.querySelector('#eNote').value.trim()};
+      if (payType) data.payType = payType;
+      if (chSel) data.channel = chSel.value;
       const btn = s.querySelector('#eSave'); btn.disabled = true;
-      try { await saveExpense(e, data); localSet('lastCur', cur); closeSheet(); toast(isNew ? '已記帳' : '已更新'); }
-      catch (err) { toast(errMsg(err)); btn.disabled = false; }
+      let id;
+      try { id = await saveExpense(e, data); localSet('lastCur', cur); }
+      catch (err) { toast(errMsg(err)); btn.disabled = false; return; }
+      closeSheet();
+      try { await syncMyTxn(id, data, boxMode === 'mine' ? sel : null, e); toast(isNew ? '已記帳' : '已更新'); }
+      catch (err) { toast('記帳已儲存，但卡片明細沒存到：' + errMsg(err)); }
     };
     s.querySelector('#eDel')?.addEventListener('click', async () => {
       if (!await confirmDialog({title: '刪除這筆記帳？', body: `${e.name || '（未命名）'}　${money(cents(e.amount), e.cur)}\n${CUR[e.cur].name}的結算結果會被清空。`, ok: '刪除', danger: true})) return;
@@ -1483,6 +1744,660 @@ function parseAmt(v) {
   const n = Number(String(v).replace(/[,，\s]/g, ''));
   if (!isFinite(n) || n <= 0) return null;
   return Math.round(n * 100) / 100;
+}
+
+/* ==== CARD ENGINE START ==== */
+// 信用卡回饋計算（純函式，不碰畫面與資料庫）。金額單位一律為新台幣。
+const CardEngine = (() => {
+  const ANY = ['card', 'applepay', 'googlepay', 'online'];
+  const ONLINE_CH = new Set(['jp_online', 'online_booking', 'airline']);
+  const PHYS_METHODS = ['card', 'googlepay', 'applepay', 'paypay_taishin', 'paypay_esun'];
+  const MPREF = ['card', 'googlepay', 'applepay', 'online', 'paypay_taishin', 'paypay_esun'];
+  const EPS = 1e-9;
+  const cache = new WeakMap();
+
+  // 預先整理資料庫：通路群組展開、卡片索引
+  function prep(cat) {
+    let p = cache.get(cat); if (p) return p;
+    const groups = cat.channelGroups || {}, sets = new Map();
+    const chSet = v => {
+      const k = Array.isArray(v) ? v.join(',') : String(v);
+      if (!sets.has(k)) sets.set(k, new Set(Array.isArray(v) ? v : (groups[v] || [v])));
+      return sets.get(k);
+    };
+    p = {chSet, card: Object.fromEntries((cat.cards || []).map(c => [c.id, c])), channel: Object.fromEntries((cat.channels || []).map(c => [c.id, c]))};
+    cache.set(cat, p); return p;
+  }
+  const methodsOf = v => v === 'any' ? ANY : (Array.isArray(v) ? v : []);
+  const isOnlineCh = ch => ONLINE_CH.has(ch);
+  const inPeriod = (r, d) => !r.period || ((!r.period.start || d >= r.period.start) && (!r.period.end || d <= r.period.end));
+  const planOf = (card, cp) => card.plans ? (cp?.plan || card.defaultPlan || card.plans[0]?.id) : null;
+
+  /* ── 日期與週期 ── */
+  const pad = n => String(n).padStart(2, '0');
+  const ymd = (y, m, d) => `${y}-${pad(m)}-${pad(d)}`;
+  const dim = (y, m) => new Date(Date.UTC(y, m, 0)).getUTCDate(); // m: 1–12
+  const addMonth = (y, m, k) => { const t = (y * 12 + (m - 1)) + k; return [Math.floor(t / 12), t % 12 + 1]; };
+  // 回傳 {key, start, end, est}：est = 沒填結帳日、以自然月估算
+  function cycleOf(cycle, date, closeDay, period) {
+    const [y, m, d] = date.split('-').map(Number);
+    if (cycle === 'quarter') {
+      const q = Math.floor((m - 1) / 3), sm = q * 3 + 1;
+      return {key: `${y}Q${q + 1}`, start: ymd(y, sm, 1), end: ymd(y, sm + 2, dim(y, sm + 2)), label: 'quarter'};
+    }
+    if (cycle === 'campaign') return {key: 'C', start: period?.start || '', end: period?.end || '', label: 'campaign'};
+    if (cycle === 'statement' && closeDay) {
+      const cd = Math.min(closeDay, dim(y, m));
+      const [ey, em] = d <= cd ? [y, m] : addMonth(y, m, 1);
+      const [py, pm] = addMonth(ey, em, -1);
+      const endD = Math.min(closeDay, dim(ey, em)), prevD = Math.min(closeDay, dim(py, pm));
+      // 開始日 = 上期結帳日的隔天
+      const sd = new Date(Date.UTC(py, pm - 1, prevD + 1));
+      return {key: `S${ey}-${pad(em)}`, start: sd.toISOString().slice(0, 10), end: ymd(ey, em, endD), label: 'statement'};
+    }
+    return {key: `${y}-${pad(m)}`, start: ymd(y, m, 1), end: ymd(y, m, dim(y, m)), label: cycle === 'statement' ? 'statement' : 'month', est: cycle === 'statement'};
+  }
+  const capBase = (card, r) => `${card.id}:${r.cap.shareKey || r.id}`;
+  const capKeyOf = (card, r, date, cp) => `${capBase(card, r)}|${cycleOf(r.cap.cycle, date, cp?.closeDay, r.period).key}`;
+  const thBase = (card, r) => `${card.id}:${r.id}:th`;
+  const thKeyOf = (card, r, date, cp) => `${thBase(card, r)}|${cycleOf(r.threshold.cycle, date, cp?.closeDay, r.period).key}`;
+  const thQualifies = (r, tx, chSet) => chSet(r.threshold.scopeChannels || r.channels).has(tx.channel)
+    && (!r.threshold.physicalOnly || (tx.method !== 'online' && !isOnlineCh(tx.channel) && !String(tx.method).startsWith('paypay')))
+    && inPeriod(r, tx.date);
+
+  /* ── 已用額度 ── */
+  // ctx: {cat, profile, usage: Map(key→{reward,spend}), th: Map(key→spend)}
+  const adjOf = (cp, key) => cp?.adj?.[key] || {};
+  function used(ctx, cp, key) {
+    const u = ctx.usage.get(key) || {reward: 0, spend: 0}, a = adjOf(cp, key);
+    return {reward: u.reward + (Number(a.reward) || 0), spend: u.spend + (Number(a.spend) || 0)};
+  }
+  function thSpent(ctx, cp, key) { return (ctx.th.get(key) || 0) + (Number(adjOf(cp, key).spend) || 0); }
+
+  // 單條規則在剩餘額度下能拿多少；local 是同一筆內已先算掉的額度（共用 shareKey 時避免重複）
+  function capReward(ctx, card, cp, r, tx, local) {
+    const full = tx.twd * r.rate / 100;
+    if (!r.cap) return {reward: full, full, capped: false};
+    const key = capKeyOf(card, r, tx.date, cp), u = used(ctx, cp, key), l = local.get(key) || {reward: 0, spend: 0};
+    let reward, remBefore;
+    if (r.cap.type === 'spend') {
+      remBefore = Math.max(0, r.cap.amount - u.spend - l.spend);
+      reward = Math.min(tx.twd, remBefore) * r.rate / 100;
+    } else {
+      remBefore = Math.max(0, r.cap.amount - u.reward - l.reward);
+      reward = Math.min(full, remBefore);
+    }
+    let cKey = null;
+    if (r.cap.campaignMax) {
+      cKey = `${capBase(card, r)}|campaignMax`;
+      const uc = used(ctx, cp, cKey), lc = local.get(cKey) || {reward: 0, spend: 0};
+      const remC = Math.max(0, r.cap.campaignMax - uc.reward - lc.reward);
+      if (remC < reward) { reward = remC; remBefore = Math.min(remBefore, remC); }
+    }
+    return {reward, full, capped: reward < full - EPS, remBefore, type: r.cap.type, key, cKey};
+  }
+
+  // 計算一筆消費。mode: 'actual'（已記帳，門檻用整季總額判斷）| 'project'（推薦，門檻加上這筆）
+  function calc(ctx, cardId, method, tx0, opts = {}) {
+    const {cat} = ctx, P = prep(cat), card = P.card[cardId]; if (!card) return null;
+    const cp = ctx.profile?.cards?.[cardId] || {};
+    const plan = opts.plan || planOf(card, cp);
+    const tx = {...tx0, method};
+    const items = [], hints = [], local = new Map();
+    let waived = false, baseRate = 0;
+    for (const r of card.rules) {
+      if (!inPeriod(r, tx.date) || !P.chSet(r.channels).has(tx.channel) || !methodsOf(r.methods).includes(method)) continue;
+      if (r.physicalOnly && (method === 'online' || isOnlineCh(tx.channel))) continue;
+      if ((r.requires || []).some(q => !cp.pre?.[q])) continue;
+      if (r.plan && r.plan !== plan) continue;
+      if (r.minAmountTwd && tx.twd < r.minAmountTwd) { hints.push({type: 'min', rule: r, amount: r.minAmountTwd}); continue; }
+      const noreg = r.registration && !cp.reg?.[r.id];
+      if (r.threshold) {
+        const key = thKeyOf(card, r, tx.date, cp), q = thQualifies(r, tx, P.chSet);
+        const spent = thSpent(ctx, cp, key) + (opts.mode === 'project' && q ? tx.twd : 0);
+        if (spent < r.threshold.amount - EPS) { hints.push({type: 'threshold', rule: r, need: r.threshold.amount - spent, amount: r.threshold.amount, noreg: !!noreg}); continue; }
+      }
+      if (noreg) {
+        const c = capReward(ctx, card, cp, r, tx, local);
+        if (c.reward > EPS) hints.push({type: 'noreg', rule: r, reward: c.reward, opens: r.registration.opens || null});
+        continue;
+      }
+      const c = capReward(ctx, card, cp, r, tx, local);
+      if (r.cap) {
+        const add = (k, rw) => { const l = local.get(k) || {reward: 0, spend: 0}; local.set(k, {reward: l.reward + rw, spend: l.spend + tx.twd}); };
+        add(c.key, c.reward); if (c.cKey) add(c.cKey, c.reward);
+      }
+      if (r.kind === 'base') baseRate += r.rate;
+      if (r.feeWaived) waived = true;
+      items.push({rule: r, rate: r.rate, ...c});
+    }
+    const gross = items.reduce((s, i) => s + i.reward, 0);
+    const feeRate = waived ? 0 : (card.foreignFee ?? cat.defaultForeignFee ?? 0);
+    const fee = tx.twd * feeRate / 100, net = gross - fee;
+    return {card, cardId, method, plan, channel: tx.channel, twd: tx.twd, date: tx.date, items, hints, gross, fee, feeRate, net,
+      netRate: tx.twd > 0 ? net / tx.twd * 100 : items.reduce((s, i) => s + i.rate, 0) - feeRate, baseRate, waived, _local: local};
+  }
+
+  // 依消費日依序累積自己所有刷卡明細的已用額度
+  function computeAll(cat, profile, txns) {
+    const P = prep(cat), ctx = {cat, profile, usage: new Map(), th: new Map()}, results = {};
+    const list = (txns || []).filter(t => P.card[t.card] && profile?.cards?.[t.card] && t.twd > 0 && t.date && t.channel)
+      .sort((a, b) => a.date.localeCompare(b.date) || (a.at || 0) - (b.at || 0) || String(a.id).localeCompare(String(b.id)));
+    for (const t of list) {
+      const card = P.card[t.card], cp = profile.cards[t.card];
+      for (const r of card.rules) if (r.threshold && thQualifies(r, t, P.chSet)) {
+        const k = thKeyOf(card, r, t.date, cp); ctx.th.set(k, (ctx.th.get(k) || 0) + t.twd);
+      }
+    }
+    for (const t of list) {
+      const res = calc(ctx, t.card, t.method, t, {mode: 'actual'}); if (!res) continue;
+      for (const [k, v] of res._local) { const u = ctx.usage.get(k) || {reward: 0, spend: 0}; ctx.usage.set(k, {reward: u.reward + v.reward, spend: u.spend + v.spend}); }
+      results[t.id] = res;
+    }
+    return {ctx, results};
+  }
+
+  // 這張卡在這個通路能用哪些付款方式
+  function methodsFor(card, channel, wallets) {
+    const w = new Set(wallets || []);
+    const base = isOnlineCh(channel) ? ['online'] : PHYS_METHODS;
+    return base.filter(m => m === 'card' || m === 'online' || (w.has(m) && !(m === 'googlepay' && card.googlePay === false)));
+  }
+
+  // 推薦：所有自己的卡 × 自己有的付款方式，依淨回饋排序
+  function recommend(ctx, tx) {
+    const {cat, profile} = ctx, P = prep(cat), out = [];
+    let altBest = null;
+    for (const card of cat.cards || []) {
+      if (!profile?.cards?.[card.id]) continue;
+      const ms = methodsFor(card, tx.channel, profile.wallets);
+      for (const m of ms) {
+        const r = calc(ctx, card.id, m, tx, {mode: 'project'});
+        if (!r) continue;
+        if (m.startsWith('paypay') && !r.items.length) continue;
+        out.push(r);
+      }
+      if (card.plans) {
+        const cur = planOf(card, profile.cards[card.id]);
+        for (const p of card.plans) if (p.id !== cur && p.id !== 'other') for (const m of ms) {
+          const r = calc(ctx, card.id, m, tx, {mode: 'project', plan: p.id});
+          if (r && r.items.some(i => i.rule.plan === p.id) && (!altBest || r.net > altBest.net)) altBest = {...r, planName: p.name};
+        }
+      }
+    }
+    out.sort((a, b) => b.net - a.net || b.netRate - a.netRate || MPREF.indexOf(a.method) - MPREF.indexOf(b.method));
+    if (altBest && (!out.length || altBest.net > out[0].net + EPS)) out.altPlan = altBest;
+    return out;
+  }
+
+  // 額度總覽：這張卡所有有上限或門檻的規則，在 date 所在週期的使用狀況
+  function capStatus(ctx, cardId, date) {
+    const {cat, profile} = ctx, card = prep(cat).card[cardId], cp = profile?.cards?.[cardId] || {}, rows = [], seen = new Map();
+    if (!card) return rows;
+    const plan = planOf(card, cp);
+    for (const r of card.rules) {
+      if (!r.cap && !r.threshold) continue;
+      const flags = [];
+      if (!inPeriod(r, date)) flags.push('period');
+      if ((r.requires || []).some(q => !cp.pre?.[q])) flags.push('requires');
+      if (r.plan && r.plan !== plan) flags.push('plan');
+      if (r.registration && !cp.reg?.[r.id]) flags.push('noreg');
+      let row = null;
+      if (r.cap) {
+        const base = capBase(card, r), cyc = cycleOf(r.cap.cycle, date, cp.closeDay, r.period), key = `${base}|${cyc.key}`;
+        if (seen.has(key)) { seen.get(key).rules.push(r); continue; }
+        const u = used(ctx, cp, key), amt = r.cap.amount;
+        const val = r.cap.type === 'spend' ? u.spend : u.reward;
+        row = {kind: 'cap', key, rules: [r], type: r.cap.type, used: val, amount: amt, full: val >= amt - EPS, cycle: cyc, flags,
+          spendToFull: r.cap.type === 'reward' ? Math.max(0, amt - val) / (r.rate / 100) : Math.max(0, amt - val)};
+        if (r.cap.campaignMax) {
+          const ck = `${base}|campaignMax`, uc = used(ctx, cp, ck);
+          row.campaign = {key: ck, used: uc.reward, amount: r.cap.campaignMax};
+          if (uc.reward >= r.cap.campaignMax - EPS) row.full = true;
+        }
+        seen.set(key, row);
+      }
+      if (r.threshold) {
+        const tk = thKeyOf(card, r, date, cp), spent = thSpent(ctx, cp, tk);
+        const th = {key: tk, spent, amount: r.threshold.amount, reached: spent >= r.threshold.amount - EPS, cycle: cycleOf(r.threshold.cycle, date, cp.closeDay, r.period), note: r.threshold.note};
+        if (row) row.threshold = th;
+        else { row = {kind: 'threshold', key: tk, rules: [r], threshold: th, flags}; seen.set(tk, row); }
+      }
+      rows.push(row);
+    }
+    return rows;
+  }
+
+  // 依文字比對通路（依資料庫順序，第一個符合的通路勝出）
+  function matchChannel(cat, ...texts) {
+    for (const raw of texts) {
+      const t = String(raw || '').trim(); if (!t) continue;
+      const low = t.toLowerCase();
+      for (const ch of cat.channels || []) for (const kw of ch.keywords || []) {
+        const k = kw.toLowerCase();
+        if (/^[\x20-\x7e]+$/.test(kw)) {
+          const re = new RegExp(`(^|[^a-z0-9])${k.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}($|[^a-z0-9])`, 'i');
+          if (re.test(t)) return ch.id;
+        } else if (low.includes(k)) return ch.id;
+      }
+    }
+    return 'jp_other';
+  }
+
+  return {prep, cycleOf, calc, computeAll, recommend, capStatus, matchChannel, methodsFor, isOnlineCh, planOf, ANY};
+})();
+/* ==== CARD ENGINE END ==== */
+
+/* ───────────── 信用卡：共用工具 ───────────── */
+const CARD_PRIVATE_NOTE = '只有自己看得到';
+const ONLINE_GROUP = '線上';
+const r2 = n => Math.round(n * 100) / 100;
+const twdFmt = n => 'NT$' + Math.round(n).toLocaleString();
+const pctFmt = n => (Math.round(n * 10) / 10).toLocaleString() + '%';
+const jstDateOf = t => { const d = tsDate(t) || new Date(); return new Date(d.getTime() + 9 * 3600e3).toISOString().slice(0, 10); };
+const md = s => s ? `${+s.slice(5, 7)}/${+s.slice(8, 10)}` : '';
+const opensFmt = o => o ? `${+o.slice(5, 7)}/${+o.slice(8, 10)} ${o.slice(11, 16)}` : '';
+function refDate() { const t = nowJST().date; return t < TRIP_START ? TRIP_START : t > TRIP_END ? TRIP_END : t; }
+function itemDate(x) { const d = DAYS.find(i => i.d === x.day); return d ? d.date : refDate(); }
+const cardById = id => S.catalog?.cards?.find(c => c.id === id) || null;
+const cardShort = c => c ? (c.name.includes(' ') ? c.name.split(' ').slice(1).join(' ') : c.name).replace(/（.*?）/g, '') : '（已移除的卡）';
+const cdot = c => `<i class="cdot" style="--cc:${esc(c?.color || '#999')}"></i>`;
+const channelName = id => S.catalog?.channels?.find(c => c.id === id)?.name || (id ? id : '其他日本實體消費');
+const METHOD_NAME = {card: '實體卡', applepay: 'Apple Pay', googlepay: 'Google Pay', paypay_taishin: 'PayPay（台新Pay+）', paypay_esun: 'PayPay（玉山Wallet）', online: '線上刷卡'};
+const WALLETS = [['googlepay', 'Google Pay'], ['applepay', 'Apple Pay'], ['paypay_taishin', 'PayPay（經台新Pay+）'], ['paypay_esun', 'PayPay（經玉山Wallet）']];
+function methodHow(card, m) {
+  if (m === 'applepay') return card.network === 'JCB' ? '需用 Apple Pay 感應（說「JCB」，不要說 QUICPay）・請確認店家支援' : '需用 Apple Pay 感應・請確認店家支援';
+  if (m === 'googlepay') return `需用 Google Pay 感應（タッチ決済）${/虛擬卡號/.test(card.googlePayNote || '') ? '，以虛擬卡號交易' : ''}・請確認店家支援`;
+  if (m === 'paypay_taishin') return '需用台新Pay+ 掃 PayPay（Richart 卡當天要切到「Pay著刷」）・請確認店家支援';
+  if (m === 'paypay_esun') return '需用玉山Wallet 掃 PayPay・請確認店家支援';
+  return '';
+}
+const combo = r => `${cardShort(r.card)}＋${METHOD_NAME[r.method] || r.method}`;
+function channelOptions(sel) {
+  const groups = [];
+  for (const c of S.catalog?.channels || []) { let g = groups.find(x => x[0] === c.group); if (!g) groups.push(g = [c.group, []]); g[1].push(c); }
+  return groups.map(([g, cs]) => `<optgroup label="${esc(g)}">${cs.map(c => `<option value="${esc(c.id)}" ${c.id === sel ? 'selected' : ''}>${esc(c.name)}</option>`).join('')}</optgroup>`).join('');
+}
+const autoChannel = (...t) => S.catalog ? CardEngine.matchChannel(S.catalog, ...t) : 'jp_other';
+
+/* ── 匯率 ── */
+const FX_DEFAULT = 0.21, FX_TTL = 3 * 3600e3;
+S.fxLive = (() => { try { return JSON.parse(localGet('fx') || 'null'); } catch { return null; } })();
+function fxNow() {
+  const L = S.fxLive;
+  if (L?.rate) return {rate: L.rate, src: navigator.onLine && Date.now() - L.fetched < 24 * 3600e3 ? 'live' : 'cache', at: L.at || L.fetched, provider: L.provider};
+  if (S.fxManual?.jpyTwd) return {rate: S.fxManual.jpyTwd, src: 'manual', at: tsDate(S.fxManual.updatedAt)?.getTime(), by: S.fxManual.updatedBy};
+  return {rate: FX_DEFAULT, src: 'default'};
+}
+function fxLabel(f = fxNow()) {
+  const when = f.at ? fmtTime(f.at) : '';
+  return {live: `匯率 API・${when} 更新`, cache: `離線・上次抓到的匯率（${when}）`, manual: `手動匯率（${esc(nm(f.by))} 設定・${when}）`, default: '預設匯率（還沒抓到 API 匯率，也沒有手動匯率）'}[f.src];
+}
+async function fetchFx(force = false) {
+  if (!navigator.onLine) return false;
+  if (!force && S.fxLive && Date.now() - S.fxLive.fetched < FX_TTL) return false;
+  const tries = [
+    async () => { const j = await (await fetch('https://open.er-api.com/v6/latest/JPY')).json(); if (j.result !== 'success' || !j.rates?.TWD) throw 0; return {rate: j.rates.TWD, at: j.time_last_update_unix * 1000, provider: 'er-api'}; },
+    async () => { const j = await (await fetch('https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@latest/v1/currencies/jpy.json')).json(); if (!j.jpy?.twd) throw 0; return {rate: j.jpy.twd, at: Date.parse(j.date + 'T00:00:00Z'), provider: 'fawazahmed0'}; }
+  ];
+  for (const f of tries) {
+    try {
+      const r = await f(); if (!(r.rate > 0 && r.rate < 1)) continue;
+      S.fxLive = {...r, fetched: Date.now()}; localSet('fx', JSON.stringify(S.fxLive)); S.cardVer++;
+      if (S.tab === 'cards' || S.tab === 'shop') render();
+      return true;
+    } catch {}
+  }
+  return false;
+}
+addEventListener('online', () => fetchFx());
+
+/* ── 卡片設定（私人） ── */
+const emptyProfile = () => ({cards: {}, wallets: ['googlepay']});
+function myProf() { return S.cardProfile || emptyProfile(); }
+function newCardProf(card) {
+  return {pre: Object.fromEntries((card.prerequisites || []).map(p => [p.id, !!p.defaultChecked])), reg: {}, closeDay: null, plan: card.plans ? (card.defaultPlan || card.plans[0].id) : null, adj: {}};
+}
+function editProf(fn) {
+  const p = structuredClone(myProf()); fn(p); S.cardProfile = p; S.cardVer++;
+  clearTimeout(editProf.h);
+  editProf.h = setTimeout(() => setDoc(doc(db, 'cardProfiles', S.me), {...S.cardProfile, updatedAt: serverTimestamp()}).catch(e => toast(errMsg(e))), 350);
+}
+const ownedCards = () => (S.catalog?.cards || []).filter(c => myProf().cards[c.id]);
+
+// 計算結果快取（設定、明細、資料庫、匯率有變動才重算）
+function cardCtx(excludeId = null) {
+  if (!S.catalog) return null;
+  if (!excludeId && cardCtx.ver === S.cardVer && cardCtx.val) return cardCtx.val;
+  const txns = S.txns.filter(t => t.id !== excludeId);
+  const v = CardEngine.computeAll(S.catalog, myProf(), txns);
+  if (!excludeId) { cardCtx.ver = S.cardVer; cardCtx.val = v; }
+  return v;
+}
+
+/* ── 私人刷卡明細同步（只在付款人自己的手機上做） ── */
+function reconcileTxns() {
+  if (!S.expSynced || !S.txSynced || !S.me || !navigator.onLine) return;
+  reconcileTxns.busy = reconcileTxns.busy || new Set();
+  for (const t of S.txns) {
+    if (reconcileTxns.busy.has(t.id)) continue;
+    const e = S.expenses.find(x => x.id === t.id), ref = doc(db, 'cardProfiles', S.me, 'txns', t.id);
+    let p = null;
+    if (!e || e.payer !== S.me || e.payType !== 'card') p = deleteDoc(ref);
+    else {
+      const ch = e.channel || t.channel;
+      if (e.cur !== t.cur || cents(e.amount) !== cents(t.amount) || ch !== t.channel) {
+        const fx = e.cur === 'TWD' ? 1 : (t.cur === 'JPY' && t.fx ? t.fx : fxNow().rate);
+        p = updateDoc(ref, {cur: e.cur, amount: e.amount, fx, twd: r2(e.amount * fx), channel: ch, updatedAt: serverTimestamp()});
+      }
+    }
+    if (p) { reconcileTxns.busy.add(t.id); p.catch(() => {}).finally(() => reconcileTxns.busy.delete(t.id)); }
+  }
+}
+const pendingCardExps = () => S.txSynced ? S.expenses.filter(e => e.payer === S.me && e.payType === 'card' && !S.txns.some(t => t.id === e.id)) : [];
+
+/* ── 推薦與明細的 HTML ── */
+function breakdownHTML(r, fx) {
+  const yen = n => fx ? ` ≈ ¥${Math.round(n / fx).toLocaleString()}` : '';
+  const lines = r.items.map(i => {
+    let s = `<li><span>${esc(i.rule.name)} <span class="num">${pctFmt(i.rate)}</span></span><b class="num">+${twdFmt(i.reward)}</b>`;
+    if (i.capped) s += `<div class="tiny warnline">${i.remBefore > 0.005 ? `加碼只剩 ${twdFmt(i.remBefore)}，超過部分只算基本 ${pctFmt(r.baseRate)}` : '已達上限・只剩基本回饋'}</div>`;
+    return s + '</li>';
+  });
+  lines.push(r.feeRate ? `<li><span>國外交易手續費 <span class="num">${pctFmt(r.feeRate)}</span></span><b class="num neg">−${twdFmt(r.fee)}</b></li>` : `<li><span>免國外交易手續費</span><b class="num">NT$0</b></li>`);
+  const hints = r.hints.map(h => {
+    if (h.type === 'noreg') return `<li class="hint">登錄「${esc(h.rule.name)}」後可多拿 ${twdFmt(h.reward)}${yen(h.reward)}${h.opens && h.opens > new Date().toISOString() ? `（${opensFmt(h.opens)} 開放登錄）` : ''}</li>`;
+    if (h.type === 'threshold') return `<li class="hint">本季日本實體再刷 ${twdFmt(h.need)} 可解鎖 ${pctFmt(h.rule.rate)}（${esc(h.rule.name)}${h.noreg ? '，也要先登錄' : ''}）</li>`;
+    if (h.type === 'min') return `<li class="hint">單筆滿 ${twdFmt(h.amount)} 才有「${esc(h.rule.name)}」</li>`;
+    return '';
+  }).join('');
+  const gp = r.card.googlePay === false && myProf().wallets?.includes('googlepay') ? `<li class="hint">${esc(r.card.googlePayNote || '這張卡不支援 Google Pay')}</li>` : '';
+  return `<ul class="bd">${lines.join('')}<li class="tot"><span>淨回饋（估算）</span><b class="num">${r.net < 0 ? '−' : ''}${twdFmt(Math.abs(r.net))}${yen(Math.abs(r.net))}・${pctFmt(r.netRate)}</b></li>${hints}${gp}</ul>`;
+}
+function recText(r, fx) {
+  const y = Math.round(r.net / fx);
+  if (r.net <= 0) return `沒有划算的卡：最好是 ${esc(combo(r))}（扣手續費約 ${y < 0 ? '−' : ''}¥${Math.abs(y).toLocaleString()}，${pctFmt(r.netRate)}）`;
+  return `刷 ${esc(combo(r))}，約回饋 ¥${y.toLocaleString()}（${pctFmt(r.netRate)}）`;
+}
+
+/* ───────────── 信用卡設定頁 ───────────── */
+function goCards() {
+  closeSheet();
+  if (S.tab !== 'cards') S.prevTab = S.tab;
+  S.tab = 'cards'; renderHeader(); render(); scrollTo({top: 0});
+}
+function leaveCards() { S.tab = S.prevTab || 'shop'; renderHeader(); render(); scrollTo({top: 0}); }
+
+function renderCards() {
+  const cat = S.catalog;
+  const head = `<div class="pagehead"><button class="btn sm" id="cdBack" aria-label="返回">${ic.chev.replace('<svg', '<svg style="transform:rotate(180deg)"')}返回</button><h2>我的信用卡</h2><span class="chip sea">${ic.lock}${CARD_PRIVATE_NOTE}</span></div>`;
+  if (!cat) {
+    $('#main').innerHTML = head + (S.me === 'qi' ? catalogImportHTML() : `<div class="card empty">${ic.shell}${nm('qi')} 還沒匯入卡片資料庫，匯入後就能設定信用卡。</div>`);
+    $('#cdBack').onclick = leaveCards; bindCatalogImport(); return;
+  }
+  if (!S.cardProfile && !S.profLoaded) { $('#main').innerHTML = head + '<p class="empty">載入中…</p>'; $('#cdBack').onclick = leaveCards; return; }
+  const p = myProf(), own = ownedCards(), others = cat.cards.filter(c => !p.cards[c.id]);
+  const {ctx} = cardCtx(), date = refDate();
+  $('#main').innerHTML = head + remindersHTML() + notesHTML('cdNotes') + fxCardHTML()
+    + `<h2 class="sec">${ic.phone.replace('<svg', '<svg class="deco"')}我的行動支付</h2>
+      <div class="card"><p class="tiny muted" style="margin:0 0 4px">勾選自己手機能用的付款方式，沒勾的不會被推薦。</p>
+      ${WALLETS.map(([k, t]) => optHTML(`w:${k}`, (p.wallets || []).includes(k), t)).join('')}</div>`
+    + `<h2 class="sec">${ic.coin.replace('<svg', '<svg class="deco"')}我的卡片<span class="chip" style="margin-left:auto">${own.length} 張</span></h2>`
+    + (own.length ? own.map(c => cardBlockHTML(c, ctx, date)).join('') : `<div class="card empty">${ic.shell}還沒有卡片，從下面加入自己有的卡</div>`)
+    + (others.length ? `<h2 class="sec">${ic.plus.replace('<svg', '<svg class="deco"')}加入卡片</h2><div class="card">${others.map(c => `<div class="addrow"><span class="cswatch" style="--cc:${esc(c.color)}"></span>
+        <div class="body"><div class="nm">${esc(c.name)}</div><div class="tiny muted">${esc(c.bank)}${c.network ? '・' + esc(c.network) : ''}</div></div>
+        <button class="btn sm" data-addcard="${esc(c.id)}">${ic.plus}加入</button></div>`).join('')}</div>` : '')
+    + `<h2 class="sec">${ic.hib.replace('<svg', '<svg class="deco"')}卡片資料庫</h2><div class="card"><div class="small">版本 <b class="num">${esc(S.catMeta?.version || cat.version)}</b>・${esc(nm(S.catMeta?.importedBy))} 於 ${fmtTime(S.catMeta?.importedAt)} 匯入</div>
+      <p class="tiny muted" style="margin:6px 0 0">${esc(cat.description || '')}</p>
+      <p class="tiny muted" style="margin:6px 0 0">網頁上不能修改資料庫，要更新請由${nm('qi')}重新匯入整份新版 JSON。</p>
+      ${S.me === 'qi' ? catalogImportHTML(true) : ''}</div>`;
+  bindCards();
+}
+function optHTML(key, on, text, sub = '') {
+  return `<button class="opt" role="checkbox" aria-checked="${!!on}" data-opt="${esc(key)}"><span class="box" style="--c:var(--sea)" aria-hidden="true">${ic.check}</span><span class="txt">${text}${sub ? `<span class="tiny muted" style="display:block">${sub}</span>` : ''}</span></button>`;
+}
+function notesHTML(id) {
+  const notes = S.catalog?.globalNotes || []; if (!notes.length) return '';
+  const v = localGet('open.' + id), open = v ? v === '1' : id !== 'shopNotes';
+  return `<details class="card mini notes" data-keep="${id}" ${open ? 'open' : ''}><summary>${ic.alert}<span>刷卡提醒</span><span class="chip">${notes.length}</span>${ic.chev.replace('<svg', '<svg class="chev"')}</summary>
+    <ul>${notes.map(n => `<li>${esc(n)}</li>`).join('')}</ul></details>`;
+}
+function regItems() {
+  const out = [], today = nowJST().date, nowIso = new Date().toISOString();
+  for (const c of ownedCards()) for (const r of c.rules) {
+    if (!r.registration || myProf().cards[c.id].reg?.[r.id]) continue;
+    if (r.period?.end && r.period.end < today) continue;
+    const o = r.registration.opens, upcoming = o && new Date(o).toISOString() > nowIso;
+    out.push({card: c, rule: r, upcoming});
+  }
+  return out.sort((a, b) => a.upcoming - b.upcoming);
+}
+const regTaskText = (c, r) => `登錄信用卡活動：${cardShort(c)}「${r.name}」`;
+function remindersHTML() {
+  const items = regItems(); if (!items.length) return '';
+  return `<div class="card remind"><div class="rh">${ic.alert}<b>登錄活動提醒</b><span class="chip hib">${items.length}</span></div>
+    ${items.map(({card: c, rule: r, upcoming}) => {
+      const g = r.registration, inList = S.checklist.some(x => x.text === regTaskText(c, r));
+      return `<div class="rrow">${cdot(c)}<div class="body"><div class="small"><b>${esc(cardShort(c))}</b>・${esc(r.name)}</div>
+        <div class="tiny muted">${upcoming ? `<span class="chip terra">即將開放 ${opensFmt(g.opens)}</span> ` : '<span class="chip hib">還沒登錄</span> '}${g.quota ? `限量 ${g.quota.toLocaleString()} 名・` : ''}${esc(g.note || '')}</div>
+        <div class="acts">${g.url ? `<a class="btn sm" href="${esc(g.url)}" target="_blank" rel="noopener">登錄頁面 ›</a>` : ''}
+          <button class="btn sm" data-task="${esc(c.id)}|${esc(r.id)}" ${inList ? 'disabled' : ''}>${inList ? ic.check + '已在準備清單' : ic.plus + '加入準備清單'}</button>
+          <button class="btn sm ghost" data-opt="reg:${esc(c.id)}:${esc(r.id)}">我已登錄</button></div></div></div>`;
+    }).join('')}</div>`;
+}
+function fxCardHTML() {
+  const f = fxNow();
+  return `<h2 class="sec">${ic.coin.replace('<svg', '<svg class="deco"')}匯率</h2><div class="card fx">
+    <div class="row"><div><div class="num big">1 JPY = ${f.rate.toFixed(4)} TWD</div><div class="tiny muted">${fxLabel(f)}</div></div>
+      <button class="btn sm" id="fxRefresh">重新抓取</button></div>
+    <p class="tiny muted" style="margin:8px 0 0">推薦與估算都用這個匯率，實際以銀行結帳匯率為準。${f.provider === 'er-api' ? '<a href="https://www.exchangerate-api.com" target="_blank" rel="noopener">Rates By Exchange Rate API</a>' : ''}</p>
+    <div class="f" style="margin:12px 0 0"><span>手動匯率（4 人共用，從沒抓到 API 匯率時使用）</span>
+      <div style="display:flex;gap:8px"><input class="in" id="fxManual" type="number" inputmode="decimal" step="0.0001" min="0.05" max="0.9" value="${S.fxManual?.jpyTwd ?? ''}" placeholder="例如 0.2100" style="flex:1;min-width:0">
+      <button class="btn" id="fxSave" style="flex:none">儲存</button></div></div>
+    ${S.fxManual?.updatedBy ? `<div class="tiny muted" style="margin-top:4px">目前手動匯率 ${S.fxManual.jpyTwd}・${esc(nm(S.fxManual.updatedBy))} 於 ${fmtTime(S.fxManual.updatedAt)} 設定</div>` : ''}</div>`;
+}
+function cycleText(c, row) {
+  if (c.label === 'quarter') return `本季 ${md(c.start)}–${md(c.end)}`;
+  if (c.label === 'campaign') return `整段活動 ${md(c.start)}–${md(c.end)} 合計`;
+  if (c.label === 'statement') return c.est ? `${+c.start.slice(5, 7)} 月（沒填結帳日，以自然月估算）` : `本期帳單 ${md(c.start)}–${md(c.end)}`;
+  return `${+c.start.slice(5, 7)} 月（自然月）`;
+}
+const FLAG_TEXT = {period: '不在活動期間', requires: '前提條件沒勾，不算', plan: '不是目前方案', noreg: '還沒登錄，不算'};
+function capRowsHTML(card, ctx, date, compact = false) {
+  const rows = CardEngine.capStatus(ctx, card.id, date); if (!rows.length) return '';
+  return rows.map(row => {
+    const names = row.rules.map(r => r.name).join('／'), flags = row.flags.map(f => `<span class="chip">${FLAG_TEXT[f]}</span>`).join('');
+    const off = row.flags.length > 0;
+    let main = '', th = '';
+    if (row.kind === 'cap') {
+      const pct = Math.min(100, row.used / row.amount * 100);
+      main = `<div class="top"><span>${esc(names)}</span><span class="num">${row.type === 'spend' ? '消費 ' : ''}${twdFmt(row.used)} / ${twdFmt(row.amount)}</span></div>
+        <div class="prog s"><i style="width:${pct}%"></i></div>
+        <div class="tiny ${row.full ? '' : 'muted'}">${row.full ? '<b>已達上限・只剩基本回饋</b>' : `剩 ${twdFmt(row.amount - row.used)}${row.type === 'reward' ? `（約再刷 ${twdFmt(row.spendToFull)}）` : ''}`}${compact ? '' : `・${cycleText(row.cycle)}`}${row.campaign ? `・活動合計 ${twdFmt(row.campaign.used)} / ${twdFmt(row.campaign.amount)}` : ''}</div>`;
+    }
+    if (row.threshold) {
+      const t = row.threshold, pct = Math.min(100, t.spent / t.amount * 100);
+      th = `${row.kind === 'threshold' ? `<div class="top"><span>${esc(names)}</span></div>` : ''}<div class="top tiny" style="margin-top:4px"><span>滿額門檻（${cycleText(t.cycle)}）</span><span class="num">${twdFmt(t.spent)} / ${twdFmt(t.amount)}</span></div>
+        <div class="prog s th"><i style="width:${pct}%"></i></div>
+        <div class="tiny ${t.reached ? '' : 'muted'}">${t.reached ? '<b style="color:var(--sea-deep)">已達標</b>' : `再刷 ${twdFmt(t.amount - t.spent)} 達標`}</div>`;
+    }
+    return `<div class="caprow ${row.full ? 'full' : ''} ${off ? 'off' : ''}">${main}${th}${flags ? `<div class="sub">${flags}</div>` : ''}
+      ${compact ? '' : `<button class="btn sm ghost adjbtn" data-adj="${esc(card.id)}|${esc(row.key)}">${ic.edit}手動調整</button>`}</div>`;
+  }).join('');
+}
+function ruleSummary(card, r, cp) {
+  const ms = r.methods === 'any' ? '' : r.methods.map(m => METHOD_NAME[m] || m).join('、');
+  const bits = [];
+  if (ms) bits.push(ms);
+  if (r.physicalOnly) bits.push('限實體店面');
+  if (r.minAmountTwd) bits.push(`單筆滿 ${twdFmt(r.minAmountTwd)}`);
+  if (r.cap) bits.push(`${{statement: '每期帳單', month: '每月', quarter: '每季', campaign: '活動期間'}[r.cap.cycle]}${r.cap.type === 'spend' ? '消費' : '回饋'}上限 ${twdFmt(r.cap.amount)}${r.cap.campaignMax ? `（合計最高 ${twdFmt(r.cap.campaignMax)}）` : ''}`);
+  if (r.threshold) bits.push(`季累積滿 ${twdFmt(r.threshold.amount)} 才給`);
+  if (r.plan) bits.push(`限「${card.plans?.find(p => p.id === r.plan)?.name || r.plan}」方案`);
+  if (r.feeWaived) bits.push('免手續費');
+  if (r.period) bits.push(`${md(r.period.start)}–${md(r.period.end)}`);
+  const miss = (r.requires || []).filter(q => !cp.pre?.[q]).length;
+  return `<li><div class="top"><span><span class="chip ${r.kind === 'base' ? 'sea' : 'terra'}">${r.kind === 'base' ? '基本' : '加碼'}</span> ${esc(r.name)}</span><b class="num">${pctFmt(r.rate)}</b></div>
+    <div class="tiny muted">${esc(bits.join('・'))}${miss ? ' <span class="chip">前提條件未勾</span>' : ''}${r.registration && !cp.reg?.[r.id] ? ' <span class="chip hib">需登錄</span>' : ''}</div>
+    ${r.notes ? `<div class="tiny muted">${esc(r.notes)}</div>` : ''}</li>`;
+}
+function cardBlockHTML(c, ctx, date) {
+  const cp = myProf().cards[c.id], open = S.cardOpen.has(c.id);
+  const regs = c.rules.filter(r => r.registration), unreg = regs.filter(r => !cp.reg?.[r.id]).length;
+  const rows = CardEngine.capStatus(ctx, c.id, date), fullN = rows.filter(r => r.full && !r.flags.length).length;
+  return `<details class="card cardx" data-card="${esc(c.id)}" ${open ? 'open' : ''} style="--cc:${esc(c.color)}"><summary>
+      <span class="cswatch" style="--cc:${esc(c.color)}"></span><div class="body"><div class="nm">${esc(c.name)}</div>
+      <div class="tiny muted">${esc(c.bank)}${c.network ? '・' + esc(c.network) : ''}${c.billingCurrency ? '・' + esc(c.billingCurrency) + ' 帳單' : ''}</div>
+      <div class="sub">${unreg ? `<span class="chip hib">${unreg} 項待登錄</span>` : ''}${fullN ? `<span class="chip">${fullN} 項已刷滿</span>` : ''}${c.googlePay === false ? '<span class="chip terra">不支援 Google Pay</span>' : ''}</div></div>
+      ${ic.chev.replace('<svg', '<svg class="chev"')}</summary>
+    <div class="cbody">
+      ${c.googlePayNote ? `<p class="${c.googlePay === false ? 'warn' : 'tiny muted'}" style="margin:4px 0 8px">${esc(c.googlePayNote)}</p>` : ''}
+      ${(c.prerequisites || []).length ? `<div class="sub-h">前提條件 <span class="tiny muted">沒勾的條件，相關加碼不算進推薦</span></div>${c.prerequisites.map(p => optHTML(`pre:${c.id}:${p.id}`, cp.pre?.[p.id], esc(p.text))).join('')}` : ''}
+      ${c.plans ? `<div class="sub-h">目前方案</div><div class="seg" data-plan="${esc(c.id)}">${c.plans.map(p => `<button type="button" data-p="${esc(p.id)}" aria-pressed="${(cp.plan || c.defaultPlan) === p.id}">${esc(p.name)}</button>`).join('')}</div>
+        ${c.planNote ? `<p class="tiny muted" style="margin:6px 2px 0">${esc(c.planNote)}</p>` : ''}` : ''}
+      ${regs.length ? `<div class="sub-h">登錄活動 <span class="tiny muted">沒勾「我已登錄」的不算進推薦</span></div>${regs.map(r => {
+        const g = r.registration, freq = {once: '登錄一次即可', monthly: '每月登錄', quarterly: '每季登錄'}[g.frequency] || '';
+        return `<div class="regrow">${optHTML(`reg:${c.id}:${r.id}`, cp.reg?.[r.id], `我已登錄「${esc(r.name)}」`, [freq, g.opens ? `開放 ${opensFmt(g.opens)}` : '', g.quota ? `限量 ${g.quota.toLocaleString()} 名` : '', g.note || ''].filter(Boolean).map(esc).join('・'))}
+          ${g.url ? `<a class="btn sm" href="${esc(g.url)}" target="_blank" rel="noopener">登錄頁面 ›</a>` : ''}</div>`;
+      }).join('')}` : ''}
+      <div class="sub-h">帳單結帳日</div>
+      <div class="row2" style="align-items:center"><select class="in" data-close-day="${esc(c.id)}"><option value="">還沒填</option>${Array.from({length: 31}, (_, i) => `<option value="${i + 1}" ${cp.closeDay === i + 1 ? 'selected' : ''}>每月 ${i + 1} 號</option>`).join('')}</select>
+        <span class="tiny muted">${cp.closeDay ? '用來切「每期帳單」的額度週期' : '沒填時「每期帳單」的額度以自然月估算'}</span></div>
+      ${rows.length ? `<div class="sub-h">剩餘額度 <span class="tiny muted">${md(date)} 所在週期</span></div>${capRowsHTML(c, ctx, date)}` : ''}
+      <details class="rules"><summary class="small">看回饋規則（${c.rules.length} 條）</summary><ul class="rl">${c.rules.map(r => ruleSummary(c, r, cp)).join('')}</ul></details>
+      <div class="sub-h">資料來源</div>
+      <ul class="src">${(c.sources || []).map(s => `<li><a href="${esc(s.url)}" target="_blank" rel="noopener">${esc(s.title)}</a> <span class="tiny muted">${esc(s.checked)} 查詢</span></li>`).join('')}</ul>
+      <button class="btn sm ghost" data-rmcard="${esc(c.id)}" style="margin-top:6px;color:#B32F3B">${ic.trash}我沒有這張卡了</button>
+    </div></details>`;
+}
+function bindCards() {
+  const M = $('#main');
+  $('#cdBack').onclick = leaveCards;
+  M.querySelectorAll('details[data-keep]').forEach(d => d.ontoggle = () => localSet('open.' + d.dataset.keep, d.open ? '1' : '0'));
+  M.querySelectorAll('details.cardx').forEach(d => d.ontoggle = () => { d.open ? S.cardOpen.add(d.dataset.card) : S.cardOpen.delete(d.dataset.card); });
+  M.querySelectorAll('[data-opt]').forEach(b => b.onclick = () => {
+    const [kind, a, c] = b.dataset.opt.split(':');
+    editProf(p => {
+      if (kind === 'w') { const w = new Set(p.wallets || []); w.has(a) ? w.delete(a) : w.add(a); p.wallets = WALLETS.map(x => x[0]).filter(x => w.has(x)); }
+      else if (kind === 'pre') { p.cards[a].pre = p.cards[a].pre || {}; p.cards[a].pre[c] = !p.cards[a].pre[c]; }
+      else if (kind === 'reg') { p.cards[a].reg = p.cards[a].reg || {}; p.cards[a].reg[c] = !p.cards[a].reg[c]; }
+    });
+    renderCards();
+  });
+  M.querySelectorAll('[data-plan]').forEach(sg => sg.onclick = e => { const b = e.target.closest('[data-p]'); if (!b) return; editProf(p => { p.cards[sg.dataset.plan].plan = b.dataset.p; }); renderCards(); });
+  M.querySelectorAll('[data-close-day]').forEach(s => s.onchange = () => { editProf(p => { p.cards[s.dataset.closeDay].closeDay = s.value ? +s.value : null; }); renderCards(); });
+  M.querySelectorAll('[data-addcard]').forEach(b => b.onclick = () => {
+    const c = cardById(b.dataset.addcard); editProf(p => { p.cards[c.id] = newCardProf(c); }); S.cardOpen.add(c.id); renderCards(); toast(`已加入 ${cardShort(c)}`);
+  });
+  M.querySelectorAll('[data-rmcard]').forEach(b => b.onclick = async () => {
+    const c = cardById(b.dataset.rmcard);
+    if (!await confirmDialog({title: `移除 ${cardShort(c)}？`, body: '這張卡的前提條件、登錄狀態、結帳日和手動調整都會清除。已記帳的刷卡明細會保留，但不再計入。', ok: '移除', danger: true})) return;
+    editProf(p => { delete p.cards[c.id]; }); renderCards();
+  });
+  M.querySelectorAll('[data-adj]').forEach(b => b.onclick = () => { const v = b.dataset.adj, i = v.indexOf('|'); openAdjust(v.slice(0, i), v.slice(i + 1)); });
+  M.querySelectorAll('[data-task]').forEach(b => b.onclick = async () => {
+    const [cid, rid] = b.dataset.task.split('|'), c = cardById(cid), r = c.rules.find(x => x.id === rid);
+    if (!await confirmDialog({title: '加入準備清單？', body: `準備清單 4 人都看得到，大家會知道你有「${c.name}」。\n\n會建立一項由你負責的項目：\n${regTaskText(c, r)}`, ok: '加入'})) return;
+    addRegTask(c, r); b.disabled = true; b.innerHTML = ic.check + '已在準備清單';
+  });
+  $('#fxRefresh')?.addEventListener('click', async () => { const ok = await fetchFx(true); toast(ok ? '已更新匯率' : '抓不到匯率，先用' + (S.fxLive ? '上次的匯率' : '手動匯率')); if (!ok) renderCards(); });
+  $('#fxSave')?.addEventListener('click', () => {
+    const v = Number($('#fxManual').value);
+    if (!(v > 0.05 && v < 0.9)) { toast('請輸入 0.05–0.9 之間的匯率'); return; }
+    setDoc(doc(db, 'settings', 'fx'), {jpyTwd: v, updatedBy: S.me, updatedAt: serverTimestamp()}).catch(e => toast(errMsg(e)));
+    toast('已儲存手動匯率');
+  });
+  bindCatalogImport();
+}
+function addRegTask(c, r) {
+  const cats = [...new Set([...S.checklist].sort((a, b) => a.catOrder - b.catOrder).map(i => i.cat))];
+  const cat = cats.find(x => x.includes('出發前')) || cats[0] || '一、出發前必做事項';
+  const g = r.registration;
+  const note = [g.opens ? `${opensFmt(g.opens)} 開放登錄` : '', g.quota ? `限量 ${g.quota.toLocaleString()} 名` : '', g.url || ''].filter(Boolean).join('・');
+  setDoc(doc(collection(db, 'checklist')), {text: regTaskText(c, r), cat, catOrder: Math.max(0, cats.indexOf(cat)), note, scope: 'claim', who: [], claimBy: S.me, booking: '',
+    order: Date.now(), createdBy: S.me, updatedBy: S.me, updatedAt: serverTimestamp()}).catch(e => toast(errMsg(e)));
+  toast('已加入準備清單，由你負責');
+}
+function openAdjust(cardId, rowKey) {
+  const c = cardById(cardId), {ctx} = cardCtx(), row = CardEngine.capStatus(ctx, cardId, refDate()).find(r => r.key === rowKey); if (!row) return;
+  const isTh = row.kind === 'threshold', key = row.key, a = myProf().cards[cardId].adj?.[key] || {};
+  const thKey = row.threshold?.key, at = thKey ? (myProf().cards[cardId].adj?.[thKey] || {}) : {};
+  const auto = ctx.usage.get(key) || {reward: 0, spend: 0}, autoTh = thKey ? (ctx.th.get(thKey) || 0) : 0;
+  openSheet(`<h3>手動調整已用額度<button class="iconbtn x" data-close aria-label="關閉">${ic.x}</button></h3>
+    <p class="small" style="margin:0 0 4px">${cdot(c)} <b>${esc(cardShort(c))}</b>・${esc(row.rules.map(r => r.name).join('／'))}</p>
+    <p class="tiny muted" style="margin:0 0 12px">${cycleText((row.cycle || row.threshold.cycle))}。用來補記沒進記帳的消費（例如出發前已經刷的部分），可以填負數扣回。</p>
+    ${isTh ? '' : `<div class="share"><span>記帳自動累積</span><b class="num">回饋 ${twdFmt(auto.reward)}・消費 ${twdFmt(auto.spend)}</b></div>
+    <div class="row2"><label class="f"><span>＋ 已拿到的回饋（NT$）</span><input class="in" id="aRw" type="number" inputmode="decimal" value="${a.reward ?? ''}" placeholder="0"></label>
+      <label class="f"><span>＋ 已累積的消費（NT$）</span><input class="in" id="aSp" type="number" inputmode="decimal" value="${a.spend ?? ''}" placeholder="0"></label></div>`}
+    ${thKey ? `<div class="share"><span>門檻：記帳自動累積</span><b class="num">${twdFmt(autoTh)}</b></div>
+      <label class="f"><span>＋ 本季已累積的日本實體消費（NT$）</span><input class="in" id="aTh" type="number" inputmode="decimal" value="${at.spend ?? ''}" placeholder="0"></label>` : ''}
+    <div class="sheet-acts"><button class="btn" data-close>取消</button><button class="btn pri" id="aSave">儲存</button></div>`, s => {
+    s.querySelector('#aSave').onclick = () => {
+      const num = id => { const el = s.querySelector(id); const v = el ? Number(el.value || 0) : 0; return isFinite(v) ? r2(v) : 0; };
+      editProf(p => {
+        const cp = p.cards[cardId]; cp.adj = cp.adj || {};
+        if (!isTh) { const rw = num('#aRw'), sp = num('#aSp'); if (rw || sp) cp.adj[key] = {reward: rw, spend: sp}; else delete cp.adj[key]; }
+        if (thKey) { const t = num('#aTh'); if (t) cp.adj[thKey] = {spend: t}; else delete cp.adj[thKey]; }
+      });
+      closeSheet(); toast('已儲存'); render();
+    };
+  });
+}
+function catalogImportHTML(inline = false) {
+  return `<div class="${inline ? '' : 'card'}" style="${inline ? 'margin-top:12px;padding-top:12px;border-top:1.5px dashed var(--line)' : ''}">
+    ${inline ? '<b class="small">匯入更新版</b>' : `<b>匯入卡片資料庫</b><p class="small muted">請選擇 <b>cards-catalog</b> 開頭的 JSON 檔。匯入後 4 人都能讀取，網頁上不能修改。</p>`}
+    <label class="f" style="margin-top:6px"><span>選擇檔案</span><input class="in" type="file" accept=".json,application/json" id="catFile"></label>
+    <button class="btn pri full" id="catGo" disabled>匯入</button><p class="small muted" id="catMsg"></p></div>`;
+}
+function bindCatalogImport() {
+  const f = $('#catFile'); if (!f) return;
+  let text = null, j = null;
+  f.onchange = async e => {
+    text = null; $('#catGo').disabled = true;
+    try {
+      j = JSON.parse(await e.target.files[0].text());
+      if (!j.version || !Array.isArray(j.cards) || !Array.isArray(j.channels) || !j.cards.every(c => c.id && Array.isArray(c.rules))) throw new Error('不是卡片資料庫格式');
+      if (S.catMeta?.version === j.version) throw new Error(`版本 ${j.version} 已經匯入過了，新版請改版本號`);
+      text = JSON.stringify(j); $('#catGo').disabled = false;
+      $('#catMsg').textContent = `版本 ${j.version}・${j.cards.length} 張卡・${j.channels.length} 種通路`;
+    } catch (err) { $('#catMsg').textContent = '無法讀取：' + err.message; }
+  };
+  $('#catGo').onclick = async () => {
+    $('#catGo').disabled = true; $('#catMsg').textContent = '匯入中…';
+    try { requireOnline(); await setDoc(doc(db, 'cardCatalog', 'current'), {version: j.version, json: text, importedBy: S.me, importedAt: serverTimestamp()}); toast('卡片資料庫已匯入'); }
+    catch (e) { $('#catMsg').textContent = errMsg(e); $('#catGo').disabled = false; }
+  };
+}
+
+/* ───────────── 購物清單：推薦卡 ───────────── */
+function shopCardTopHTML() {
+  if (!S.catalog) return '';
+  const own = ownedCards();
+  if (!own.length) return `<button class="card mini cta" id="toCards">${ic.coin}<span>設定自己有哪些信用卡，清單會推薦最划算的刷法</span>${ic.chev}</button>`;
+  const {ctx} = cardCtx(), date = refDate(), open = localGet('open.capMini') === '1';
+  return `<details class="card mini" data-keep="capMini" ${open ? 'open' : ''}><summary>${ic.coin}<span>我的卡片剩餘額度</span><span class="tiny muted">${md(date)}</span>${ic.chev.replace('<svg', '<svg class="chev"')}</summary>
+    ${own.map(c => { const rows = capRowsHTML(c, ctx, date, true); return `<div class="minicard"><div class="small">${cdot(c)} <b>${esc(cardShort(c))}</b></div>${rows || '<div class="tiny muted">沒有額度上限</div>'}</div>`; }).join('')}
+    <button class="btn sm ghost" id="toCards2" style="margin-top:6px">信用卡設定 ›</button></details>` + notesHTML('shopNotes');
+}
+function shopRec(x) {
+  if (!S.catalog || !ownedCards().length) return null;
+  const fx = fxNow().rate, hasBud = Number(x.budget) > 0;
+  const twd = hasBud ? Number(x.budget) * (Number(x.qty) || 1) * fx : 1000;
+  const channel = x.channel || autoChannel(x.place, x.name);
+  const recs = CardEngine.recommend(cardCtx().ctx, {twd, channel, date: itemDate(x)});
+  return {recs, hasBud, fx, channel, twd};
+}
+function shopRecHTML(x) {
+  const R = shopRec(x); if (!R || !R.recs.length) return '';
+  const top = R.recs[0], open = S.recOpen.has(x.id);
+  const line = R.hasBud ? recText(top, R.fx) : `${top.net > 0 ? '推薦' : '沒有划算的卡：最好是'} ${esc(combo(top))}（約 ${pctFmt(top.netRate)}）・填預算可估金額`;
+  const how = methodHow(top.card, top.method);
+  return `<div class="rec"><button class="line" data-rec="${x.id}" aria-expanded="${open}">${cdot(top.card)}<span>${line}</span>${ic.chev.replace('<svg', '<svg class="chev"')}</button>
+    ${how ? `<div class="how tiny">${esc(how)}</div>` : ''}
+    ${open ? `<div class="detail"><div class="tiny muted">通路：${esc(channelName(R.channel))}・${R.hasBud ? `約 ${twdFmt(R.twd)}` : '以 NT$1,000 試算'}・匯率 ${R.fx.toFixed(4)}</div>
+      ${R.recs.slice(0, 3).map((r, i) => `<div class="rk"><div class="small"><b>${i + 1}. ${cdot(r.card)} ${esc(combo(r))}</b></div>${methodHow(r.card, r.method) ? `<div class="tiny how">${esc(methodHow(r.card, r.method))}</div>` : ''}${breakdownHTML(r, R.fx)}</div>`).join('')}
+      ${R.recs.altPlan ? `<div class="tiny hintbox">💡 ${esc(cardShort(R.recs.altPlan.card))} 切換到「${esc(R.recs.altPlan.planName)}」並用 ${esc(METHOD_NAME[R.recs.altPlan.method])} 付，約 ${pctFmt(R.recs.altPlan.netRate)}。${esc(R.recs.altPlan.card.planNote || '')}</div>` : ''}
+      <div class="tiny muted" style="margin-top:6px">以上皆為估算，實際以銀行帳單為準。</div></div>` : ''}</div>`;
 }
 
 /* ───────────── service worker ───────────── */
