@@ -1440,6 +1440,7 @@ function renderShop() {
   $('#main').querySelectorAll('details[data-keep]').forEach(d => d.ontoggle = () => localSet('open.' + d.dataset.keep, d.open ? '1' : '0'));
   ['#toCards', '#toCards2'].forEach(k => $(k)?.addEventListener('click', goCards));
   $('#toCalc')?.addEventListener('click', openCalc);
+  bindCapView($('#main'), render);
   $('#main').querySelectorAll('[data-copy-item]').forEach(b => b.onclick = () => {
     const x = items.find(i => i.id === b.dataset.copyItem); if (!x) return;
     copyToMine([x], who); toast(`已把「${x.name}」複製到我的清單`);
@@ -1606,7 +1607,9 @@ async function deleteExpense(e) {
   if (S.txns.some(t => t.id === e.id)) deleteDoc(doc(db, 'cardProfiles', S.me, 'txns', e.id)).catch(() => {});
 }
 // 付款人自己的私人刷卡明細：寫入或刪除
+const recentTx = new Map(); // id → 寫入時間（給 reconcileTxns 判斷是不是剛存的）
 async function syncMyTxn(id, data, sel, old) {
+  recentTx.set(id, Date.now());
   const ref = doc(db, 'cardProfiles', S.me, 'txns', id), had = S.txns.find(t => t.id === id);
   if (data.payer !== S.me || data.payType !== 'card' || !sel?.card) { if (had && (data.payer !== S.me || data.payType !== 'card')) await deleteDoc(ref); return; }
   const same = had && had.cur === data.cur && cents(had.amount) === cents(data.amount);
@@ -1857,6 +1860,8 @@ const CardEngine = (() => {
     if (f === 'quarterly') return `${r.id}@${date.slice(0, 4)}Q${Math.floor((+date.slice(5, 7) - 1) / 3) + 1}`;
     return r.id;
   }
+  // 自己決定不參加的登錄活動（例如名額已滿）：不算進推薦，也不再提示「登錄後可多拿」
+  function isSkip(cp, r, date) { const s = cp?.regSkip || {}; return !!(s[regKey(r, date)] || s[r.id]); }
   function isReg(cp, r, date) {
     const reg = cp?.reg || {}, k = regKey(r, date);
     if (k !== r.id && reg[k] !== undefined) return !!reg[k];
@@ -1957,6 +1962,7 @@ const CardEngine = (() => {
       if (r.plan && r.plan !== plan) continue;
       if (r.minAmountTwd && tx.twd < r.minAmountTwd) { hints.push({type: 'min', rule: r, amount: r.minAmountTwd}); continue; }
       const noreg = r.registration && !isReg(cp, r, tx.date);
+      if (noreg && isSkip(cp, r, tx.date)) continue;
       if (r.threshold) {
         const key = thKeyOf(card, r, tx.date, cp), q = thQualifies(r, tx, P.chSet);
         const spent = thSpent(ctx, cp, key) + (opts.mode === 'project' && q ? tx.twd : 0);
@@ -2018,7 +2024,7 @@ const CardEngine = (() => {
       if (!profile?.cards?.[card.id]) continue;
       // 每張卡綁了哪些行動支付（沒設定時沿用「我的行動支付」全部）
       const cw = profile.cards[card.id].wallets;
-      const ms = methodsFor(card, tx.channel, Array.isArray(cw) ? (profile.wallets || []).filter(w => cw.includes(w)) : profile.wallets);
+      const ms = methodsFor(card, tx.channel, Array.isArray(cw) ? cw : profile.wallets);
       for (const m of ms) {
         const r = calc(ctx, card.id, m, tx, {mode: 'project'});
         if (!r) continue;
@@ -2051,7 +2057,7 @@ const CardEngine = (() => {
       if (!inPeriod(r, date)) flags.push('period');
       if ((r.requires || []).some(q => !cp.pre?.[q])) flags.push('requires');
       if (r.plan && r.plan !== plan) flags.push('plan');
-      if (r.registration && !isReg(cp, r, date)) flags.push('noreg');
+      if (r.registration && !isReg(cp, r, date)) flags.push(isSkip(cp, r, date) ? 'skip' : 'noreg');
       let row = null;
       if (r.cap) {
         const base = capBase(card, r), cyc = cycleOf(r.cap.cycle, date, cp.closeDay, r.period), key = `${base}|${cyc.key}`;
@@ -2094,7 +2100,7 @@ const CardEngine = (() => {
     return 'jp_other';
   }
 
-  return {prep, cycleOf, calc, computeAll, recommend, capStatus, matchChannel, methodsFor, isOnlineCh, planOf, regKey, isReg, regPeriods, ANY};
+  return {prep, cycleOf, calc, computeAll, recommend, capStatus, matchChannel, methodsFor, isOnlineCh, planOf, regKey, isReg, isSkip, regPeriods, ANY};
 })();
 /* ==== CARD ENGINE END ==== */
 
@@ -2108,6 +2114,14 @@ const jstDateOf = t => { const d = tsDate(t) || new Date(); return new Date(d.ge
 const md = s => s ? `${+s.slice(5, 7)}/${+s.slice(8, 10)}` : '';
 const opensFmt = o => o ? `${+o.slice(5, 7)}/${+o.slice(8, 10)} ${o.slice(11, 16)}` : '';
 function refDate() { const t = nowJST().date; return t < TRIP_START ? TRIP_START : t > TRIP_END ? TRIP_END : t; }
+// 剩餘額度要看哪一天所在的週期：出發前可以切換「旅行期間」或「今天」（出發前刷的帳，例如 10 月預付的住宿，算在今天的週期）
+function capDate() { const t = nowJST().date; return t < TRIP_START && localGet('capView') === 'today' ? t : refDate(); }
+function capViewHTML() {
+  const t = nowJST().date; if (t >= TRIP_START) return '';
+  const v = localGet('capView') === 'today' ? 'today' : 'trip';
+  return `<div class="seg" data-capview style="margin:0 0 10px"><button type="button" data-v="trip" aria-pressed="${v === 'trip'}">看旅行期間（${md(TRIP_START)}）</button><button type="button" data-v="today" aria-pressed="${v === 'today'}">看今天（${md(t)}）</button></div>`;
+}
+function bindCapView(root, after) { root.querySelectorAll('[data-capview]').forEach(g => g.onclick = e => { const b = e.target.closest('[data-v]'); if (!b) return; localSet('capView', b.dataset.v); after(); }); }
 function itemDate(x) { const d = DAYS.find(i => i.d === x.day); return d ? d.date : refDate(); }
 const cardById = id => S.catalog?.cards?.find(c => c.id === id) || null;
 const cardShort = c => c ? (c.name.includes(' ') ? c.name.split(' ').slice(1).join(' ') : c.name).replace(/（.*?）/g, '') : '（已移除的卡）';
@@ -2232,6 +2246,8 @@ function reconcileTxns() {
     if (reconcileTxns.busy.has(t.id)) continue;
     const e = S.expenses.find(x => x.id === t.id), ref = doc(db, 'cardProfiles', S.me, 'txns', t.id);
     let p = null;
+    // 剛存的記帳：交易要等伺服器確認後才會出現在清單裡，這段時間找不到記帳是正常的，不能把卡片明細刪掉
+    if (!e && Date.now() - Math.max(recentTx.get(t.id) || 0, Number(t.at) || 0) < 3 * 60e3) continue;
     if (!e || e.payer !== S.me || e.payType !== 'card') p = deleteDoc(ref);
     else {
       const ch = e.channel || t.channel;
@@ -2286,12 +2302,12 @@ function renderCards() {
   }
   if (!S.cardProfile && !S.profLoaded) { $('#main').innerHTML = head + '<p class="empty">載入中…</p>'; $('#cdBack').onclick = leaveCards; return; }
   const p = myProf(), own = ownedCards(), others = cat.cards.filter(c => !p.cards[c.id]);
-  const {ctx} = cardCtx(), date = refDate();
+  const {ctx} = cardCtx(), date = capDate();
   $('#main').innerHTML = head + remindersHTML() + notesHTML('cdNotes') + fxCardHTML()
     + `<h2 class="sec">${ic.phone.replace('<svg', '<svg class="deco"')}我的行動支付</h2>
-      <div class="card"><p class="tiny muted" style="margin:0 0 4px">勾選自己手機能用的付款方式，沒勾的不會被推薦。每張卡實際綁了哪些，在下面各張卡片裡設定。</p>
+      <div class="card"><p class="tiny muted" style="margin:0 0 4px">每張卡實際綁了哪些，在下面各張卡片裡設定（以卡片的設定為準）。這裡是還沒設定的卡的預設值。</p>
       ${WALLETS.map(([k, t]) => optHTML(`w:${k}`, (p.wallets || []).includes(k), t)).join('')}</div>`
-    + `<h2 class="sec">${ic.coin.replace('<svg', '<svg class="deco"')}我的卡片<span class="chip" style="margin-left:auto">${own.length} 張</span></h2>`
+    + `<h2 class="sec">${ic.coin.replace('<svg', '<svg class="deco"')}我的卡片<span class="chip" style="margin-left:auto">${own.length} 張</span></h2>` + (own.length ? capViewHTML() : '')
     + (own.length ? own.map(c => cardBlockHTML(c, ctx, date)).join('') : `<div class="card empty">${ic.shell}還沒有卡片，從下面加入自己有的卡</div>`)
     + (others.length ? `<h2 class="sec">${ic.plus.replace('<svg', '<svg class="deco"')}加入卡片</h2><div class="card">${others.map(c => `<div class="addrow">${cardArt(c)}
         <div class="body"><div class="nm">${esc(c.name)}</div><div class="tiny muted">${esc(c.bank)}${c.network ? '・' + esc(c.network) : ''}</div></div>
@@ -2321,7 +2337,7 @@ function regItems() {
     if (!r.registration || (r.period?.end && r.period.end < today)) continue;
     const cp = myProf().cards[c.id];
     for (const p of regPeriodsOf(r)) {
-      if (CardEngine.isReg(cp, r, p.date)) continue;
+      if (CardEngine.isReg(cp, r, p.date) || CardEngine.isSkip(cp, r, p.date)) continue;
       const o = periodOpens(r, p), upcoming = !!o && new Date(o).toISOString() > nowIso;
       out.push({card: c, rule: r, period: p, opens: o, upcoming});
     }
@@ -2338,7 +2354,8 @@ function remindersHTML() {
         <div class="tiny muted">${upcoming ? `<span class="chip terra">即將開放 ${opensFmt(opens)}</span> ` : '<span class="chip hib">還沒登錄</span> '}${g.quota ? `限量 ${g.quota.toLocaleString()} 名・` : ''}${esc(g.note || '')}</div>
         <div class="acts">${g.url ? `<a class="btn sm" href="${esc(g.url)}" target="_blank" rel="noopener">登錄頁面 ›</a>` : ''}
           <button class="btn sm" data-task="${esc(c.id)}|${esc(r.id)}|${esc(p.key)}" ${inList ? 'disabled' : ''}>${inList ? ic.check + '已在準備清單' : ic.plus + '加入準備清單'}</button>
-          <button class="btn sm wide" data-opt="reg:${esc(c.id)}:${esc(p.key)}">${ic.check}我已登錄${p.label ? `（${esc(p.label)}）` : ''}</button></div></div></div>`;
+          <button class="btn sm" data-opt="reg:${esc(c.id)}:${esc(p.key)}">${ic.check}我已登錄</button>
+          <button class="btn sm" data-opt="skip:${esc(c.id)}:${esc(p.key)}">${ic.x}不參加</button></div></div></div>`;
     }).join('')}</div>`;
 }
 function fxCardHTML() {
@@ -2358,7 +2375,7 @@ function cycleText(c, row) {
   if (c.label === 'statement') return c.est ? `${+c.start.slice(5, 7)} 月（沒填結帳日，以自然月估算）` : `本期帳單 ${md(c.start)}–${md(c.end)}`;
   return `${+c.start.slice(5, 7)} 月（自然月）`;
 }
-const FLAG_TEXT = {period: '不在活動期間', requires: '前提條件沒勾，不算', plan: '不是目前方案', noreg: '還沒登錄，不算'};
+const FLAG_TEXT = {period: '不在活動期間', requires: '前提條件沒勾，不算', plan: '不是目前方案', noreg: '還沒登錄，不算', skip: '不參加'};
 function capRowsHTML(card, ctx, date, compact = false) {
   const rows = CardEngine.capStatus(ctx, card.id, date); if (!rows.length) return '';
   return rows.map(row => {
@@ -2397,16 +2414,19 @@ function ruleSummary(card, r, cp) {
     <div class="tiny muted">${esc(bits.join('・'))}${miss ? ' <span class="chip">前提條件未勾</span>' : ''}${r.registration ? ' <span class="chip hib">需登錄</span>' : ''}</div>
     ${r.notes ? `<div class="tiny muted">${esc(r.notes)}</div>` : ''}</li>`;
 }
-// 這張卡可以綁的行動支付：自己手機有勾、卡片也支援（PayPay 只列有對應回饋規則的卡）
+// 這張卡可以綁的行動支付：Google Pay（卡片支援時）、PayPay（有對應回饋規則的卡，例如熊本熊卡＋玉山Wallet、Richart＋台新Pay+）；
+// Apple Pay 只在「我的行動支付」有勾時列出（大家都是 Android）
+const cardSupports = (c, k) => k === 'googlepay' ? c.googlePay !== false : k === 'applepay' ? true : c.rules.some(r => Array.isArray(r.methods) && r.methods.includes(k));
 function cardWalletOpts(c) {
-  const g = myProf().wallets || [];
-  return WALLETS.filter(([k]) => g.includes(k) && (k === 'googlepay' ? c.googlePay !== false : k === 'applepay' || c.rules.some(r => Array.isArray(r.methods) && r.methods.includes(k))));
+  const g = myProf().wallets || [], cw = myProf().cards[c.id]?.wallets || [];
+  return WALLETS.filter(([k]) => cardSupports(c, k) && (k !== 'applepay' || g.includes(k) || cw.includes(k)));
 }
-function cardWalletsOn(c) { const cw = myProf().cards[c.id]?.wallets, g = myProf().wallets || []; return Array.isArray(cw) ? g.filter(w => cw.includes(w)) : g; }
+// 每張卡自己的設定優先；還沒設定時沿用「我的行動支付」
+function cardWalletsOn(c) { const cw = myProf().cards[c.id]?.wallets; return (Array.isArray(cw) ? cw : (myProf().wallets || [])).filter(k => cardSupports(c, k)); }
 function cardBlockHTML(c, ctx, date) {
   const cp = myProf().cards[c.id], open = S.cardOpen.has(c.id);
   const wopts = cardWalletOpts(c), won = cardWalletsOn(c), wunset = wopts.length && !Array.isArray(cp.wallets);
-  const regs = c.rules.filter(r => r.registration), unreg = regs.reduce((n, r) => n + regPeriodsOf(r).filter(p => !CardEngine.isReg(cp, r, p.date)).length, 0);
+  const regs = c.rules.filter(r => r.registration), unreg = regs.reduce((n, r) => n + regPeriodsOf(r).filter(p => !CardEngine.isReg(cp, r, p.date) && !CardEngine.isSkip(cp, r, p.date)).length, 0);
   const rows = CardEngine.capStatus(ctx, c.id, date), fullN = rows.filter(r => r.full && !r.flags.length).length;
   return `<details class="card cardx" data-card="${esc(c.id)}" ${open ? 'open' : ''}><summary>
       ${cardArt(c)}<div class="body"><div class="nm">${esc(c.name)}</div>
@@ -2427,7 +2447,8 @@ function cardBlockHTML(c, ctx, date) {
         const g = r.registration, freq = {once: '登錄一次即可', monthly: '每月登錄', quarterly: '每季登錄'}[g.frequency] || '';
         const ps = regPeriodsOf(r);
         return `<div class="regrow"><div style="flex:1;min-width:0">${(ps.length ? ps : [{key: r.id, label: '', date: refDate()}]).map((p, i) => optHTML(`reg:${c.id}:${p.key}`, CardEngine.isReg(cp, r, p.date), `我已登錄「${esc(r.name)}」${p.label ? `（${esc(p.label)}）` : ''}`,
-            i ? (periodOpens(r, p) ? `開放 ${opensFmt(periodOpens(r, p))}` : '') : [freq, periodOpens(r, p) ? `開放 ${opensFmt(periodOpens(r, p))}` : '', g.quota ? `限量 ${g.quota.toLocaleString()} 名` : '', g.note || ''].filter(Boolean).map(esc).join('・'))).join('')}</div>
+            i ? (periodOpens(r, p) ? `開放 ${opensFmt(periodOpens(r, p))}` : '') : [freq, periodOpens(r, p) ? `開放 ${opensFmt(periodOpens(r, p))}` : '', g.quota ? `限量 ${g.quota.toLocaleString()} 名` : '', g.note || ''].filter(Boolean).map(esc).join('・'))
+            + optHTML(`skip:${c.id}:${p.key}`, CardEngine.isSkip(cp, r, p.date), `不參加${p.label ? `（${esc(p.label)}）` : ''}`, i ? '' : '名額滿了或不想登錄時勾選：不再提醒，也不算進推薦')).join('')}</div>
           ${g.url ? `<a class="btn sm" href="${esc(g.url)}" target="_blank" rel="noopener">登錄頁面 ›</a>` : ''}</div>`;
       }).join('')}` : ''}
       <div class="sub-h">帳單結帳日</div>
@@ -2443,14 +2464,19 @@ function cardBlockHTML(c, ctx, date) {
 function bindCards() {
   const M = $('#main');
   $('#cdBack').onclick = leaveCards;
+  bindCapView(M, renderCards);
   M.querySelectorAll('details[data-keep]').forEach(d => d.ontoggle = () => localSet('open.' + d.dataset.keep, d.open ? '1' : '0'));
   M.querySelectorAll('details.cardx').forEach(d => d.ontoggle = () => { d.open ? S.cardOpen.add(d.dataset.card) : S.cardOpen.delete(d.dataset.card); });
   M.querySelectorAll('[data-opt]').forEach(b => b.onclick = () => {
     const [kind, a, c] = b.dataset.opt.split(':');
     editProf(p => {
       if (kind === 'w') { const w = new Set(p.wallets || []); w.has(a) ? w.delete(a) : w.add(a); p.wallets = WALLETS.map(x => x[0]).filter(x => w.has(x)); }
-      else if (kind === 'cw') { const cp = p.cards[a], cur = Array.isArray(cp.wallets) ? cp.wallets : [...(p.wallets || [])]; cp.wallets = cur.includes(c) ? cur.filter(x => x !== c) : [...cur, c]; }
+      else if (kind === 'cw') { const cp = p.cards[a], card = cardById(a), cur = Array.isArray(cp.wallets) ? cp.wallets : (p.wallets || []).filter(k => cardSupports(card, k)); cp.wallets = cur.includes(c) ? cur.filter(x => x !== c) : WALLETS.map(x => x[0]).filter(x => x === c || cur.includes(x)); }
       else if (kind === 'pre') { p.cards[a].pre = p.cards[a].pre || {}; p.cards[a].pre[c] = !p.cards[a].pre[c]; }
+      else if (kind === 'skip') {
+        const cp = p.cards[a], sk = cp.regSkip = cp.regSkip || {};
+        if (sk[c]) delete sk[c]; else { sk[c] = true; if (cp.reg) cp.reg[c] = false; }
+      }
       else if (kind === 'reg') {
         const reg = p.cards[a].reg = p.cards[a].reg || {}, rid = c.split('@')[0], r = cardById(a)?.rules.find(x => x.id === rid);
         if (r && c !== rid) {
@@ -2459,6 +2485,7 @@ function bindCards() {
           const pd = regPeriodsOf(r).find(q => q.key === c);
           reg[c] = !CardEngine.isReg(p.cards[a], r, pd ? pd.date : refDate());
         } else reg[c] = !reg[c];
+        if (reg[c] && p.cards[a].regSkip) delete p.cards[a].regSkip[c];
       }
     });
     renderCards();
@@ -2500,7 +2527,7 @@ function addRegTask(c, r, p) {
   toast('已加入準備清單，由你負責');
 }
 function openAdjust(cardId, rowKey) {
-  const c = cardById(cardId), {ctx} = cardCtx(), row = CardEngine.capStatus(ctx, cardId, refDate()).find(r => r.key === rowKey); if (!row) return;
+  const c = cardById(cardId), {ctx} = cardCtx(), row = CardEngine.capStatus(ctx, cardId, capDate()).find(r => r.key === rowKey); if (!row) return;
   const isTh = row.kind === 'threshold', key = row.key, a = myProf().cards[cardId].adj?.[key] || {};
   const thKey = row.threshold?.key, at = thKey ? (myProf().cards[cardId].adj?.[thKey] || {}) : {};
   const auto = ctx.usage.get(key) || {reward: 0, spend: 0}, autoTh = thKey ? (ctx.th.get(thKey) || 0) : 0;
@@ -2555,9 +2582,9 @@ function shopCardTopHTML() {
   if (!S.catalog) return '';
   const own = ownedCards();
   if (!own.length) return `<button class="card mini cta" id="toCards">${ic.coin}<span>設定自己有哪些信用卡，清單會推薦最划算的刷法</span>${ic.chev}</button>`;
-  const {ctx} = cardCtx(), date = refDate(), open = localGet('open.capMini') === '1';
+  const {ctx} = cardCtx(), date = capDate(), open = localGet('open.capMini') === '1';
   return `<details class="card mini" data-keep="capMini" ${open ? 'open' : ''}><summary>${ic.coin}<span>我的卡片剩餘額度</span><span class="tiny muted">${md(date)}</span>${ic.chev.replace('<svg', '<svg class="chev"')}</summary>
-    ${own.map(c => { const rows = capRowsHTML(c, ctx, date, true); return `<div class="minicard"><div class="small">${cdot(c)} <b>${esc(cardShort(c))}</b></div>${rows || '<div class="tiny muted">沒有額度上限</div>'}</div>`; }).join('')}
+    <div style="margin-top:8px">${capViewHTML()}</div>${own.map(c => { const rows = capRowsHTML(c, ctx, date, true); return `<div class="minicard"><div class="small">${cdot(c)} <b>${esc(cardShort(c))}</b></div>${rows || '<div class="tiny muted">沒有額度上限</div>'}</div>`; }).join('')}
     <div style="display:flex;gap:8px;margin-top:8px"><button class="btn sm" id="toCalc">${ic.calc}刷卡試算</button><button class="btn sm ghost" id="toCards2">信用卡設定 ›</button></div></details>` + notesHTML('shopNotes');
 }
 function shopRec(x) {
