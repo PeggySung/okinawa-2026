@@ -373,18 +373,19 @@ select.in{-webkit-appearance:none;appearance:none;padding-right:42px;cursor:poin
 
 /* ── credit cards ── */
 /* 卡面：官網卡面照片（白邊小照片）或手繪卡片圖示；--w 是橫式卡片的寬度 */
-.cart{--w:58px;flex:none;display:inline-flex;align-items:center;justify-content:center;width:var(--w);height:calc(var(--w) / 1.586 + 4px);vertical-align:middle}
-.cart .face{display:block;height:calc(var(--w) / 1.586);aspect-ratio:1.586;border-radius:calc(var(--w) * .085);background:#fff;padding:2px;box-shadow:0 0 0 1.4px var(--ink),2px 3px 0 rgba(43,58,78,.14)}
-.cart .face.p{aspect-ratio:.632;height:calc(var(--w) / 1.586 + 4px)}
-.cart .face i{display:block;width:100%;height:100%;border-radius:calc(var(--w) * .05);background-repeat:no-repeat;background-size:cover;background-position:center}
-.cart .hc{display:block;width:var(--w);aspect-ratio:1.586;filter:drop-shadow(2px 3px 0 rgba(43,58,78,.14))}
+.cart{--w:58px;flex:none;display:inline-flex;align-items:center;justify-content:center;width:var(--w);height:calc(var(--w) / 1.586);vertical-align:middle}
+/* 卡面照片：淺色細框、不留白邊；直式卡面轉成橫的，所有卡片大小一致 */
+.cart .face{position:relative;display:block;overflow:hidden;width:var(--w);height:calc(var(--w) / 1.586);border-radius:calc(var(--w) * .075);background:var(--sand);
+  box-shadow:0 0 0 1px rgba(43,58,78,.16),1.5px 2px 0 rgba(43,58,78,.09)}
+.cart .face i{position:absolute;inset:0;background-repeat:no-repeat;background-size:cover;background-position:center}
+.cart .face.r i{inset:auto;left:50%;top:50%;width:calc(var(--w) / 1.586);height:var(--w);transform:translate(-50%,-50%) rotate(-90deg)}
+.cart .hc{display:block;width:var(--w);aspect-ratio:1.586;filter:drop-shadow(1.5px 2px 0 rgba(43,58,78,.1))}
 .cart .hc svg{display:block;width:100%;height:100%;overflow:visible}
 .cart.m{--w:72px}
-.cart.s{--w:22px;height:15px;margin:0 1px}
-.cart.s .face{padding:1px;box-shadow:0 0 0 1px var(--ink)}
-.cart.s .face.p{height:15px}
+.cart.s{--w:22px;margin:0 1px}
+.cart.s .face{box-shadow:0 0 0 1px rgba(43,58,78,.2)}
 .cart.s .hc{filter:none}
-.chip .cart.s{--w:19px;height:13px}.chip .cart.s .face.p{height:13px}
+.chip .cart.s{--w:19px}
 .pagehead{display:flex;align-items:center;gap:8px;margin:0 0 6px}
 .pagehead h2{flex:1;margin:0;font-family:var(--f-title);font-weight:400;font-size:22px}
 .pagehead .btn svg{width:16px;height:16px}
@@ -2015,7 +2016,9 @@ const CardEngine = (() => {
     let altBest = null;
     for (const card of cat.cards || []) {
       if (!profile?.cards?.[card.id]) continue;
-      const ms = methodsFor(card, tx.channel, profile.wallets);
+      // 每張卡綁了哪些行動支付（沒設定時沿用「我的行動支付」全部）
+      const cw = profile.cards[card.id].wallets;
+      const ms = methodsFor(card, tx.channel, Array.isArray(cw) ? (profile.wallets || []).filter(w => cw.includes(w)) : profile.wallets);
       for (const m of ms) {
         const r = calc(ctx, card.id, m, tx, {mode: 'project'});
         if (!r) continue;
@@ -2113,15 +2116,21 @@ const imgState = new Map(); // url → 'ok' | 'fail' | 'loading'
 const lum = h => { const n = parseInt(String(h || '#999999').slice(1), 16); return ((n >> 16) * 299 + (n >> 8 & 255) * 587 + (n & 255) * 114) / 1000; };
 function handCard(c, small) {
   const col = c?.color || '#999999', light = lum(col) > 150, line = light ? '#2B3A4E' : '#FFFDF8';
-  return `<span class="hc"><svg viewBox="0 0 64 40" aria-hidden="true"><path d="M5.5 2.2C20 1.4 44 1.6 58.6 2.4c2.2.2 3.4 1.6 3.5 3.8.3 9.6.3 18.4-.1 28-.1 2.2-1.5 3.6-3.7 3.7-14.8.6-38.6.5-53.2-.1-2.1-.1-3.4-1.5-3.5-3.6C1.3 24.6 1.2 15.8 1.7 6c.1-2.2 1.6-3.6 3.8-3.8z" fill="${esc(col)}" stroke="#2B3A4E" stroke-width="${small ? 3 : 2}" stroke-linejoin="round"/>${small ? '' : `<rect x="8" y="13" width="11" height="8.5" rx="2" fill="#F4C25B" stroke="#2B3A4E" stroke-width="1.4"/><path d="M8 17.2h11M13.5 13v8.5" stroke="#2B3A4E" stroke-width=".9" opacity=".55"/><path d="M8 29.5h7M18 29.5h7M28 29.5h7" stroke="${line}" stroke-width="2.2" stroke-linecap="round" opacity=".85"/><path d="M44 7.5c5 .4 9 2.6 11.5 6" stroke="#fff" stroke-width="2" stroke-linecap="round" fill="none" opacity="${light ? .75 : .35}"/>`}</svg></span>`;
+  return `<span class="hc"><svg viewBox="0 0 64 40" aria-hidden="true"><path d="M5.5 2.2C20 1.4 44 1.6 58.6 2.4c2.2.2 3.4 1.6 3.5 3.8.3 9.6.3 18.4-.1 28-.1 2.2-1.5 3.6-3.7 3.7-14.8.6-38.6.5-53.2-.1-2.1-.1-3.4-1.5-3.5-3.6C1.3 24.6 1.2 15.8 1.7 6c.1-2.2 1.6-3.6 3.8-3.8z" fill="${esc(col)}" stroke="rgba(43,58,78,.28)" stroke-width="${small ? 2.5 : 1.6}" stroke-linejoin="round"/>${small ? '' : `<rect x="8" y="13" width="11" height="8.5" rx="2" fill="#F4C25B" stroke="#2B3A4E" stroke-width="1.4"/><path d="M8 17.2h11M13.5 13v8.5" stroke="#2B3A4E" stroke-width=".9" opacity=".55"/><path d="M8 29.5h7M18 29.5h7M28 29.5h7" stroke="${line}" stroke-width="2.2" stroke-linecap="round" opacity=".85"/><path d="M44 7.5c5 .4 9 2.6 11.5 6" stroke="#fff" stroke-width="2" stroke-linecap="round" fill="none" opacity="${light ? .75 : .35}"/>`}</svg></span>`;
 }
 const faceIndex = c => { const f = myProf().cards[c?.id]?.face; return f === undefined ? 0 : f; };
+// 銀行官網圖片周圍有白邊或倒影時的裁切（資料庫沒寫 crop 才用；2026/10/14 量測）
+const IMG_CROP_FIX = {
+  'https://bank.sinopac.com/upload/sinopac/picture/16c98d0bff700000bd35.jpg': [0.0933, 0.0632, 0.8067, 0.8026],
+  'https://bank.sinopac.com/upload/sinopac/picture/1a031bf3e0700000aa0f.png': [0.1017, 0.0632, 0.7983, 0.7947]
+};
 function cardArt(c, size = '', idx = faceIndex(c)) {
-  const im = c?.images?.[idx], cls = `cart ${size}`;
+  const im0 = c?.images?.[idx], cls = `cart ${size}`;
+  const im = im0 && !im0.crop && IMG_CROP_FIX[im0.url] ? {...im0, crop: IMG_CROP_FIX[im0.url]} : im0;
   if (!im || imgState.get(im.url) === 'fail') return `<span class="${cls}">${handCard(c, size === 's')}</span>`;
   let st = `background-image:url('${esc(im.url)}');`;
   if (im.crop) { const [x, y, w, h] = im.crop; st += `background-size:${100 / w}% ${100 / h}%;background-position:${w < 1 ? x / (1 - w) * 100 : 0}% ${h < 1 ? y / (1 - h) * 100 : 0}%;`; }
-  return `<span class="${cls}"><span class="face ${im.portrait ? 'p' : ''}" data-img="${esc(im.url)}" data-card="${esc(c.id)}"><i style="${st}"></i></span></span>`;
+  return `<span class="${cls}"><span class="face ${im.portrait ? 'r' : ''}" data-img="${esc(im.url)}" data-card="${esc(c.id)}"><i style="${st}"></i></span></span>`;
 }
 const cdot = c => cardArt(c, 's');
 // 圖片讀不到（銀行改網址、離線又沒快取）就換成手繪圖示
@@ -2280,7 +2289,7 @@ function renderCards() {
   const {ctx} = cardCtx(), date = refDate();
   $('#main').innerHTML = head + remindersHTML() + notesHTML('cdNotes') + fxCardHTML()
     + `<h2 class="sec">${ic.phone.replace('<svg', '<svg class="deco"')}我的行動支付</h2>
-      <div class="card"><p class="tiny muted" style="margin:0 0 4px">勾選自己手機能用的付款方式，沒勾的不會被推薦。</p>
+      <div class="card"><p class="tiny muted" style="margin:0 0 4px">勾選自己手機能用的付款方式，沒勾的不會被推薦。每張卡實際綁了哪些，在下面各張卡片裡設定。</p>
       ${WALLETS.map(([k, t]) => optHTML(`w:${k}`, (p.wallets || []).includes(k), t)).join('')}</div>`
     + `<h2 class="sec">${ic.coin.replace('<svg', '<svg class="deco"')}我的卡片<span class="chip" style="margin-left:auto">${own.length} 張</span></h2>`
     + (own.length ? own.map(c => cardBlockHTML(c, ctx, date)).join('') : `<div class="card empty">${ic.shell}還沒有卡片，從下面加入自己有的卡</div>`)
@@ -2388,17 +2397,26 @@ function ruleSummary(card, r, cp) {
     <div class="tiny muted">${esc(bits.join('・'))}${miss ? ' <span class="chip">前提條件未勾</span>' : ''}${r.registration ? ' <span class="chip hib">需登錄</span>' : ''}</div>
     ${r.notes ? `<div class="tiny muted">${esc(r.notes)}</div>` : ''}</li>`;
 }
+// 這張卡可以綁的行動支付：自己手機有勾、卡片也支援（PayPay 只列有對應回饋規則的卡）
+function cardWalletOpts(c) {
+  const g = myProf().wallets || [];
+  return WALLETS.filter(([k]) => g.includes(k) && (k === 'googlepay' ? c.googlePay !== false : k === 'applepay' || c.rules.some(r => Array.isArray(r.methods) && r.methods.includes(k))));
+}
+function cardWalletsOn(c) { const cw = myProf().cards[c.id]?.wallets, g = myProf().wallets || []; return Array.isArray(cw) ? g.filter(w => cw.includes(w)) : g; }
 function cardBlockHTML(c, ctx, date) {
   const cp = myProf().cards[c.id], open = S.cardOpen.has(c.id);
+  const wopts = cardWalletOpts(c), won = cardWalletsOn(c), wunset = wopts.length && !Array.isArray(cp.wallets);
   const regs = c.rules.filter(r => r.registration), unreg = regs.reduce((n, r) => n + regPeriodsOf(r).filter(p => !CardEngine.isReg(cp, r, p.date)).length, 0);
   const rows = CardEngine.capStatus(ctx, c.id, date), fullN = rows.filter(r => r.full && !r.flags.length).length;
   return `<details class="card cardx" data-card="${esc(c.id)}" ${open ? 'open' : ''}><summary>
       ${cardArt(c)}<div class="body"><div class="nm">${esc(c.name)}</div>
       <div class="tiny muted">${esc(c.bank)}${c.network ? '・' + esc(c.network) : ''}${c.billingCurrency ? '・' + esc(c.billingCurrency) + ' 帳單' : ''}</div>
-      <div class="sub">${unreg ? `<span class="chip hib">${unreg} 項待登錄</span>` : ''}${fullN ? `<span class="chip">${fullN} 項已刷滿</span>` : ''}${c.googlePay === false ? '<span class="chip terra">不支援 Google Pay</span>' : ''}</div></div>
+      <div class="sub">${unreg ? `<span class="chip hib">${unreg} 項待登錄</span>` : ''}${fullN ? `<span class="chip">${fullN} 項已刷滿</span>` : ''}${c.googlePay === false ? '<span class="chip terra">不支援 Google Pay</span>' : ''}${wunset ? '<span class="chip hib">行動支付未設定</span>' : wopts.filter(([k]) => won.includes(k)).map(([k]) => `<span class="chip sea">${ic.phone}${esc(METHOD_NAME[k])}</span>`).join('')}</div></div>
       ${ic.chev.replace('<svg', '<svg class="chev"')}</summary>
     <div class="cbody">
       ${c.googlePayNote ? `<p class="${c.googlePay === false ? 'warn' : 'tiny muted'}" style="margin:4px 0 8px">${esc(c.googlePayNote)}</p>` : ''}
+      ${wopts.length ? `<div class="sub-h">這張卡綁了哪些行動支付 <span class="tiny muted">沒綁的付法不會推薦</span></div>${wopts.map(([k, t]) => optHTML(`cw:${c.id}:${k}`, won.includes(k), `這張卡已綁 ${esc(t)}`)).join('')}
+        ${wunset ? '<p class="tiny hintbox">還沒設定，目前先當作都有綁。請只勾實際有綁的，推薦才會準。</p>' : ''}` : ''}
       ${(c.images || []).length ? `<div class="sub-h">卡面 <span class="tiny muted">選自己的卡面，圖片來自銀行官網</span></div>
         <div class="pickface" data-face="${esc(c.id)}">${c.images.map((im, i) => `<button type="button" data-i="${i}" aria-pressed="${faceIndex(c) === i}">${cardArt(c, 'm', i)}<span>${esc(im.name)}</span></button>`).join('')}
           <button type="button" data-i="-1" aria-pressed="${faceIndex(c) === -1}"><span class="cart m">${handCard(c)}</span><span>手繪圖示</span></button></div>` : ''}
@@ -2431,6 +2449,7 @@ function bindCards() {
     const [kind, a, c] = b.dataset.opt.split(':');
     editProf(p => {
       if (kind === 'w') { const w = new Set(p.wallets || []); w.has(a) ? w.delete(a) : w.add(a); p.wallets = WALLETS.map(x => x[0]).filter(x => w.has(x)); }
+      else if (kind === 'cw') { const cp = p.cards[a], cur = Array.isArray(cp.wallets) ? cp.wallets : [...(p.wallets || [])]; cp.wallets = cur.includes(c) ? cur.filter(x => x !== c) : [...cur, c]; }
       else if (kind === 'pre') { p.cards[a].pre = p.cards[a].pre || {}; p.cards[a].pre[c] = !p.cards[a].pre[c]; }
       else if (kind === 'reg') {
         const reg = p.cards[a].reg = p.cards[a].reg || {}, rid = c.split('@')[0], r = cardById(a)?.rules.find(x => x.id === rid);
