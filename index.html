@@ -1587,7 +1587,7 @@ async function saveExpense(old, data) {
     const stamp = {updatedBy: S.me, updatedAt: serverTimestamp()};
     if (!old) tx.set(ref, {...data, ...stamp, createdBy: S.me, createdAt: serverTimestamp()});
     else if (moneyChanged) tx.update(ref, {...data, ...stamp});
-    else tx.update(ref, {name: data.name, note: data.note, ...('payType' in data ? {payType: data.payType} : {}), ...('channel' in data ? {channel: data.channel} : {}), ...stamp});
+    else tx.update(ref, {name: data.name, note: data.note, ...('payType' in data ? {payType: data.payType} : {}), ...('channel' in data ? {channel: data.channel} : {}), ...(data.paidDate && data.paidDate !== old.paidDate ? {paidDate: data.paidDate} : {}), ...stamp});
     if (moneyChanged) for (const c of curs) bump(tx, c, reads[c]);
     id = ref.id;
   });
@@ -1643,12 +1643,14 @@ function renderMoney() {
       <div class="tiny muted" style="text-align:center">＋ 代表別人要給他・− 代表他要付出去</div>
       ${res}</div>`;
   }).join('');
+  // 依付款日期排；沒填付款日期的舊記帳用建立時間（台灣時間）
+  const exDay = e => e.paidDate || (e.createdAt ? localDateOf(e.createdAt) : '9999-12-31');
   const f = S.exFilter, exps = S.expenses.filter(e => f === 'all' || e.cur === f)
-    .sort((a, b) => (tsDate(b.createdAt)?.getTime() || 0) - (tsDate(a.createdAt)?.getTime() || 0));
+    .sort((a, b) => exDay(b).localeCompare(exDay(a)) || (tsDate(b.createdAt)?.getTime() || 0) - (tsDate(a.createdAt)?.getTime() || 0));
   let lastDay = '', rows = '';
   const txRes = S.catalog ? cardCtx() : null;
   for (const e of exps) {
-    const d = tsDate(e.createdAt), key = d ? `${d.getMonth() + 1}/${d.getDate()}（${'日一二三四五六'[d.getDay()]}）` : '剛剛';
+    const ds = exDay(e), key = ds === '9999-12-31' ? '剛剛' : `${+ds.slice(5, 7)}/${+ds.slice(8, 10)}（${'日一二三四五六'[new Date(ds + 'T00:00:00Z').getUTCDay()]}）`;
     if (key !== lastDay) { rows += `<div class="exday">${key}</div>`; lastDay = key; }
     const {base, rem} = shareInfo(e.amount, e.split.length);
     let payTag = '';
@@ -1702,7 +1704,8 @@ function editExpense(e, pre = null) {
   let chManual = !!(e?.channel && hasCat && e.channel !== autoChannel(e.name)) || !!(pre?.channel && hasCat && pre.channel !== autoChannel(pre.name));
   // 私人卡片欄位（只在自己是付款人時使用）
   const oldTx = e ? S.txns.find(t => t.id === e.id) : null;
-  const sel = {card: oldTx?.card || pre?.card || null, method: oldTx?.method || pre?.method || null, date: oldTx?.date || (e ? jstDateOf(e.createdAt) : pre?.date || nowJST().date), manual: !!oldTx || !!pre?.card, result: null};
+  // 付款日期（大家都看得到）：有填就用；舊記帳沒填時，自己的刷卡用卡片明細的消費日，否則用建立時間
+  const sel = {card: oldTx?.card || pre?.card || null, method: oldTx?.method || pre?.method || null, date: e?.paidDate || oldTx?.date || (e ? localDateOf(e.createdAt) : pre?.date || localDateOf(Date.now())), manual: !!oldTx || !!pre?.card, result: null};
   openSheet(`<h3>${isNew ? '記一筆' : '編輯記帳'}<button class="iconbtn x" data-close aria-label="關閉">${ic.x}</button></h3>
     <div id="eLock"></div>
     <div class="seg" id="eCur" style="margin-bottom:12px">${['JPY', 'TWD'].map(c => `<button type="button" data-c="${c}">${CUR[c].sym} ${CUR[c].name}</button>`).join('')}</div>
@@ -1711,6 +1714,7 @@ function editExpense(e, pre = null) {
     <div class="f"><span>分攤的人（當分母）</span><div class="pick" id="eSplit"></div></div>
     <div class="share" id="eShare"></div>
     <label class="f"><span>品名</span><input class="in" id="eName" value="${esc(e?.name || pre?.name || '')}" maxlength="100" placeholder="例如 燒肉晚餐"></label>
+    <label class="f"><span>付款日期 <span class="tiny muted">（大家都看得到，記帳明細依這個日期排）</span></span><input class="in" id="ePaid" type="date" value="${esc(sel.date)}"></label>
     ${hasCat ? `<label class="f"><span>通路類型 <span class="tiny muted" id="eChAuto"></span></span><select class="in" id="eCh">${channelOptions(e?.channel || pre?.channel || autoChannel(e?.name))}</select></label>` : ''}
     <div class="f"><span>付款方式（大家都看得到）</span><div class="seg" id="ePay"><button type="button" data-p="cash">現金</button><button type="button" data-p="card">刷卡</button></div></div>
     <div id="eCardBox"></div>
@@ -1733,7 +1737,7 @@ function editExpense(e, pre = null) {
     };
     const fillMethods = () => {
       const card = cardById(sel.card), ms = box.querySelector('#eMethod'); if (!card || !ms) return;
-      const list = CardEngine.methodsFor(card, channel() || 'jp_other', WALLETS.map(w => w[0]));
+      const list = CardEngine.methodsFor(card, channel() || 'jp_other', cardWalletsOn(card));
       if (sel.method && !list.includes(sel.method)) list.push(sel.method);
       if (!list.includes(sel.method)) sel.method = list[0];
       ms.innerHTML = list.map(m => `<option value="${m}" ${m === sel.method ? 'selected' : ''}>${METHOD_NAME[m] || m}</option>`).join('');
@@ -1764,14 +1768,13 @@ function editExpense(e, pre = null) {
         else if (mode === 'nocards') box.innerHTML = `<div class="cardbox"><div class="tiny muted">還沒設定自己的信用卡。</div><button type="button" class="btn sm" id="eToCards" style="margin-top:6px">${ic.coin}去設定信用卡</button></div>`;
         else box.innerHTML = `<div class="cardbox"><div class="lbl">${ic.lock}刷哪張卡（只有你看得到）</div>
           <select class="in" id="eCard" aria-label="哪張卡">${ownedCards().map(c => `<option value="${esc(c.id)}">${esc(cardShort(c))}</option>`).join('')}${sel.card && !myProf().cards[sel.card] ? `<option value="${esc(sel.card)}">${esc(cardShort(cardById(sel.card)))}（已移除）</option>` : ''}</select>
-          <div class="row2" style="margin-top:8px"><select class="in" id="eMethod" aria-label="付款方式"></select><input class="in" id="eDate" type="date" value="${esc(sel.date)}" aria-label="消費日"></div>
+          <select class="in" id="eMethod" aria-label="付款方式" style="margin-top:8px"></select>
           <div class="est" id="eEst"></div></div>`;
         box.querySelector('#eToCards')?.addEventListener('click', goCards);
         const cs = box.querySelector('#eCard');
         if (cs) {
           cs.onchange = () => { sel.card = cs.value; sel.manual = true; sel.method = null; est(); };
           box.querySelector('#eMethod').onchange = ev => { sel.method = ev.target.value; sel.manual = true; est(); };
-          box.querySelector('#eDate').onchange = ev => { sel.date = ev.target.value || sel.date; est(); };
         }
       }
       if (mode === 'mine') est();
@@ -1795,6 +1798,7 @@ function editExpense(e, pre = null) {
     if (isNew && !pre?.amount) setTimeout(() => amtEl.focus(), 250);
     amtEl.oninput = paint;
     s.querySelector('#eName').oninput = () => { syncCh(); paintCard(); };
+    s.querySelector('#ePaid').onchange = ev => { sel.date = ev.target.value || sel.date; paintCard(); };
     chSel?.addEventListener('change', () => { chManual = true; syncCh(); paintCard(); });
     s.querySelector('#eCur').onclick = ev => { const b = ev.target.closest('[data-c]'); if (b && !b.disabled) { cur = b.dataset.c; paint(); } };
     s.querySelector('#ePayer').onclick = ev => { const b = ev.target.closest('[data-m]'); if (b && !b.disabled) { payer = b.dataset.m; paint(); } };
@@ -1804,7 +1808,7 @@ function editExpense(e, pre = null) {
       const amount = parseAmt(amtEl.value);
       if (!amount || amount <= 0) { toast('請輸入總額'); return; }
       if (!split.length) { toast('至少要勾一位分攤的人'); return; }
-      const data = {cur, amount, payer, split, name: s.querySelector('#eName').value.trim(), note: s.querySelector('#eNote').value.trim()};
+      const data = {cur, amount, payer, split, name: s.querySelector('#eName').value.trim(), note: s.querySelector('#eNote').value.trim(), paidDate: s.querySelector('#ePaid').value || sel.date};
       if (payType) data.payType = payType;
       if (chSel) data.channel = chSel.value;
       const btn = s.querySelector('#eSave'); btn.disabled = true;
@@ -2110,6 +2114,8 @@ const ONLINE_GROUP = '線上';
 const r2 = n => Math.round(n * 100) / 100;
 const twdFmt = n => 'NT$' + Math.round(n).toLocaleString();
 const pctFmt = n => (Math.round(n * 10) / 10).toLocaleString() + '%';
+// 手機當地日期（在台灣是台灣日期、在沖繩是日本日期）
+const localDateOf = t => { const d = tsDate(t) || new Date(); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`; };
 const jstDateOf = t => { const d = tsDate(t) || new Date(); return new Date(d.getTime() + 9 * 3600e3).toISOString().slice(0, 10); };
 const md = s => s ? `${+s.slice(5, 7)}/${+s.slice(8, 10)}` : '';
 const opensFmt = o => o ? `${+o.slice(5, 7)}/${+o.slice(8, 10)} ${o.slice(11, 16)}` : '';
@@ -2253,8 +2259,8 @@ function reconcileTxns() {
       const ch = e.channel || t.channel;
       if (e.cur !== t.cur || cents(e.amount) !== cents(t.amount) || ch !== t.channel) {
         const fx = e.cur === 'TWD' ? 1 : (t.cur === 'JPY' && t.fx ? t.fx : fxNow().rate);
-        p = updateDoc(ref, {cur: e.cur, amount: e.amount, fx, twd: r2(e.amount * fx), channel: ch, updatedAt: serverTimestamp()});
-      }
+        p = updateDoc(ref, {cur: e.cur, amount: e.amount, fx, twd: r2(e.amount * fx), channel: ch, ...(e.paidDate ? {date: e.paidDate} : {}), updatedAt: serverTimestamp()});
+      } else if (e.paidDate && e.paidDate !== t.date) p = updateDoc(ref, {date: e.paidDate, updatedAt: serverTimestamp()});
     }
     if (p) { reconcileTxns.busy.add(t.id); p.catch(() => {}).finally(() => reconcileTxns.busy.delete(t.id)); }
   }
@@ -2649,7 +2655,7 @@ function openCalc() {
   const head = `<h3>${ic.calc.replace('<svg', '<svg style="width:22px;height:22px;color:var(--sea)"')}刷卡試算<span class="chip sea" style="font-family:var(--f-body)">${ic.lock}${CARD_PRIVATE_NOTE}</span><button class="iconbtn x" data-close aria-label="關閉">${ic.x}</button></h3>`;
   if (!S.catalog) return openSheet(head + `<div class="card empty">${ic.shell}${nm('qi')} 還沒匯入卡片資料庫，匯入後就能試算。</div>`);
   if (!ownedCards().length) return openSheet(head + `<div class="card empty">${ic.shell}還沒設定自己有哪些信用卡<br><button class="btn pri" id="kGoCards" style="margin-top:12px">${ic.coin}去設定信用卡</button></div>`, s => s.querySelector('#kGoCards').onclick = goCards);
-  Object.assign(CALC, {cur: localGet('calc.cur') === 'TWD' ? 'TWD' : 'JPY', amt: '', ch: null, q: '', phys: localGet('calc.phys') === '1', date: nowJST().date, pick: true});
+  Object.assign(CALC, {cur: localGet('calc.cur') === 'TWD' ? 'TWD' : 'JPY', amt: '', ch: null, q: '', phys: localGet('calc.phys') === '1', date: localDateOf(Date.now()), pick: true});
   CALC.open.clear();
   openSheet(head + `
     <div class="seg" id="kCur" style="margin-bottom:10px">${['JPY', 'TWD'].map(c => `<button type="button" data-c="${c}">${CUR[c].sym} ${CUR[c].name}</button>`).join('')}</div>
@@ -2669,7 +2675,7 @@ function openCalc() {
     s.querySelector('#kCur').onclick = ev => { const b = ev.target.closest('[data-c]'); if (!b) return; CALC.cur = b.dataset.c; localSet('calc.cur', CALC.cur); paintCur(); paintConv(s); paintCalcRes(s); };
     amtEl.oninput = () => { CALC.amt = amtEl.value; paintConv(s); paintCalcRes(s); };
     amtEl.onkeydown = ev => { if (ev.key !== 'Enter') return; ev.preventDefault(); if (CALC.ch) { amtEl.blur(); s.querySelector('#kRes').scrollIntoView({block: 'start', behavior: 'smooth'}); } else qEl.focus(); };
-    s.querySelector('#kDate').onchange = ev => { CALC.date = ev.target.value || nowJST().date; paintCalcRes(s); };
+    s.querySelector('#kDate').onchange = ev => { CALC.date = ev.target.value || localDateOf(Date.now()); paintCalcRes(s); };
     qEl.oninput = () => { CALC.q = qEl.value; paintChList(s); };
     qEl.onkeydown = ev => { if (ev.key !== 'Enter') return; ev.preventDefault(); const h = calcSearch(CALC.q)[0]; if (h) pickCh(s, h.id); else qEl.blur(); };
     s.querySelector('#kChList').onclick = ev => { const b = ev.target.closest('[data-ch]'); if (b) pickCh(s, b.dataset.ch); };
