@@ -1669,7 +1669,7 @@ function editExpense(e) {
       sel.result = r;
       const top = recs[0], isTop = top && r && top.cardId === sel.card && top.method === sel.method;
       el.innerHTML = r ? `<div><b>估算回饋 ${r.net < 0 ? '−' : ''}${twdFmt(Math.abs(r.net))}</b>（${pctFmt(r.netRate)}）<span class="tiny muted">・約 ${twdFmt(twd)}</span></div>
-        ${methodHow(r.card, r.method) ? `<div class="tiny how">${esc(methodHow(r.card, r.method))}</div>` : ''}
+        ${methodHow(r.card, r.method, r.channel) ? `<div class="tiny how">${esc(methodHow(r.card, r.method, r.channel))}</div>` : ''}
         ${breakdownHTML(r, null)}
         ${top && !isTop ? `<div class="tiny hintbox">推薦第一名：${esc(combo(top))}（${pctFmt(top.netRate)}）</div>` : top ? '<div class="tiny" style="color:var(--sea-deep);margin-top:4px">✓ 這是目前最划算的刷法</div>' : ''}` : '';
     };
@@ -1772,6 +1772,33 @@ const CardEngine = (() => {
   const isOnlineCh = ch => ONLINE_CH.has(ch);
   const inPeriod = (r, d) => !r.period || ((!r.period.start || d >= r.period.start) && (!r.period.end || d <= r.period.end));
   const planOf = (card, cp) => card.plans ? (cp?.plan || card.defaultPlan || card.plans[0]?.id) : null;
+  // 登錄：每月／每季登錄的活動，每個期間分開勾（key = 規則id@2026-11 或 規則id@2026Q4）
+  function regKey(r, date) {
+    const f = r.registration?.frequency;
+    if (f === 'monthly') return `${r.id}@${date.slice(0, 7)}`;
+    if (f === 'quarterly') return `${r.id}@${date.slice(0, 4)}Q${Math.floor((+date.slice(5, 7) - 1) / 3) + 1}`;
+    return r.id;
+  }
+  function isReg(cp, r, date) {
+    const reg = cp?.reg || {}, k = regKey(r, date);
+    if (k !== r.id && reg[k] !== undefined) return !!reg[k];
+    return !!reg[r.id]; // 一次登錄，或舊版只有一個勾選
+  }
+  // 從 from 到 to 之間（限活動期間內）需要登錄的期間
+  function regPeriods(r, from, to) {
+    const f = r.registration?.frequency;
+    const a = r.period?.start && r.period.start > from ? r.period.start : from, b = r.period?.end && r.period.end < to ? r.period.end : to;
+    if (f !== 'monthly' && f !== 'quarterly') return [{key: r.id, label: '', date: a}];
+    const out = [];
+    let [y, m] = a.split('-').map(Number);
+    const [by, bm] = b.split('-').map(Number);
+    while (y * 12 + m <= by * 12 + bm) {
+      const d = `${y}-${String(m).padStart(2, '0')}-01`, date = d < a ? a : d, key = regKey(r, date);
+      if (!out.some(o => o.key === key)) out.push({key, date, label: f === 'monthly' ? `${m} 月` : `第 ${Math.floor((m - 1) / 3) + 1} 季`});
+      m++; if (m > 12) { m = 1; y++; }
+    }
+    return out;
+  }
 
   /* ── 日期與週期 ── */
   const pad = n => String(n).padStart(2, '0');
@@ -1851,7 +1878,7 @@ const CardEngine = (() => {
       if ((r.requires || []).some(q => !cp.pre?.[q])) continue;
       if (r.plan && r.plan !== plan) continue;
       if (r.minAmountTwd && tx.twd < r.minAmountTwd) { hints.push({type: 'min', rule: r, amount: r.minAmountTwd}); continue; }
-      const noreg = r.registration && !cp.reg?.[r.id];
+      const noreg = r.registration && !isReg(cp, r, tx.date);
       if (r.threshold) {
         const key = thKeyOf(card, r, tx.date, cp), q = thQualifies(r, tx, P.chSet);
         const spent = thSpent(ctx, cp, key) + (opts.mode === 'project' && q ? tx.twd : 0);
@@ -1859,7 +1886,8 @@ const CardEngine = (() => {
       }
       if (noreg) {
         const c = capReward(ctx, card, cp, r, tx, local);
-        if (c.reward > EPS) hints.push({type: 'noreg', rule: r, reward: c.reward, opens: r.registration.opens || null});
+        const o = r.registration.opens;
+        if (c.reward > EPS) hints.push({type: 'noreg', rule: r, reward: c.reward, opens: o && regKey(r, o.slice(0, 10)) === regKey(r, tx.date) ? o : null});
         continue;
       }
       const c = capReward(ctx, card, cp, r, tx, local);
@@ -1900,7 +1928,7 @@ const CardEngine = (() => {
   // 這張卡在這個通路能用哪些付款方式
   function methodsFor(card, channel, wallets) {
     const w = new Set(wallets || []);
-    const base = isOnlineCh(channel) ? ['online'] : PHYS_METHODS;
+    const base = isOnlineCh(channel) ? ['online', 'googlepay', 'applepay'] : PHYS_METHODS;
     return base.filter(m => m === 'card' || m === 'online' || (w.has(m) && !(m === 'googlepay' && card.googlePay === false)));
   }
 
@@ -1941,7 +1969,7 @@ const CardEngine = (() => {
       if (!inPeriod(r, date)) flags.push('period');
       if ((r.requires || []).some(q => !cp.pre?.[q])) flags.push('requires');
       if (r.plan && r.plan !== plan) flags.push('plan');
-      if (r.registration && !cp.reg?.[r.id]) flags.push('noreg');
+      if (r.registration && !isReg(cp, r, date)) flags.push('noreg');
       let row = null;
       if (r.cap) {
         const base = capBase(card, r), cyc = cycleOf(r.cap.cycle, date, cp.closeDay, r.period), key = `${base}|${cyc.key}`;
@@ -1984,7 +2012,7 @@ const CardEngine = (() => {
     return 'jp_other';
   }
 
-  return {prep, cycleOf, calc, computeAll, recommend, capStatus, matchChannel, methodsFor, isOnlineCh, planOf, ANY};
+  return {prep, cycleOf, calc, computeAll, recommend, capStatus, matchChannel, methodsFor, isOnlineCh, planOf, regKey, isReg, regPeriods, ANY};
 })();
 /* ==== CARD ENGINE END ==== */
 
@@ -2005,7 +2033,8 @@ const cdot = c => `<i class="cdot" style="--cc:${esc(c?.color || '#999')}"></i>`
 const channelName = id => S.catalog?.channels?.find(c => c.id === id)?.name || (id ? id : '其他日本實體消費');
 const METHOD_NAME = {card: '實體卡', applepay: 'Apple Pay', googlepay: 'Google Pay', paypay_taishin: 'PayPay（台新Pay+）', paypay_esun: 'PayPay（玉山Wallet）', online: '線上刷卡'};
 const WALLETS = [['googlepay', 'Google Pay'], ['applepay', 'Apple Pay'], ['paypay_taishin', 'PayPay（經台新Pay+）'], ['paypay_esun', 'PayPay（經玉山Wallet）']];
-function methodHow(card, m) {
+function methodHow(card, m, channel) {
+  if ((m === 'applepay' || m === 'googlepay') && CardEngine.isOnlineCh(channel)) return `在網站或 App 結帳時選 ${METHOD_NAME[m]}${m === 'googlepay' && /虛擬卡號/.test(card.googlePayNote || '') ? '（以虛擬卡號交易）' : ''}・行動支付加碼是否適用線上付款，請以銀行認定為準`;
   if (m === 'applepay') return card.network === 'JCB' ? '需用 Apple Pay 感應（說「JCB」，不要說 QUICPay）・請確認店家支援' : '需用 Apple Pay 感應・請確認店家支援';
   if (m === 'googlepay') return `需用 Google Pay 感應（タッチ決済）${/虛擬卡號/.test(card.googlePayNote || '') ? '，以虛擬卡號交易' : ''}・請確認店家支援`;
   if (m === 'paypay_taishin') return '需用台新Pay+ 掃 PayPay（Richart 卡當天要切到「Pay著刷」）・請確認店家支援';
@@ -2162,27 +2191,34 @@ function notesHTML(id) {
   return `<details class="card mini notes" data-keep="${id}" ${open ? 'open' : ''}><summary>${ic.alert}<span>刷卡提醒</span><span class="chip">${notes.length}</span>${ic.chev.replace('<svg', '<svg class="chev"')}</summary>
     <ul>${notes.map(n => `<li>${esc(n)}</li>`).join('')}</ul></details>`;
 }
+// 需要登錄的期間：今天到行程結束（每月／每季活動會分開列）
+function regPeriodsOf(r) { const t = nowJST().date; return CardEngine.regPeriods(r, t, t > TRIP_END ? t : TRIP_END); }
+// 這個期間的開放登錄時間（資料庫只記一個時間，只用在同一個月份／季別）
+function periodOpens(r, p) { const o = r.registration?.opens; return o && CardEngine.regKey(r, o.slice(0, 10)) === p.key ? o : null; }
 function regItems() {
   const out = [], today = nowJST().date, nowIso = new Date().toISOString();
   for (const c of ownedCards()) for (const r of c.rules) {
-    if (!r.registration || myProf().cards[c.id].reg?.[r.id]) continue;
-    if (r.period?.end && r.period.end < today) continue;
-    const o = r.registration.opens, upcoming = o && new Date(o).toISOString() > nowIso;
-    out.push({card: c, rule: r, upcoming});
+    if (!r.registration || (r.period?.end && r.period.end < today)) continue;
+    const cp = myProf().cards[c.id];
+    for (const p of regPeriodsOf(r)) {
+      if (CardEngine.isReg(cp, r, p.date)) continue;
+      const o = periodOpens(r, p), upcoming = !!o && new Date(o).toISOString() > nowIso;
+      out.push({card: c, rule: r, period: p, opens: o, upcoming});
+    }
   }
   return out.sort((a, b) => a.upcoming - b.upcoming);
 }
-const regTaskText = (c, r) => `登錄信用卡活動：${cardShort(c)}「${r.name}」`;
+const regTaskText = (c, r, p) => `登錄信用卡活動：${cardShort(c)}「${r.name}」${p?.label ? `（${p.label}）` : ''}`;
 function remindersHTML() {
   const items = regItems(); if (!items.length) return '';
   return `<div class="card remind"><div class="rh">${ic.alert}<b>登錄活動提醒</b><span class="chip hib">${items.length}</span></div>
-    ${items.map(({card: c, rule: r, upcoming}) => {
-      const g = r.registration, inList = S.checklist.some(x => x.text === regTaskText(c, r));
-      return `<div class="rrow">${cdot(c)}<div class="body"><div class="small"><b>${esc(cardShort(c))}</b>・${esc(r.name)}</div>
-        <div class="tiny muted">${upcoming ? `<span class="chip terra">即將開放 ${opensFmt(g.opens)}</span> ` : '<span class="chip hib">還沒登錄</span> '}${g.quota ? `限量 ${g.quota.toLocaleString()} 名・` : ''}${esc(g.note || '')}</div>
+    ${items.map(({card: c, rule: r, period: p, opens, upcoming}) => {
+      const g = r.registration, inList = S.checklist.some(x => x.text === regTaskText(c, r, p));
+      return `<div class="rrow">${cdot(c)}<div class="body"><div class="small"><b>${esc(cardShort(c))}</b>・${esc(r.name)}${p.label ? `<span class="chip" style="margin-left:4px">${esc(p.label)}</span>` : ''}</div>
+        <div class="tiny muted">${upcoming ? `<span class="chip terra">即將開放 ${opensFmt(opens)}</span> ` : '<span class="chip hib">還沒登錄</span> '}${g.quota ? `限量 ${g.quota.toLocaleString()} 名・` : ''}${esc(g.note || '')}</div>
         <div class="acts">${g.url ? `<a class="btn sm" href="${esc(g.url)}" target="_blank" rel="noopener">登錄頁面 ›</a>` : ''}
-          <button class="btn sm" data-task="${esc(c.id)}|${esc(r.id)}" ${inList ? 'disabled' : ''}>${inList ? ic.check + '已在準備清單' : ic.plus + '加入準備清單'}</button>
-          <button class="btn sm ghost" data-opt="reg:${esc(c.id)}:${esc(r.id)}">我已登錄</button></div></div></div>`;
+          <button class="btn sm" data-task="${esc(c.id)}|${esc(r.id)}|${esc(p.key)}" ${inList ? 'disabled' : ''}>${inList ? ic.check + '已在準備清單' : ic.plus + '加入準備清單'}</button>
+          <button class="btn sm ghost" data-opt="reg:${esc(c.id)}:${esc(p.key)}">我已登錄</button></div></div></div>`;
     }).join('')}</div>`;
 }
 function fxCardHTML() {
@@ -2238,12 +2274,12 @@ function ruleSummary(card, r, cp) {
   if (r.period) bits.push(`${md(r.period.start)}–${md(r.period.end)}`);
   const miss = (r.requires || []).filter(q => !cp.pre?.[q]).length;
   return `<li><div class="top"><span><span class="chip ${r.kind === 'base' ? 'sea' : 'terra'}">${r.kind === 'base' ? '基本' : '加碼'}</span> ${esc(r.name)}</span><b class="num">${pctFmt(r.rate)}</b></div>
-    <div class="tiny muted">${esc(bits.join('・'))}${miss ? ' <span class="chip">前提條件未勾</span>' : ''}${r.registration && !cp.reg?.[r.id] ? ' <span class="chip hib">需登錄</span>' : ''}</div>
+    <div class="tiny muted">${esc(bits.join('・'))}${miss ? ' <span class="chip">前提條件未勾</span>' : ''}${r.registration ? ' <span class="chip hib">需登錄</span>' : ''}</div>
     ${r.notes ? `<div class="tiny muted">${esc(r.notes)}</div>` : ''}</li>`;
 }
 function cardBlockHTML(c, ctx, date) {
   const cp = myProf().cards[c.id], open = S.cardOpen.has(c.id);
-  const regs = c.rules.filter(r => r.registration), unreg = regs.filter(r => !cp.reg?.[r.id]).length;
+  const regs = c.rules.filter(r => r.registration), unreg = regs.reduce((n, r) => n + regPeriodsOf(r).filter(p => !CardEngine.isReg(cp, r, p.date)).length, 0);
   const rows = CardEngine.capStatus(ctx, c.id, date), fullN = rows.filter(r => r.full && !r.flags.length).length;
   return `<details class="card cardx" data-card="${esc(c.id)}" ${open ? 'open' : ''} style="--cc:${esc(c.color)}"><summary>
       <span class="cswatch" style="--cc:${esc(c.color)}"></span><div class="body"><div class="nm">${esc(c.name)}</div>
@@ -2257,7 +2293,9 @@ function cardBlockHTML(c, ctx, date) {
         ${c.planNote ? `<p class="tiny muted" style="margin:6px 2px 0">${esc(c.planNote)}</p>` : ''}` : ''}
       ${regs.length ? `<div class="sub-h">登錄活動 <span class="tiny muted">沒勾「我已登錄」的不算進推薦</span></div>${regs.map(r => {
         const g = r.registration, freq = {once: '登錄一次即可', monthly: '每月登錄', quarterly: '每季登錄'}[g.frequency] || '';
-        return `<div class="regrow">${optHTML(`reg:${c.id}:${r.id}`, cp.reg?.[r.id], `我已登錄「${esc(r.name)}」`, [freq, g.opens ? `開放 ${opensFmt(g.opens)}` : '', g.quota ? `限量 ${g.quota.toLocaleString()} 名` : '', g.note || ''].filter(Boolean).map(esc).join('・'))}
+        const ps = regPeriodsOf(r);
+        return `<div class="regrow"><div style="flex:1;min-width:0">${(ps.length ? ps : [{key: r.id, label: '', date: refDate()}]).map((p, i) => optHTML(`reg:${c.id}:${p.key}`, CardEngine.isReg(cp, r, p.date), `我已登錄「${esc(r.name)}」${p.label ? `（${esc(p.label)}）` : ''}`,
+            i ? (periodOpens(r, p) ? `開放 ${opensFmt(periodOpens(r, p))}` : '') : [freq, periodOpens(r, p) ? `開放 ${opensFmt(periodOpens(r, p))}` : '', g.quota ? `限量 ${g.quota.toLocaleString()} 名` : '', g.note || ''].filter(Boolean).map(esc).join('・'))).join('')}</div>
           ${g.url ? `<a class="btn sm" href="${esc(g.url)}" target="_blank" rel="noopener">登錄頁面 ›</a>` : ''}</div>`;
       }).join('')}` : ''}
       <div class="sub-h">帳單結帳日</div>
@@ -2280,7 +2318,15 @@ function bindCards() {
     editProf(p => {
       if (kind === 'w') { const w = new Set(p.wallets || []); w.has(a) ? w.delete(a) : w.add(a); p.wallets = WALLETS.map(x => x[0]).filter(x => w.has(x)); }
       else if (kind === 'pre') { p.cards[a].pre = p.cards[a].pre || {}; p.cards[a].pre[c] = !p.cards[a].pre[c]; }
-      else if (kind === 'reg') { p.cards[a].reg = p.cards[a].reg || {}; p.cards[a].reg[c] = !p.cards[a].reg[c]; }
+      else if (kind === 'reg') {
+        const reg = p.cards[a].reg = p.cards[a].reg || {}, rid = c.split('@')[0], r = cardById(a)?.rules.find(x => x.id === rid);
+        if (r && c !== rid) {
+          // 舊版只有一個勾選：先展開成各期間，再切換這一期
+          if (reg[rid] !== undefined) { for (const q of regPeriodsOf(r)) if (reg[q.key] === undefined) reg[q.key] = !!reg[rid]; delete reg[rid]; }
+          const pd = regPeriodsOf(r).find(q => q.key === c);
+          reg[c] = !CardEngine.isReg(p.cards[a], r, pd ? pd.date : refDate());
+        } else reg[c] = !reg[c];
+      }
     });
     renderCards();
   });
@@ -2296,9 +2342,9 @@ function bindCards() {
   });
   M.querySelectorAll('[data-adj]').forEach(b => b.onclick = () => { const v = b.dataset.adj, i = v.indexOf('|'); openAdjust(v.slice(0, i), v.slice(i + 1)); });
   M.querySelectorAll('[data-task]').forEach(b => b.onclick = async () => {
-    const [cid, rid] = b.dataset.task.split('|'), c = cardById(cid), r = c.rules.find(x => x.id === rid);
-    if (!await confirmDialog({title: '加入準備清單？', body: `準備清單 4 人都看得到，大家會知道你有「${c.name}」。\n\n會建立一項由你負責的項目：\n${regTaskText(c, r)}`, ok: '加入'})) return;
-    addRegTask(c, r); b.disabled = true; b.innerHTML = ic.check + '已在準備清單';
+    const [cid, rid, pk] = b.dataset.task.split('|'), c = cardById(cid), r = c.rules.find(x => x.id === rid), p = regPeriodsOf(r).find(q => q.key === pk);
+    if (!await confirmDialog({title: '加入準備清單？', body: `準備清單 4 人都看得到，大家會知道你有「${c.name}」。\n\n會建立一項由你負責的項目：\n${regTaskText(c, r, p)}`, ok: '加入'})) return;
+    addRegTask(c, r, p); b.disabled = true; b.innerHTML = ic.check + '已在準備清單';
   });
   $('#fxRefresh')?.addEventListener('click', async () => { const ok = await fetchFx(true); toast(ok ? '已更新匯率' : '抓不到匯率，先用' + (S.fxLive ? '上次的匯率' : '手動匯率')); if (!ok) renderCards(); });
   $('#fxSave')?.addEventListener('click', () => {
@@ -2309,12 +2355,13 @@ function bindCards() {
   });
   bindCatalogImport();
 }
-function addRegTask(c, r) {
+function addRegTask(c, r, p) {
   const cats = [...new Set([...S.checklist].sort((a, b) => a.catOrder - b.catOrder).map(i => i.cat))];
   const cat = cats.find(x => x.includes('出發前')) || cats[0] || '一、出發前必做事項';
   const g = r.registration;
-  const note = [g.opens ? `${opensFmt(g.opens)} 開放登錄` : '', g.quota ? `限量 ${g.quota.toLocaleString()} 名` : '', g.url || ''].filter(Boolean).join('・');
-  setDoc(doc(collection(db, 'checklist')), {text: regTaskText(c, r), cat, catOrder: Math.max(0, cats.indexOf(cat)), note, scope: 'claim', who: [], claimBy: S.me, booking: '',
+  const o = p ? periodOpens(r, p) : g.opens;
+  const note = [o ? `${opensFmt(o)} 開放登錄` : '', g.quota ? `限量 ${g.quota.toLocaleString()} 名` : '', g.url || ''].filter(Boolean).join('・');
+  setDoc(doc(collection(db, 'checklist')), {text: regTaskText(c, r, p), cat, catOrder: Math.max(0, cats.indexOf(cat)), note, scope: 'claim', who: [], claimBy: S.me, booking: '',
     order: Date.now(), createdBy: S.me, updatedBy: S.me, updatedAt: serverTimestamp()}).catch(e => toast(errMsg(e)));
   toast('已加入準備清單，由你負責');
 }
@@ -2391,11 +2438,11 @@ function shopRecHTML(x) {
   const R = shopRec(x); if (!R || !R.recs.length) return '';
   const top = R.recs[0], open = S.recOpen.has(x.id);
   const line = R.hasBud ? recText(top, R.fx) : `${top.net > 0 ? '推薦' : '沒有划算的卡：最好是'} ${esc(combo(top))}（約 ${pctFmt(top.netRate)}）・填預算可估金額`;
-  const how = methodHow(top.card, top.method);
+  const how = methodHow(top.card, top.method, top.channel);
   return `<div class="rec"><button class="line" data-rec="${x.id}" aria-expanded="${open}">${cdot(top.card)}<span>${line}</span>${ic.chev.replace('<svg', '<svg class="chev"')}</button>
     ${how ? `<div class="how tiny">${esc(how)}</div>` : ''}
     ${open ? `<div class="detail"><div class="tiny muted">通路：${esc(channelName(R.channel))}・${R.hasBud ? `約 ${twdFmt(R.twd)}` : '以 NT$1,000 試算'}・匯率 ${R.fx.toFixed(4)}</div>
-      ${R.recs.slice(0, 3).map((r, i) => `<div class="rk"><div class="small"><b>${i + 1}. ${cdot(r.card)} ${esc(combo(r))}</b></div>${methodHow(r.card, r.method) ? `<div class="tiny how">${esc(methodHow(r.card, r.method))}</div>` : ''}${breakdownHTML(r, R.fx)}</div>`).join('')}
+      ${R.recs.slice(0, 3).map((r, i) => `<div class="rk"><div class="small"><b>${i + 1}. ${cdot(r.card)} ${esc(combo(r))}</b></div>${methodHow(r.card, r.method, r.channel) ? `<div class="tiny how">${esc(methodHow(r.card, r.method, r.channel))}</div>` : ''}${breakdownHTML(r, R.fx)}</div>`).join('')}
       ${R.recs.altPlan ? `<div class="tiny hintbox">💡 ${esc(cardShort(R.recs.altPlan.card))} 切換到「${esc(R.recs.altPlan.planName)}」並用 ${esc(METHOD_NAME[R.recs.altPlan.method])} 付，約 ${pctFmt(R.recs.altPlan.netRate)}。${esc(R.recs.altPlan.card.planNote || '')}</div>` : ''}
       <div class="tiny muted" style="margin-top:6px">以上皆為估算，實際以銀行帳單為準。</div></div>` : ''}</div>`;
 }
