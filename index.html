@@ -367,9 +367,19 @@ select.in{-webkit-appearance:none;appearance:none;padding-right:42px;cursor:poin
 #toast.on{opacity:1;transform:translate(-50%,0)}
 
 /* ── credit cards ── */
-.cdot{--cc:#999;display:inline-block;width:15px;height:10px;border-radius:2.5px;background:var(--cc);box-shadow:inset 0 0 0 1px rgba(0,0,0,.14);vertical-align:-1px;flex:none}
-.cswatch{--cc:#999;position:relative;flex:none;width:40px;height:26px;border-radius:6px;background:var(--cc);box-shadow:inset 0 0 0 1.5px rgba(0,0,0,.12),2px 2px 0 rgba(43,58,78,.12)}
-.cswatch::after{content:"";position:absolute;left:6px;top:8px;width:9px;height:7px;border-radius:2px;background:#E9C978;box-shadow:inset 0 0 0 1px rgba(0,0,0,.15)}
+/* 卡面：官網卡面照片（白邊小照片）或手繪卡片圖示；--w 是橫式卡片的寬度 */
+.cart{--w:58px;flex:none;display:inline-flex;align-items:center;justify-content:center;width:var(--w);height:calc(var(--w) / 1.586 + 4px);vertical-align:middle}
+.cart .face{display:block;height:calc(var(--w) / 1.586);aspect-ratio:1.586;border-radius:calc(var(--w) * .085);background:#fff;padding:2px;box-shadow:0 0 0 1.4px var(--ink),2px 3px 0 rgba(43,58,78,.14)}
+.cart .face.p{aspect-ratio:.632;height:calc(var(--w) / 1.586 + 4px)}
+.cart .face i{display:block;width:100%;height:100%;border-radius:calc(var(--w) * .05);background-repeat:no-repeat;background-size:cover;background-position:center}
+.cart .hc{display:block;width:var(--w);aspect-ratio:1.586;filter:drop-shadow(2px 3px 0 rgba(43,58,78,.14))}
+.cart .hc svg{display:block;width:100%;height:100%;overflow:visible}
+.cart.m{--w:72px}
+.cart.s{--w:22px;height:15px;margin:0 1px}
+.cart.s .face{padding:1px;box-shadow:0 0 0 1px var(--ink)}
+.cart.s .face.p{height:15px}
+.cart.s .hc{filter:none}
+.chip .cart.s{--w:19px;height:13px}.chip .cart.s .face.p{height:13px}
 .pagehead{display:flex;align-items:center;gap:8px;margin:0 0 6px}
 .pagehead h2{flex:1;margin:0;font-family:var(--f-title);font-weight:400;font-size:22px}
 .pagehead .btn svg{width:16px;height:16px}
@@ -399,7 +409,7 @@ details.notes li+li{margin-top:5px}
 .remind .rh b{font-weight:400;font-size:16px}
 .rrow{display:flex;gap:9px;padding:10px 0 4px}
 .rrow+.rrow{border-top:1px dashed var(--line)}
-.rrow .cdot{margin-top:5px}
+.rrow>.cart{margin-top:3px}
 .rrow .body{flex:1;min-width:0}
 .rrow .acts{display:flex;flex-wrap:wrap;gap:6px;margin-top:7px}
 .fx .row{display:flex;align-items:center;justify-content:space-between;gap:10px}
@@ -411,7 +421,7 @@ details.notes li+li{margin-top:5px}
 .cardx>summary .sub{display:flex;flex-wrap:wrap;gap:5px;margin-top:4px}
 .cardx>summary .chev{width:18px;height:18px;color:var(--ink-3);transition:transform .2s;margin-top:4px;flex:none}
 .cardx[open]>summary .chev{transform:rotate(90deg)}
-.cardx{box-shadow:inset 4px 0 0 var(--cc),inset 0 0 0 1.5px var(--line-2),var(--shadow)}
+
 .cbody{margin-top:10px;padding-top:4px;border-top:1.5px dashed var(--line)}
 .sub-h{font-family:var(--f-title);font-size:14.5px;margin:14px 0 4px;display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
 .regrow{display:flex;align-items:flex-start;gap:8px}
@@ -467,7 +477,10 @@ ul.bd li.hint::before{content:"💡 "}
 .pend svg{width:22px;height:22px;color:var(--hib);flex:none}
 .pend .body{flex:1;font-size:14px}
 .ex .sub{flex-wrap:wrap}
-.chip .cdot{width:12px;height:8px}
+.pickface{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:6px}
+.pickface button{display:flex;flex-direction:column;align-items:center;gap:6px;padding:10px 4px 8px;border-radius:14px;font-family:var(--f-title);font-size:12.5px;color:var(--ink-2);position:relative}
+.pickface button[aria-pressed=true]{background:var(--card);color:var(--ink);box-shadow:inset 0 0 0 2px var(--sea)}
+.pickface button[aria-pressed=true]::after{content:"";position:absolute;top:5px;right:6px;width:18px;height:18px;border-radius:50%;background:var(--sea) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12.5l4.5 4.5L19 7.5'/%3E%3C/svg%3E") center/12px no-repeat}
 
 /* ── gate screens ── */
 .gate{text-align:center;padding-top:10px}
@@ -483,7 +496,7 @@ ul.bd li.hint::before{content:"💡 "}
 .gbtn svg{width:22px;height:22px}
 .profile{text-align:center;padding:4px 0 6px}
 .profile .nm{font-family:var(--f-title);font-size:28px;margin-top:16px}
-.profile .full{color:var(--ink-2);font-family:var(--f-title)}
+.profile div.full{color:var(--ink-2);font-family:var(--f-title)}
 .profile .ttl{display:inline-block;margin-top:12px;font-family:var(--f-title);font-size:17px;padding:3px 16px;border-radius:999px;color:#fff;background:var(--c)}
 .profile blockquote{margin:14px 10px 6px;font-family:var(--f-title);font-size:16px;color:var(--ink);line-height:1.7}
 </style>
@@ -2029,7 +2042,39 @@ function refDate() { const t = nowJST().date; return t < TRIP_START ? TRIP_START
 function itemDate(x) { const d = DAYS.find(i => i.d === x.day); return d ? d.date : refDate(); }
 const cardById = id => S.catalog?.cards?.find(c => c.id === id) || null;
 const cardShort = c => c ? (c.name.includes(' ') ? c.name.split(' ').slice(1).join(' ') : c.name).replace(/（.*?）/g, '') : '（已移除的卡）';
-const cdot = c => `<i class="cdot" style="--cc:${esc(c?.color || '#999')}"></i>`;
+// 卡面：使用者選的官網卡面（讀不到時改手繪圖示）；size: '' 清單、'm' 挑選、's' 小標籤
+const imgState = new Map(); // url → 'ok' | 'fail' | 'loading'
+const lum = h => { const n = parseInt(String(h || '#999999').slice(1), 16); return ((n >> 16) * 299 + (n >> 8 & 255) * 587 + (n & 255) * 114) / 1000; };
+function handCard(c, small) {
+  const col = c?.color || '#999999', light = lum(col) > 150, line = light ? '#2B3A4E' : '#FFFDF8';
+  return `<span class="hc"><svg viewBox="0 0 64 40" aria-hidden="true"><path d="M5.5 2.2C20 1.4 44 1.6 58.6 2.4c2.2.2 3.4 1.6 3.5 3.8.3 9.6.3 18.4-.1 28-.1 2.2-1.5 3.6-3.7 3.7-14.8.6-38.6.5-53.2-.1-2.1-.1-3.4-1.5-3.5-3.6C1.3 24.6 1.2 15.8 1.7 6c.1-2.2 1.6-3.6 3.8-3.8z" fill="${esc(col)}" stroke="#2B3A4E" stroke-width="${small ? 3 : 2}" stroke-linejoin="round"/>${small ? '' : `<rect x="8" y="13" width="11" height="8.5" rx="2" fill="#F4C25B" stroke="#2B3A4E" stroke-width="1.4"/><path d="M8 17.2h11M13.5 13v8.5" stroke="#2B3A4E" stroke-width=".9" opacity=".55"/><path d="M8 29.5h7M18 29.5h7M28 29.5h7" stroke="${line}" stroke-width="2.2" stroke-linecap="round" opacity=".85"/><path d="M44 7.5c5 .4 9 2.6 11.5 6" stroke="#fff" stroke-width="2" stroke-linecap="round" fill="none" opacity="${light ? .75 : .35}"/>`}</svg></span>`;
+}
+const faceIndex = c => { const f = myProf().cards[c?.id]?.face; return f === undefined ? 0 : f; };
+function cardArt(c, size = '', idx = faceIndex(c)) {
+  const im = c?.images?.[idx], cls = `cart ${size}`;
+  if (!im || imgState.get(im.url) === 'fail') return `<span class="${cls}">${handCard(c, size === 's')}</span>`;
+  let st = `background-image:url('${esc(im.url)}');`;
+  if (im.crop) { const [x, y, w, h] = im.crop; st += `background-size:${100 / w}% ${100 / h}%;background-position:${w < 1 ? x / (1 - w) * 100 : 0}% ${h < 1 ? y / (1 - h) * 100 : 0}%;`; }
+  return `<span class="${cls}"><span class="face ${im.portrait ? 'p' : ''}" data-img="${esc(im.url)}" data-card="${esc(c.id)}"><i style="${st}"></i></span></span>`;
+}
+const cdot = c => cardArt(c, 's');
+// 圖片讀不到（銀行改網址、離線又沒快取）就換成手繪圖示
+function checkCardImages(root = document) {
+  root.querySelectorAll('.face[data-img]').forEach(f => {
+    const u = f.dataset.img, st = imgState.get(u);
+    const swap = () => { const c = cardById(f.dataset.card), box = f.parentElement; if (box) box.innerHTML = handCard(c, box.classList.contains('s')); };
+    if (st === 'fail') return swap();
+    if (st === 'ok') return;
+    if (st === 'loading') { (checkCardImages.wait[u] = checkCardImages.wait[u] || []).push(swap); return; }
+    imgState.set(u, 'loading'); (checkCardImages.wait[u] = checkCardImages.wait[u] || []).push(swap);
+    const im = new Image();
+    im.onload = () => { imgState.set(u, 'ok'); delete checkCardImages.wait[u]; };
+    im.onerror = () => { imgState.set(u, 'fail'); (checkCardImages.wait[u] || []).forEach(f => f()); delete checkCardImages.wait[u]; };
+    im.src = u;
+  });
+}
+checkCardImages.wait = {};
+new MutationObserver(() => { clearTimeout(checkCardImages.t); checkCardImages.t = setTimeout(() => checkCardImages(), 30); }).observe(document.body, {childList: true, subtree: true});
 const channelName = id => S.catalog?.channels?.find(c => c.id === id)?.name || (id ? id : '其他日本實體消費');
 const METHOD_NAME = {card: '實體卡', applepay: 'Apple Pay', googlepay: 'Google Pay', paypay_taishin: 'PayPay（台新Pay+）', paypay_esun: 'PayPay（玉山Wallet）', online: '線上刷卡'};
 const WALLETS = [['googlepay', 'Google Pay'], ['applepay', 'Apple Pay'], ['paypay_taishin', 'PayPay（經台新Pay+）'], ['paypay_esun', 'PayPay（經玉山Wallet）']];
@@ -2173,7 +2218,7 @@ function renderCards() {
       ${WALLETS.map(([k, t]) => optHTML(`w:${k}`, (p.wallets || []).includes(k), t)).join('')}</div>`
     + `<h2 class="sec">${ic.coin.replace('<svg', '<svg class="deco"')}我的卡片<span class="chip" style="margin-left:auto">${own.length} 張</span></h2>`
     + (own.length ? own.map(c => cardBlockHTML(c, ctx, date)).join('') : `<div class="card empty">${ic.shell}還沒有卡片，從下面加入自己有的卡</div>`)
-    + (others.length ? `<h2 class="sec">${ic.plus.replace('<svg', '<svg class="deco"')}加入卡片</h2><div class="card">${others.map(c => `<div class="addrow"><span class="cswatch" style="--cc:${esc(c.color)}"></span>
+    + (others.length ? `<h2 class="sec">${ic.plus.replace('<svg', '<svg class="deco"')}加入卡片</h2><div class="card">${others.map(c => `<div class="addrow">${cardArt(c)}
         <div class="body"><div class="nm">${esc(c.name)}</div><div class="tiny muted">${esc(c.bank)}${c.network ? '・' + esc(c.network) : ''}</div></div>
         <button class="btn sm" data-addcard="${esc(c.id)}">${ic.plus}加入</button></div>`).join('')}</div>` : '')
     + `<h2 class="sec">${ic.hib.replace('<svg', '<svg class="deco"')}卡片資料庫</h2><div class="card"><div class="small">版本 <b class="num">${esc(S.catMeta?.version || cat.version)}</b>・${esc(nm(S.catMeta?.importedBy))} 於 ${fmtTime(S.catMeta?.importedAt)} 匯入</div>
@@ -2281,13 +2326,16 @@ function cardBlockHTML(c, ctx, date) {
   const cp = myProf().cards[c.id], open = S.cardOpen.has(c.id);
   const regs = c.rules.filter(r => r.registration), unreg = regs.reduce((n, r) => n + regPeriodsOf(r).filter(p => !CardEngine.isReg(cp, r, p.date)).length, 0);
   const rows = CardEngine.capStatus(ctx, c.id, date), fullN = rows.filter(r => r.full && !r.flags.length).length;
-  return `<details class="card cardx" data-card="${esc(c.id)}" ${open ? 'open' : ''} style="--cc:${esc(c.color)}"><summary>
-      <span class="cswatch" style="--cc:${esc(c.color)}"></span><div class="body"><div class="nm">${esc(c.name)}</div>
+  return `<details class="card cardx" data-card="${esc(c.id)}" ${open ? 'open' : ''}><summary>
+      ${cardArt(c)}<div class="body"><div class="nm">${esc(c.name)}</div>
       <div class="tiny muted">${esc(c.bank)}${c.network ? '・' + esc(c.network) : ''}${c.billingCurrency ? '・' + esc(c.billingCurrency) + ' 帳單' : ''}</div>
       <div class="sub">${unreg ? `<span class="chip hib">${unreg} 項待登錄</span>` : ''}${fullN ? `<span class="chip">${fullN} 項已刷滿</span>` : ''}${c.googlePay === false ? '<span class="chip terra">不支援 Google Pay</span>' : ''}</div></div>
       ${ic.chev.replace('<svg', '<svg class="chev"')}</summary>
     <div class="cbody">
       ${c.googlePayNote ? `<p class="${c.googlePay === false ? 'warn' : 'tiny muted'}" style="margin:4px 0 8px">${esc(c.googlePayNote)}</p>` : ''}
+      ${(c.images || []).length ? `<div class="sub-h">卡面 <span class="tiny muted">選自己的卡面，圖片來自銀行官網</span></div>
+        <div class="pickface" data-face="${esc(c.id)}">${c.images.map((im, i) => `<button type="button" data-i="${i}" aria-pressed="${faceIndex(c) === i}">${cardArt(c, 'm', i)}<span>${esc(im.name)}</span></button>`).join('')}
+          <button type="button" data-i="-1" aria-pressed="${faceIndex(c) === -1}"><span class="cart m">${handCard(c)}</span><span>手繪圖示</span></button></div>` : ''}
       ${(c.prerequisites || []).length ? `<div class="sub-h">前提條件 <span class="tiny muted">沒勾的條件，相關加碼不算進推薦</span></div>${c.prerequisites.map(p => optHTML(`pre:${c.id}:${p.id}`, cp.pre?.[p.id], esc(p.text))).join('')}` : ''}
       ${c.plans ? `<div class="sub-h">目前方案</div><div class="seg" data-plan="${esc(c.id)}">${c.plans.map(p => `<button type="button" data-p="${esc(p.id)}" aria-pressed="${(cp.plan || c.defaultPlan) === p.id}">${esc(p.name)}</button>`).join('')}</div>
         ${c.planNote ? `<p class="tiny muted" style="margin:6px 2px 0">${esc(c.planNote)}</p>` : ''}` : ''}
@@ -2330,6 +2378,7 @@ function bindCards() {
     });
     renderCards();
   });
+  M.querySelectorAll('[data-face]').forEach(g => g.onclick = e => { const b = e.target.closest('[data-i]'); if (!b) return; editProf(p => { p.cards[g.dataset.face].face = +b.dataset.i; }); renderCards(); });
   M.querySelectorAll('[data-plan]').forEach(sg => sg.onclick = e => { const b = e.target.closest('[data-p]'); if (!b) return; editProf(p => { p.cards[sg.dataset.plan].plan = b.dataset.p; }); renderCards(); });
   M.querySelectorAll('[data-close-day]').forEach(s => s.onchange = () => { editProf(p => { p.cards[s.dataset.closeDay].closeDay = s.value ? +s.value : null; }); renderCards(); });
   M.querySelectorAll('[data-addcard]').forEach(b => b.onclick = () => {
