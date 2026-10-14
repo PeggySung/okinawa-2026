@@ -2431,12 +2431,13 @@ function cardBlockHTML(c, ctx, date) {
   return `<details class="card cardx" data-card="${esc(c.id)}" ${open ? 'open' : ''}><summary>
       ${cardArt(c)}<div class="body"><div class="nm">${esc(c.name)}</div>
       <div class="tiny muted">${esc(c.bank)}${c.network ? '・' + esc(c.network) : ''}${c.billingCurrency ? '・' + esc(c.billingCurrency) + ' 帳單' : ''}</div>
-      <div class="sub">${unreg ? `<span class="chip hib">${unreg} 項待登錄</span>` : ''}${fullN ? `<span class="chip">${fullN} 項已刷滿</span>` : ''}${c.googlePay === false ? '<span class="chip terra">不支援 Google Pay</span>' : ''}${wunset ? '<span class="chip hib">行動支付未設定</span>' : wopts.filter(([k]) => won.includes(k)).map(([k]) => `<span class="chip sea">${ic.phone}${esc(METHOD_NAME[k])}</span>`).join('')}</div></div>
+      <div class="sub">${unreg ? `<span class="chip hib">${unreg} 項待登錄</span>` : ''}${fullN ? `<span class="chip">${fullN} 項已刷滿</span>` : ''}${c.googlePay === false ? '<span class="chip terra">不支援 Google Pay</span>' : ''}${wunset ? '<span class="chip hib">行動支付未確認</span>' : wopts.filter(([k]) => won.includes(k)).map(([k]) => `<span class="chip sea">${ic.phone}${esc(METHOD_NAME[k])}</span>`).join('')}</div></div>
       ${ic.chev.replace('<svg', '<svg class="chev"')}</summary>
     <div class="cbody">
       ${c.googlePayNote ? `<p class="${c.googlePay === false ? 'warn' : 'tiny muted'}" style="margin:4px 0 8px">${esc(c.googlePayNote)}</p>` : ''}
       ${wopts.length ? `<div class="sub-h">這張卡綁了哪些行動支付 <span class="tiny muted">沒綁的付法不會推薦</span></div>${wopts.map(([k, t]) => optHTML(`cw:${c.id}:${k}`, won.includes(k), `這張卡已綁 ${esc(t)}`)).join('')}
-        ${wunset ? '<p class="tiny hintbox">還沒設定，目前先當作都有綁。請只勾實際有綁的，推薦才會準。</p>' : ''}` : ''}
+        ${wunset ? `<div class="tiny hintbox">還沒確認，目前先當作上面勾的都有綁。確認沒問題請按下面的按鈕，或直接改勾選。
+          <button type="button" class="btn sm" data-wconfirm="${esc(c.id)}" style="display:flex;margin-top:6px">${ic.check}沒錯，這張卡就是綁這些</button></div>` : ''}` : ''}
       ${(c.images || []).length ? `<div class="sub-h">卡面 <span class="tiny muted">選自己的卡面，圖片來自銀行官網</span></div>
         <div class="pickface" data-face="${esc(c.id)}">${c.images.map((im, i) => `<button type="button" data-i="${i}" aria-pressed="${faceIndex(c) === i}">${cardArt(c, 'm', i)}<span>${esc(im.name)}</span></button>`).join('')}
           <button type="button" data-i="-1" aria-pressed="${faceIndex(c) === -1}"><span class="cart m">${handCard(c)}</span><span>手繪圖示</span></button></div>` : ''}
@@ -2490,6 +2491,7 @@ function bindCards() {
     });
     renderCards();
   });
+  M.querySelectorAll('[data-wconfirm]').forEach(b => b.onclick = () => { const c = cardById(b.dataset.wconfirm); editProf(p => { p.cards[c.id].wallets = cardWalletsOn(c); }); renderCards(); toast('已確認'); });
   M.querySelectorAll('[data-face]').forEach(g => g.onclick = e => { const b = e.target.closest('[data-i]'); if (!b) return; editProf(p => { p.cards[g.dataset.face].face = +b.dataset.i; }); renderCards(); });
   M.querySelectorAll('[data-plan]').forEach(sg => sg.onclick = e => { const b = e.target.closest('[data-p]'); if (!b) return; editProf(p => { p.cards[sg.dataset.plan].plan = b.dataset.p; }); renderCards(); });
   M.querySelectorAll('[data-close-day]').forEach(s => s.onchange = () => { editProf(p => { p.cards[s.dataset.closeDay].closeDay = s.value ? +s.value : null; }); renderCards(); });
@@ -2536,10 +2538,19 @@ function openAdjust(cardId, rowKey) {
     <p class="tiny muted" style="margin:0 0 12px">${cycleText((row.cycle || row.threshold.cycle))}。用來補記沒進記帳的消費（例如出發前已經刷的部分），可以填負數扣回。</p>
     ${isTh ? '' : `<div class="share"><span>記帳自動累積</span><b class="num">回饋 ${twdFmt(auto.reward)}・消費 ${twdFmt(auto.spend)}</b></div>
     <div class="row2"><label class="f"><span>＋ 已拿到的回饋（NT$）</span><input class="in" id="aRw" type="number" inputmode="decimal" value="${a.reward ?? ''}" placeholder="0"></label>
-      <label class="f"><span>＋ 已累積的消費（NT$）</span><input class="in" id="aSp" type="number" inputmode="decimal" value="${a.spend ?? ''}" placeholder="0"></label></div>`}
+      <label class="f"><span>＋ 已累積的消費（NT$）</span><input class="in" id="aSp" type="number" inputmode="decimal" value="${a.spend ?? ''}" placeholder="0"></label></div>
+    <p class="tiny muted" style="margin:-4px 2px 12px" id="aHint">只要填其中一格，另一格會依 ${pctFmt(row.rules[0].rate)} 自動算${row.type === 'reward' ? `（回饋最多 ${twdFmt(row.amount)}）` : ''}，也可以自己改。</p>`}
     ${thKey ? `<div class="share"><span>門檻：記帳自動累積</span><b class="num">${twdFmt(autoTh)}</b></div>
       <label class="f"><span>＋ 本季已累積的日本實體消費（NT$）</span><input class="in" id="aTh" type="number" inputmode="decimal" value="${at.spend ?? ''}" placeholder="0"></label>` : ''}
     <div class="sheet-acts"><button class="btn" data-close>取消</button><button class="btn pri" id="aSave">儲存</button></div>`, s => {
+    // 自動計算：先填的那格當依據，另一格自動帶入；自己改過的格子就不再自動覆蓋
+    const rate = (row.rules[0]?.rate || 0) / 100, rw = s.querySelector('#aRw'), sp = s.querySelector('#aSp'), th = s.querySelector('#aTh');
+    const touched = new Set([[rw, a.reward], [sp, a.spend], [th, at.spend]].filter(([el, v]) => el && v).map(([el]) => el));
+    const put = (el, v) => { if (el && !touched.has(el)) el.value = v ? String(r2(v)) : ''; };
+    const capRw = v => row.type === 'reward' && row.amount ? Math.min(v, row.amount) : v;
+    sp?.addEventListener('input', () => { touched.add(sp); const v = Number(sp.value) || 0; put(rw, rate ? capRw(v * rate) : 0); put(th, v); });
+    rw?.addEventListener('input', () => { touched.add(rw); const v = Number(rw.value) || 0; if (rate) { put(sp, v / rate); put(th, v / rate); } });
+    th?.addEventListener('input', () => touched.add(th));
     s.querySelector('#aSave').onclick = () => {
       const num = id => { const el = s.querySelector(id); const v = el ? Number(el.value || 0) : 0; return isFinite(v) ? r2(v) : 0; };
       editProf(p => {
