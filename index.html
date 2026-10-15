@@ -538,6 +538,64 @@ ul.bd li.hint::before{content:"💡 "}
 .krow .detail{margin:0 0 10px;padding:8px 10px;border-radius:10px;background:var(--card);box-shadow:inset 0 0 0 1.5px var(--line)}
 .krow .detail .btn{margin-top:8px}
 
+
+/* ── 優惠券 ── */
+.chip.cp{background:#FFF0D2;color:#8A5A00;cursor:pointer}
+.chip.cpw{background:#FFF0D2;color:#8A5A00}
+.cpl{display:flex;align-items:center;gap:11px;width:100%;text-align:left;padding:11px 2px}
+.cpl+.cpl{border-top:1px dashed var(--line)}
+.cpl .sw,.cprow .sw,.cps-top .sw{flex:none;width:9px;align-self:stretch;min-height:34px;border-radius:5px;background:var(--b);box-shadow:inset 0 0 0 1px rgba(43,58,78,.18)}
+.cpl .body{flex:1;min-width:0}
+.cpl .nm{display:block;font-family:var(--f-title);font-size:15.5px;line-height:1.3}
+.cpl .sub{display:flex;flex-wrap:wrap;gap:5px;margin-top:5px}
+.cpl .big{flex:none;text-align:right;font-family:var(--f-num);font-weight:800;font-size:19px;color:var(--terra);line-height:1.1}
+.cpl .big small{display:block;font-family:var(--f-body);font-weight:400;font-size:11px;color:var(--ink-3)}
+.cpl.off{opacity:.55}
+.cprow{display:flex;align-items:center;gap:10px;width:100%;text-align:left;padding:8px 0}
+.cprow+.cprow{border-top:1px dashed var(--line)}
+.cprow .body{flex:1;min-width:0;font-size:14px}
+.cprow>svg:last-child{width:15px;height:15px;color:var(--ink-3);flex:none}
+.zxst{padding:10px 14px}
+.recheck{margin-bottom:12px}
+.kcp{margin-top:8px;padding:8px 10px;border-radius:10px;background:#FFF6E4;box-shadow:inset 0 0 0 1.5px rgba(138,90,0,.22);font-size:13.5px;line-height:1.5}
+.kcp .num{font-size:15px}
+.rec .cpline{font-size:12.5px;color:#8A5A00;margin:4px 2px 0}
+#cpShow{position:fixed;inset:0;z-index:90;background:#fff;color:#1d2624;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;
+  padding:calc(var(--safe-t) + 12px) max(16px,env(safe-area-inset-right,0px)) calc(var(--safe-b) + 28px) max(16px,env(safe-area-inset-left,0px))}
+.cps-wrap{max-width:520px;margin:0 auto;display:flex;flex-direction:column;gap:12px}
+.cps-top{display:flex;align-items:center;gap:10px}
+.cps-top .t{flex:1;min-width:0;line-height:1.3}
+.cps-top .t b{display:block;font-family:var(--f-title);font-weight:400;font-size:20px}
+.cps-top .t small{font-size:13px;color:#56667A}
+.cps-check{background:#FFF0D2;color:#7A4F00;border-radius:12px;padding:10px 12px;font-family:var(--f-title);font-size:16px}
+.cps-check small{display:block;font-family:var(--f-body);font-size:12.5px}
+.cps-tiers{display:flex;flex-wrap:wrap;gap:6px}
+.cps-tiers button{min-height:38px;padding:0 13px;border-radius:999px;box-shadow:inset 0 0 0 1.5px #C9D0CD;font-size:14px;color:#1d2624;background:#fff}
+.cps-tiers button[aria-pressed=true]{background:#1d2624;color:#fff;box-shadow:none}
+.cps-code{position:relative;background:#fff;border:2px solid #1d2624;border-radius:14px;padding:22px 16px;min-height:190px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;text-align:center}
+.cps-code svg,.cps-code img{display:block;width:100%;max-width:460px;height:auto}
+.cps-code.qr svg{max-width:300px}
+.cps-veil{position:absolute;inset:0;border-radius:12px;background:rgba(255,255,255,.95);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:12px}
+.cps-txt{font-family:ui-monospace,Menlo,monospace;font-size:12px;color:#56667A;text-align:center;word-break:break-all;margin-top:-4px}
+.cps-net{font-size:13px;color:#56667A;text-align:center;margin:-2px 0 0}
+.cps-open{min-height:58px;font-size:18px}
+.cps-box{background:#F4F6F5;border-radius:14px;padding:14px;font-size:15px}
+.cps-box b{display:flex;align-items:center;gap:6px;font-family:var(--f-title);font-weight:400;font-size:17px}
+.cps-box b svg{width:20px;height:20px}
+.cps-box p{margin:6px 0 0}
+.cps-amt{background:#EEF8F6;border-radius:14px;padding:12px;display:flex;flex-direction:column;gap:6px;font-size:14px}
+.cps-in{display:flex;flex-direction:column;gap:4px;font-size:12.5px;color:#56667A}
+.cps-in input{font-family:var(--f-num);font-weight:800;font-size:22px;min-height:46px;border:0;border-radius:10px;padding:6px 12px;box-shadow:inset 0 0 0 1.5px #B9C9C6;background:#fff;color:#1d2624;text-align:right}
+.cps-cond,.cps-warn{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px;font-size:15px;line-height:1.45}
+.cps-cond li{display:flex;gap:10px}
+.cps-cond li>span:first-child{flex:none;width:22px;text-align:center}
+.cps-warn li{background:#FCE6E6;color:#8E2430;border-radius:10px;padding:8px 11px;font-size:14px}
+.cps-more{font-size:14px;border-top:1px dashed #D3DAD8;padding-top:8px}
+.cps-more summary{cursor:pointer;color:#0B7478;font-family:var(--f-title)}
+.cps-more p,.cps-more ul{margin:6px 0 0;color:#3D4B5C}
+.cps-more ul{padding-left:18px}
+.cps-foot{font-size:12.5px;color:#56667A;line-height:1.7}
+
 /* ── gate screens ── */
 .gate{text-align:center;padding-top:10px}
 .gate .hero{width:min(64vw,250px);aspect-ratio:1;border-radius:22%;display:block;margin:0 auto 18px;box-shadow:0 0 0 4px var(--card),0 0 0 6px var(--ink),6px 9px 0 6px rgba(43,58,78,.12)}
@@ -633,6 +691,7 @@ const ic = {
   search: I('<circle cx="11" cy="11" r="6.5"/><path d="M20 20l-4.2-4.2"/>'),
   store: I('<path d="M4 9.5l1.4-5h13.2l1.4 5M4 9.5c0 1.5 1.2 2.5 2.7 2.5S9.3 11 9.3 9.5c0 1.5 1.2 2.5 2.7 2.5s2.7-1 2.7-2.5c0 1.5 1.1 2.5 2.6 2.5S20 11 20 9.5M5.5 12v8h13v-8M10 20v-4.5h4V20"/>'),
   hib: I('<path d="M12 12c-1.8-3.2-1.5-6.6 0-8.2 1.5 1.6 1.8 5 0 8.2zM12 12c3.2-1.6 6.6-1 7.9.7-1.8 1.4-5.2 1.3-7.9-.7zM12 12c2.2 2.8 2.6 6.2 1.4 8-1.9-1-3-4.3-1.4-8zM12 12c-1.4 3.2-4.6 4.8-6.6 4.3.2-2.1 3-4.4 6.6-4.3zM12 12c-3.5.2-6.4-1.6-7-3.6 2-.6 5.3.8 7 3.6z"/><circle cx="12" cy="12" r="1.2" fill="currentColor"/>'),
+  ticket: I('<path d="M3.5 8.5v-2A1.5 1.5 0 015 5h14a1.5 1.5 0 011.5 1.5v2a3.5 3.5 0 000 7v2A1.5 1.5 0 0119 19H5a1.5 1.5 0 01-1.5-1.5v-2a3.5 3.5 0 000-7z"/><path d="M14.5 5.5v13" stroke-dasharray="1.6 2.4"/>'),
   shell: I('<path d="M12 20c-5 0-8-3.5-8-7.5C4 8 7.5 4 12 4s8 4 8 8.5c0 4-3 7.5-8 7.5z"/><path d="M12 20V6M12 20L7 8.5M12 20l5-11.5M12 20L4.8 11.5M12 20l7.2-8.5"/>'),
   google: '<svg viewBox="0 0 24 24"><path fill="#4285F4" d="M22.5 12.3c0-.8-.1-1.5-.2-2.3H12v4.4h5.9a5 5 0 01-2.2 3.3v2.7h3.6c2-1.9 3.2-4.7 3.2-8.1z"/><path fill="#34A853" d="M12 23c3 0 5.5-1 7.3-2.7l-3.6-2.7c-1 .7-2.2 1-3.7 1-2.8 0-5.2-1.9-6.1-4.5H2.2v2.8A11 11 0 0012 23z"/><path fill="#FBBC05" d="M5.9 14.1a6.6 6.6 0 010-4.2V7.1H2.2a11 11 0 000 9.8l3.7-2.8z"/><path fill="#EA4335" d="M12 5.4c1.6 0 3 .6 4.2 1.6l3.1-3.1A11 11 0 0012 1 11 11 0 002.2 7.1l3.7 2.8C6.8 7.3 9.2 5.4 12 5.4z"/></svg>'
 };
@@ -718,9 +777,11 @@ const S = {
   openCats: new Set(JSON.parse(localGet('openCats') || '[]')), loaded: {},
   // 信用卡
   catalog: null, catMeta: null, cardProfile: null, profLoaded: false, txns: [], fxManual: null, cardVer: 0,
-  cardOpen: new Set(), recOpen: new Set(), expSynced: false, txSynced: false, prevTab: null
+  cardOpen: new Set(), recOpen: new Set(), expSynced: false, txSynced: false, prevTab: null,
+  // 優惠券
+  cpCat: null, cpMeta: null, cpUser: []
 };
-if (S.tab === 'cards') S.tab = 'shop';
+if (S.tab === 'cards' || S.tab === 'coupons') S.tab = 'shop';
 function localGet(k) { try { return localStorage.getItem('rlc.' + k); } catch { return null; } }
 function localSet(k, v) { try { localStorage.setItem('rlc.' + k, v); } catch {} }
 
@@ -916,6 +977,19 @@ function startApp() {
     S.cardVer++; if (['cards', 'shop', 'money'].includes(S.tab) && !$('#sheet.on')) render();
     maybeCalcFromUrl();
   });
+  // 優惠券資料庫與成員新增的券：有變動就重畫購物清單和優惠券頁（出示畫面開著時也更新）
+  const cpRedraw = () => { S.cardVer++; if (['coupons', 'shop'].includes(S.tab) && !$('#sheet.on') && !inputFocused()) render(); if ($('#cpShow')) paintCoupon(); };
+  L(doc(db, 'couponCatalog', 'current'), d => {
+    if (d.exists()) {
+      const x = d.data({serverTimestamps: 'estimate'});
+      try { S.cpCat = JSON.parse(x.json); S.cpMeta = {version: x.version, importedBy: x.importedBy, importedAt: x.importedAt}; }
+      catch (e) { console.warn('couponCatalog', e); }
+    } else { S.cpCat = null; S.cpMeta = null; }
+    cpRedraw();
+    // 有網路時先把條碼元件存進手機（省流量模式除外），到店裡沒訊號也能出示
+    if (S.cpCat && navigator.onLine && !navigator.connection?.saveData) setTimeout(() => zxCached().then(ok => { if (!ok) zx().catch(() => {}); }), 8000);
+  });
+  L(collection(db, 'coupons'), s => { S.cpUser = s.docs.map(d => ({id: d.id, ...d.data({serverTimestamps: 'estimate'})})); cpRedraw(); });
   L(doc(db, 'settings', 'fx'), d => { S.fxManual = d.exists() ? d.data({serverTimestamps: 'estimate'}) : null; S.cardVer++; if (S.tab === 'cards' && !inputFocused()) render(); });
   fetchFx();
   L(collection(db, 'settlements'), s => { S.settlements = {}; s.docs.forEach(d => S.settlements[d.id] = d.data({serverTimestamps: 'estimate'})); if (S.tab === 'money') render(); });
@@ -966,8 +1040,8 @@ const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
 let sw = null;
 document.addEventListener('touchstart', e => {
   sw = null;
-  if (e.touches.length !== 1 || document.body.classList.contains('bare') || S.tab === 'cards') return;
-  if ($('#sheet.on') || $('#dlg.on') || $('#lightbox.on')) return;
+  if (e.touches.length !== 1 || document.body.classList.contains('bare') || S.tab === 'cards' || S.tab === 'coupons') return;
+  if ($('#sheet.on') || $('#dlg.on') || $('#lightbox.on') || $('#cpShow')) return;
   const t = e.touches[0], el = e.target;
   if (t.clientX < 24 || t.clientX > innerWidth - 24) return;
   if (el.closest('input,textarea,select,.daybar,[data-noswipe]')) return;
@@ -1011,7 +1085,7 @@ addEventListener('online', syncNet); addEventListener('offline', syncNet); syncN
 function render() {
   if (!S.me) { $('#main').innerHTML = '<p class="empty">載入中…</p>'; return; }
   const fab = $('#fab'); fab.classList.add('hidden'); fab.onclick = null;
-  ({trip: renderTrip, flight: renderFlight, prep: renderPrep, shop: renderShop, money: renderMoney, cards: renderCards})[S.tab]();
+  ({trip: renderTrip, flight: renderFlight, prep: renderPrep, shop: renderShop, money: renderMoney, cards: renderCards, coupons: renderCoupons})[S.tab]();
 }
 
 /* avatar preview (tap to see the full picture) */
@@ -1424,11 +1498,12 @@ function renderShop() {
         ${x.day || x.qty || x.budget || x.note ? `<div class="sub">${x.day ? `<span class="chip sea">${dayLabel(x.day)}</span>` : ''}${x.qty ? `<span class="chip">× <span class="num">${esc(x.qty)}</span></span>` : ''}${x.budget ? `<span class="chip terra">預算 <span class="num">¥${Number(x.budget).toLocaleString()}</span></span>` : ''}${x.note ? `<span class="small muted">${esc(x.note)}</span>` : ''}</div>` : ''}
         ${x.fromWho && COLORS[x.fromWho] ? `<div class="sub"><span class="chip">${avatar(x.fromWho, 's').replace('data-profile', 'data-x')} 來自 ${nm(x.fromWho)}</span></div>` : ''}
         ${x.place ? `<div class="sub"><span class="small muted">${ic.map.replace('<svg', '<svg style="width:13px;height:13px;vertical-align:-2px"')} ${esc(x.place)}</span></div>` : ''}
-        ${S.catalog && (x.channel || mine) ? `<div class="sub"><span class="chip">${esc(channelName(x.channel || autoChannel(x.place, x.name)))}</span></div>` : ''}
+        ${S.catalog && (x.channel || mine) || cpMatch(x.place).length ? `<div class="sub">${S.catalog && (x.channel || mine) ? `<span class="chip">${esc(channelName(x.channel || autoChannel(x.place, x.name)))}</span>` : ''}${!x.bought ? shopCpChipHTML(x, mine) : ''}</div>` : ''}
       </${mine ? 'button' : 'div'}>${x.place || !mine ? `<div class="acts">${x.place ? `<a class="btn sm" href="${mapsSearch(x.place)}" target="_blank" rel="noopener" aria-label="在 Google Maps 開啟 ${esc(x.place)}">${ic.map}地圖</a>` : ''}${mine ? '' : have(x) ? `<button class="btn sm" disabled>${ic.check}已有</button>` : `<button class="btn sm" data-copy-item="${x.id}" aria-label="複製 ${esc(x.name)} 到我的清單">${ic.copy}複製</button>`}</div>` : ''}${recs[x.id] || ''}</div>`).join('')}
       ${totAll ? `<div class="totals"><span>預算合計 <b class="num">¥${totAll.toLocaleString()}</b></span><span>還沒買 <b class="num">¥${totLeft.toLocaleString()}</b></span></div>` : ''}</div>`
     : `<div class="empty">${ic.bag}${mine ? '還沒有想買的東西，按右下角新增' : `${nm(who)} 還沒有列清單`}</div>`;
-  $('#main').innerHTML = `${bar}${mine ? shopCardTopHTML() : ''}<h2 class="sec">${ic.shell.replace('<svg', '<svg class="deco"')}${mine ? '我的購物清單' : nm(who) + ' 的購物清單'}${mine ? '' : '<span class="chip" style="margin-left:auto">只能看</span>'}</h2>${!mine && copyable.length ? `<button class="btn full" id="copyAll" style="margin-bottom:12px">${ic.copy}把 ${copyable.length} 項全部複製到我的清單</button>` : ''}${list}`;
+  const cpTop = mine ? (shopCpTopHTML() || `<button class="card mini cta" id="toCoupons0">${ic.ticket}<span>優惠券：${S.me === 'qi' ? '匯入優惠券資料庫，或' : ''}掃描券圖新增</span>${ic.chev}</button>`) : '';
+  $('#main').innerHTML = `${bar}${mine ? recheckHTML() + shopCardTopHTML() + cpTop : ''}<h2 class="sec">${ic.shell.replace('<svg', '<svg class="deco"')}${mine ? '我的購物清單' : nm(who) + ' 的購物清單'}${mine ? '' : '<span class="chip" style="margin-left:auto">只能看</span>'}</h2>${!mine && copyable.length ? `<button class="btn full" id="copyAll" style="margin-bottom:12px">${ic.copy}把 ${copyable.length} 項全部複製到我的清單</button>` : ''}${list}`;
   $('#main').querySelector('.whobar').onclick = e => { const b = e.target.closest('[data-w]'); if (b) { S.shopWho = b.dataset.w; renderShop(); } };
   $('#main').querySelectorAll('[data-buy]').forEach(b => b.onclick = () => {
     const x = S.shopping[S.me].find(i => i.id === b.dataset.buy); if (!x) return;
@@ -1441,6 +1516,7 @@ function renderShop() {
   $('#main').querySelectorAll('details[data-keep]').forEach(d => d.ontoggle = () => localSet('open.' + d.dataset.keep, d.open ? '1' : '0'));
   ['#toCards', '#toCards2'].forEach(k => $(k)?.addEventListener('click', goCards));
   $('#toCalc')?.addEventListener('click', openCalc);
+  bindShopCoupons($('#main'));
   bindCapView($('#main'), render);
   $('#main').querySelectorAll('[data-copy-item]').forEach(b => b.onclick = () => {
     const x = items.find(i => i.id === b.dataset.copyItem); if (!x) return;
@@ -1455,11 +1531,12 @@ function renderShop() {
 // 勾選「已買」後，問要不要順便記帳：帶入品名、預算×數量（日圓）、通路、今天日期，刷哪張卡自動用推薦第一名
 async function askShopExpense(x) {
   if (x.expenseId && S.expenses.some(e => e.id === x.expenseId)) return; // 這項已經記過帳了
-  const qty = Number(x.qty) || 1, amt = Number(x.budget) > 0 ? r2(Number(x.budget) * qty) : null;
+  const qty = Number(x.qty) || 1, cp = Number(x.budget) > 0 ? cpForItemBought(x) : null;
+  const amt = Number(x.budget) > 0 ? r2(Number(x.budget) * qty - (cp?.share || 0)) : null;
   const ok = await confirmDialog({title: '要記一筆帳嗎？', ok: '記一筆', no: '先不用',
-    body: `「${x.name}」已買好。\n會帶入品名${amt ? `、金額 ¥${amt.toLocaleString()}（預算${qty > 1 ? ` × ${qty}` : ''}）` : ''}和推薦的刷卡方式，分攤預設只有自己，存檔前都可以改。`});
+    body: `「${x.name}」已買好。\n會帶入品名${amt ? `、金額 ¥${Math.round(amt).toLocaleString()}（預算${qty > 1 ? ` × ${qty}` : ''}${cp?.share ? `，已扣${cp.c.chain}優惠券` : ''}）` : ''}和推薦的刷卡方式，分攤預設只有自己，存檔前都可以改。`});
   if (!ok) return;
-  editExpense(null, {cur: 'JPY', amount: amt, name: x.name, channel: S.catalog ? (x.channel || autoChannel(x.place, x.name)) : null,
+  editExpense(null, {cur: 'JPY', amount: amt ? Math.round(amt) : amt, note: cp?.share ? `已用優惠券：${cp.c.chain} ${tierText(cp.ev.tier)}` : '', name: x.name, channel: S.catalog ? (x.channel || autoChannel(x.place, x.name)) : null,
     date: localDateOf(Date.now()), split: [S.me],
     onSaved: id => updateDoc(doc(db, 'shopping', S.me, 'items', x.id), {expenseId: id}).catch(() => {})});
 }
@@ -1730,7 +1807,7 @@ function editExpense(e, pre = null) {
     ${hasCat ? `<label class="f"><span>通路類型 <span class="tiny muted" id="eChAuto"></span></span><select class="in" id="eCh">${channelOptions(e?.channel || pre?.channel || autoChannel(e?.name))}</select></label>` : ''}
     <div class="f"><span>付款方式（大家都看得到）</span><div class="seg" id="ePay"><button type="button" data-p="cash">現金</button><button type="button" data-p="card">刷卡</button></div></div>
     <div id="eCardBox"></div>
-    <label class="f"><span>備註</span><input class="in" id="eNote" value="${esc(e?.note || '')}" maxlength="500"></label>
+    <label class="f"><span>備註</span><input class="in" id="eNote" value="${esc(e?.note || pre?.note || '')}" maxlength="500"></label>
     ${e ? `<div class="audit">建立：${esc(nm(e.createdBy))}・${fmtTime(e.createdAt)}<br>最後修改：${esc(nm(e.updatedBy))}・${fmtTime(e.updatedAt)}</div>` : ''}
     <div class="sheet-acts">${isNew ? '' : `<button class="btn" id="eDel">${ic.trash}刪除</button>`}<button class="btn pri" id="eSave">儲存</button></div>`, s => {
     const amtEl = s.querySelector('#eAmt'), chSel = s.querySelector('#eCh'), box = s.querySelector('#eCardBox');
@@ -2309,7 +2386,7 @@ function goCards() {
   if (S.tab !== 'cards') S.prevTab = S.tab;
   S.tab = 'cards'; renderHeader(); render(); scrollTo({top: 0});
 }
-function leaveCards() { S.tab = S.prevTab || 'shop'; renderHeader(); render(); scrollTo({top: 0}); }
+function leaveCards() { S.tab = S.prevTab && S.prevTab !== 'coupons' ? S.prevTab : 'shop'; renderHeader(); render(); scrollTo({top: 0}); }
 
 function renderCards() {
   const cat = S.catalog;
@@ -2321,7 +2398,7 @@ function renderCards() {
   if (!S.cardProfile && !S.profLoaded) { $('#main').innerHTML = head + '<p class="empty">載入中…</p>'; $('#cdBack').onclick = leaveCards; return; }
   const p = myProf(), own = ownedCards(), others = cat.cards.filter(c => !p.cards[c.id]);
   const {ctx} = cardCtx(), date = capDate();
-  $('#main').innerHTML = head + remindersHTML() + notesHTML('cdNotes') + fxCardHTML()
+  $('#main').innerHTML = head + recheckHTML() + remindersHTML() + notesHTML('cdNotes') + fxCardHTML()
     + `<h2 class="sec">${ic.phone.replace('<svg', '<svg class="deco"')}我的行動支付</h2>
       <div class="card"><p class="tiny muted" style="margin:0 0 4px">每張卡實際綁了哪些，在下面各張卡片裡設定（以卡片的設定為準）。這裡是還沒設定的卡的預設值。</p>
       ${WALLETS.map(([k, t]) => optHTML(`w:${k}`, (p.wallets || []).includes(k), t)).join('')}</div>`
@@ -2619,10 +2696,12 @@ function shopCardTopHTML() {
 function shopRec(x) {
   if (!S.catalog || !ownedCards().length) return null;
   const fx = fxNow().rate, hasBud = Number(x.budget) > 0;
-  const twd = hasBud ? Number(x.budget) * (Number(x.qty) || 1) * fx : 1000;
+  const itemYen = hasBud ? Number(x.budget) * (Number(x.qty) || 1) : 0, cp = hasBud ? cpForItem(x) : null;
+  const disc = cp?.share > 0 ? cp.share : 0;
+  const twd = hasBud ? (itemYen - disc) * fx : 1000;
   const channel = x.channel || autoChannel(x.place, x.name);
   const recs = CardEngine.recommend(cardCtx().ctx, {twd, channel, date: itemDate(x)});
-  return {recs, hasBud, fx, channel, twd};
+  return {recs, hasBud, fx, channel, twd, cp, disc, itemYen};
 }
 function shopRecHTML(x) {
   const R = shopRec(x); if (!R || !R.recs.length) return '';
@@ -2631,6 +2710,7 @@ function shopRecHTML(x) {
   const how = methodHow(top.card, top.method, top.channel);
   return `<div class="rec"><button class="line" data-rec="${x.id}" aria-expanded="${open}">${cdot(top.card)}<span class="txt">${line}</span>${ic.chev.replace('<svg', '<svg class="chev"')}</button>
     ${how ? `<div class="how tiny">${esc(how)}</div>` : ''}
+    ${R.cp ? `<div class="cpline">${R.disc ? `已扣 ${esc(R.cp.c.chain)} ${esc(tierText(R.cp.ev.tier))}（約 −${yen(R.disc)}），以下按 ${yen(R.itemYen - R.disc)} 計算` : R.cp.ev.next ? `${esc(R.cp.c.chain)}：這家店清單再買 ${yen(R.cp.ev.need)} 可${R.cp.ev.tier ? '升到' : '用'} ${esc(tierText(R.cp.ev.next))}` : ''}${R.cp.c.status === 'check' && (R.disc || R.cp.ev.next) ? '・⚠️ 沖繩適用待確認' : ''}</div>` : ''}
     ${open ? `<div class="detail"><div class="tiny muted">通路：${esc(channelName(R.channel))}・${R.hasBud ? `約 ${twdFmt(R.twd)}` : '以 NT$1,000 試算'}・匯率 ${R.fx.toFixed(4)}</div>
       ${R.recs.slice(0, 3).map((r, i) => `<div class="rk"><div class="small"><b>${i + 1}. ${cdot(r.card)} ${esc(combo(r))}</b></div>${methodHow(r.card, r.method, r.channel) ? `<div class="tiny how">${esc(methodHow(r.card, r.method, r.channel))}</div>` : ''}${breakdownHTML(r, R.fx)}</div>`).join('')}
       ${R.recs.altPlan ? `<div class="tiny hintbox">💡 ${esc(cardShort(R.recs.altPlan.card))} 切換到「${esc(R.recs.altPlan.planName)}」並用 ${esc(METHOD_NAME[R.recs.altPlan.method])} 付，約 ${pctFmt(R.recs.altPlan.netRate)}。${esc(R.recs.altPlan.card.planNote || '')}</div>` : ''}
@@ -2639,7 +2719,7 @@ function shopRecHTML(x) {
 
 /* ───────────── 刷卡試算（臨時想買東西時的快速計算機） ─────────────
    只用自己的卡、扣掉已用額度（記帳明細＋手動調整），結果只在自己手機上，不寫進資料庫。 */
-const CALC = {cur: 'JPY', amt: '', ch: null, q: '', phys: false, date: null, pick: true, open: new Set()};
+const CALC = {cur: 'JPY', amt: '', ch: null, q: '', phys: false, date: null, pick: true, open: new Set(), store: '', cp: 'auto'};
 const chShort = c => c.name.replace(/（.*?）/g, '').trim();
 const chById = id => S.catalog?.channels?.find(c => c.id === id) || null;
 function calcRecent() { try { return JSON.parse(localGet('calc.recent') || '[]').filter(chById); } catch { return []; } }
@@ -2667,9 +2747,9 @@ function openCalc() {
   const head = `<h3>${ic.calc.replace('<svg', '<svg style="width:22px;height:22px;color:var(--sea)"')}刷卡試算<span class="chip sea" style="font-family:var(--f-body)">${ic.lock}${CARD_PRIVATE_NOTE}</span><button class="iconbtn x" data-close aria-label="關閉">${ic.x}</button></h3>`;
   if (!S.catalog) return openSheet(head + `<div class="card empty">${ic.shell}${nm('qi')} 還沒匯入卡片資料庫，匯入後就能試算。</div>`);
   if (!ownedCards().length) return openSheet(head + `<div class="card empty">${ic.shell}還沒設定自己有哪些信用卡<br><button class="btn pri" id="kGoCards" style="margin-top:12px">${ic.coin}去設定信用卡</button></div>`, s => s.querySelector('#kGoCards').onclick = goCards);
-  Object.assign(CALC, {cur: localGet('calc.cur') === 'TWD' ? 'TWD' : 'JPY', amt: '', ch: null, q: '', phys: localGet('calc.phys') === '1', date: localDateOf(Date.now()), pick: true});
+  Object.assign(CALC, {cur: localGet('calc.cur') === 'TWD' ? 'TWD' : 'JPY', amt: '', ch: null, q: '', phys: localGet('calc.phys') === '1', date: localDateOf(Date.now()), pick: true, store: '', cp: 'auto'});
   CALC.open.clear();
-  openSheet(head + `
+  openSheet(head + `${recheckHTML()}
     <div class="seg" id="kCur" style="margin-bottom:10px">${['JPY', 'TWD'].map(c => `<button type="button" data-c="${c}">${CUR[c].sym} ${CUR[c].name}</button>`).join('')}</div>
     <label class="f"><span>要花多少</span><input class="in big" id="kAmt" type="text" inputmode="decimal" autocomplete="off" placeholder="0"></label>
     <div class="kconv"><span id="kConv"></span><label class="kdate">消費日<input type="date" id="kDate" value="${esc(CALC.date)}"></label></div>
@@ -2678,14 +2758,15 @@ function openCalc() {
       <div id="kChPick"><div class="ksearch">${ic.search}<input class="in" id="kQ" type="search" enterkeyhint="done" autocomplete="off" placeholder="打店名，例如 唐吉、7-11、AEON、一蘭"></div><div id="kChList"></div></div>
     </div>
     <div id="kPhys" class="kopt"></div>
+    <div id="kCp"></div>
     <div id="kRes" class="kres"></div>`, s => {
     const amtEl = s.querySelector('#kAmt'), qEl = s.querySelector('#kQ');
     const paintCur = () => s.querySelectorAll('#kCur [data-c]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.c === CALC.cur)));
-    const all = () => { paintConv(s); paintCh(s); paintPhys(s); paintCalcRes(s); };
+    const all = () => { paintConv(s); paintCh(s); paintPhys(s); paintCalcCp(s); paintCalcRes(s); };
     paintCur(); all();
     setTimeout(() => amtEl.focus(), 260);
-    s.querySelector('#kCur').onclick = ev => { const b = ev.target.closest('[data-c]'); if (!b) return; CALC.cur = b.dataset.c; localSet('calc.cur', CALC.cur); paintCur(); paintConv(s); paintCalcRes(s); };
-    amtEl.oninput = () => { CALC.amt = amtEl.value; paintConv(s); paintCalcRes(s); };
+    s.querySelector('#kCur').onclick = ev => { const b = ev.target.closest('[data-c]'); if (!b) return; CALC.cur = b.dataset.c; localSet('calc.cur', CALC.cur); paintCur(); paintConv(s); paintCalcCp(s); paintCalcRes(s); };
+    amtEl.oninput = () => { CALC.amt = amtEl.value; paintConv(s); paintCalcCp(s); paintCalcRes(s); };
     amtEl.onkeydown = ev => { if (ev.key !== 'Enter') return; ev.preventDefault(); if (CALC.ch) { amtEl.blur(); s.querySelector('#kRes').scrollIntoView({block: 'start', behavior: 'smooth'}); } else qEl.focus(); };
     s.querySelector('#kDate').onchange = ev => { CALC.date = ev.target.value || localDateOf(Date.now()); paintCalcRes(s); };
     qEl.oninput = () => { CALC.q = qEl.value; paintChList(s); };
@@ -2693,6 +2774,11 @@ function openCalc() {
     s.querySelector('#kChList').onclick = ev => { const b = ev.target.closest('[data-ch]'); if (b) pickCh(s, b.dataset.ch); };
     s.querySelector('#kChSel').onclick = ev => { if (!ev.target.closest('#kChChange')) return; CALC.pick = true; paintCh(s); qEl.focus(); };
     s.querySelector('#kPhys').onclick = ev => { if (!ev.target.closest('[data-phys]')) return; CALC.phys = !CALC.phys; localSet('calc.phys', CALC.phys ? '1' : '0'); paintPhys(s); paintCalcRes(s); };
+    s.querySelector('#kCp').onclick = ev => {
+      const b = ev.target.closest('[data-kcp]');
+      if (b) { CALC.cp = b.dataset.kcp; if (CALC.ch) localSet('calc.cp.' + CALC.ch, CALC.cp); paintCalcCp(s); paintCalcRes(s); return; }
+      const v = ev.target.closest('[data-kshow]'); if (v) openCoupon(v.dataset.kshow, {amt: calcCpState().yenAmt, keep: true});
+    };
     s.querySelector('#kRes').onclick = ev => {
       const t = ev.target.closest('[data-krow]');
       if (t) { const k = t.dataset.krow; CALC.open.has(k) ? CALC.open.delete(k) : CALC.open.add(k); paintCalcRes(s); return; }
@@ -2732,10 +2818,11 @@ function paintChList(s) {
     + groups.map(([g, cs]) => `<div class="chgrp"><b>${esc(g)}</b><div class="chips">${cs.map(chChip).join('')}</div></div>`).join('');
 }
 function pickCh(s, id) {
+  CALC.store = CALC.q.trim(); CALC.cp = localGet('calc.cp.' + id) || 'auto';
   CALC.ch = id; CALC.pick = false; CALC.q = ''; CALC.open.clear();
   const qEl = s.querySelector('#kQ'); qEl.value = ''; qEl.blur();
   localSet('calc.recent', JSON.stringify([id, ...calcRecent().filter(x => x !== id)].slice(0, 4)));
-  paintCh(s); paintPhys(s); paintCalcRes(s);
+  paintCh(s); paintPhys(s); paintCalcCp(s); paintCalcRes(s);
   if (!parseAmt(CALC.amt)) s.querySelector('#kAmt').focus();
   else setTimeout(() => s.querySelector('#kRes')?.scrollIntoView({block: 'start', behavior: 'smooth'}), 60);
 }
@@ -2745,14 +2832,16 @@ function paintPhys(s) {
 }
 // 每張卡取最划算的付法，依淨回饋排序
 function calcCompute() {
-  const {fx, twd} = calcTwd(), channel = CALC.ch || 'jp_other', has = twd > 0;
+  const {fx, twd: twd0} = calcTwd(), channel = CALC.ch || 'jp_other', has = twd0 > 0, cp = calcCpState();
+  // 有套用優惠券時，用折後的實付金額算回饋
+  const twd = cp.disc > 0 ? (CALC.cur === 'JPY' ? r2(cp.paidYen * fx) : r2(twd0 - cp.disc * fx)) : twd0;
   const online = CardEngine.isOnlineCh(channel), ok = m => online || !CALC.phys || m === 'card';
   const recs = CardEngine.recommend(cardCtx().ctx, {twd: has ? twd : 1000, channel, date: CALC.date});
   const by = new Map();
   for (const r of recs) if (ok(r.method)) { if (!by.has(r.cardId)) by.set(r.cardId, []); by.get(r.cardId).push(r); }
   const rows = [...by.values()];
   const alt = recs.altPlan && ok(recs.altPlan.method) && (!rows.length || recs.altPlan.net > rows[0][0].net + 1e-9) ? recs.altPlan : null;
-  return {rows, has, twd, fx, channel, alt};
+  return {rows, has, twd, fx, channel, alt, cp};
 }
 function calcAmt(n, R) {
   const sg = n < -0.004 ? '−' : '', v = Math.abs(n);
@@ -2767,7 +2856,7 @@ function paintCalcRes(s) {
   const how = r => methodHow(r.card, r.method, r.channel);
   const otherWays = list => list.length > 1 ? `<div class="tiny muted" style="margin-top:6px">其他付法：${list.slice(1).map(o => `${esc(METHOD_NAME[o.method] || o.method)} ${R.has ? calcAmt(o.net, R) + '・' : ''}${pctFmt(o.netRate)}`).join('；')}</div>` : '';
   const chName = chById(R.channel)?.name || '其他日本實體消費';
-  el.innerHTML = `<div class="kres-h"><span>${R.has ? `花 ${CALC.cur === 'JPY' ? '¥' + parseAmt(CALC.amt).toLocaleString() : twdFmt(R.twd)}` : '回饋率（輸入金額後顯示回饋金額）'}</span><span class="tiny muted">${esc(CALC.ch ? chName : '還沒選通路，先以「其他日本實體消費」計算')}</span></div>
+  el.innerHTML = `<div class="kres-h"><span>${R.has ? (R.cp.disc > 0 ? `實付 ${CALC.cur === 'JPY' ? yen(R.cp.paidYen) : twdFmt(R.twd)}（已扣優惠券）` : `花 ${CALC.cur === 'JPY' ? '¥' + parseAmt(CALC.amt).toLocaleString() : twdFmt(R.twd)}`) : '回饋率（輸入金額後顯示回饋金額）'}</span><span class="tiny muted">${esc(CALC.ch ? chName : '還沒選通路，先以「其他日本實體消費」計算')}</span></div>
     <div class="cbest ${bad ? 'bad' : ''}">
       <div><span class="chip ${bad ? 'hib' : 'sea'}">${bad ? '每張卡扣掉手續費都沒回饋・損失最少的是' : '推薦刷這張'}</span></div>
       <div class="cb-main">${cardArt(top.card)}<div class="body"><div class="nm">${esc(cardShort(top.card))}</div><div class="small muted">用 ${esc(METHOD_NAME[top.method] || top.method)} 付</div></div>
@@ -2789,10 +2878,529 @@ function paintCalcRes(s) {
     <button type="button" class="btn sm ghost" id="kGoCards2" style="margin-top:2px">信用卡設定・剩餘額度 ›</button>`;
 }
 function calcRecord(cardId, method) {
-  const a = parseAmt(CALC.amt); if (!a) { toast('請先輸入金額'); return; }
-  const c = chById(CALC.ch);
-  const pre = {cur: CALC.cur, amount: a, channel: CALC.ch || 'jp_other', card: cardId, method, date: CALC.date, name: c && c.id !== 'jp_other' ? chShort(c) : ''};
+  const a0 = parseAmt(CALC.amt); if (!a0) { toast('請先輸入金額'); return; }
+  const c = chById(CALC.ch), cp = calcCpState();
+  const a = cp.disc > 0 ? (CALC.cur === 'JPY' ? Math.round(cp.paidYen) : r2(a0 - cp.disc * cp.fx)) : a0;
+  const pre = {cur: CALC.cur, amount: a, note: cp.disc > 0 ? `已用優惠券：${cp.c.chain} ${tierText(cp.ev.tier)}` : '', channel: CALC.ch || 'jp_other', card: cardId, method, date: CALC.date, name: c && c.id !== 'jp_other' ? chShort(c) : ''};
   closeSheet(); setTimeout(() => editExpense(null, pre), 280);
+}
+
+/* ───────────── 優惠券 ─────────────
+   資料：couponCatalog/current（阿柒匯入，4 人可讀）＋ coupons（成員自己掃描新增的券、或幫資料庫的券補上條碼）
+   條碼：資料庫只存內容（Code128 文字／QR 原始位元組），出示時用 zxing-wasm 重畫，畫完再讀一次比對，一致才顯示。 */
+const ZX_VER = '3.1.4', ZX_BASE = `https://cdn.jsdelivr.net/npm/zxing-wasm@${ZX_VER}/dist/`, ZX_WASM = ZX_BASE + 'full/zxing_full.wasm';
+let zxP = null;
+function zx() {
+  if (zxP) return zxP;
+  zxP = new Promise((res, rej) => {
+    const fail = e => { zxP = null; rej(e instanceof Error ? e : new Error('條碼元件載入失敗')); };
+    const go = () => {
+      const Z = window.ZXingWASM; if (!Z) return fail();
+      Promise.resolve(Z.prepareZXingModule({overrides: {locateFile: (p, pre) => p.endsWith('.wasm') ? ZX_WASM : pre + p}, fireImmediately: true}))
+        .then(() => res(Z), fail);
+    };
+    if (window.ZXingWASM) return go();
+    const sc = document.createElement('script'); sc.src = ZX_BASE + 'iife/full/index.js'; sc.crossOrigin = 'anonymous';
+    sc.onload = go; sc.onerror = () => { sc.remove(); fail(); };
+    document.head.append(sc);
+  });
+  return zxP;
+}
+// 條碼元件是否已經存在手機裡（離線也能出示）
+async function zxCached() { try { return !!(await caches.match(ZX_WASM)) && !!(await caches.match(ZX_BASE + 'iife/full/index.js')); } catch { return false; } }
+const b64ToBytes = b => Uint8Array.from(atob(b), ch => ch.charCodeAt(0));
+const bytesToB64 = u => { let s = ''; for (let i = 0; i < u.length; i += 0x8000) s += String.fromCharCode.apply(null, u.subarray(i, i + 0x8000)); return btoa(s); };
+const sameBytes = (a, b) => a.length === b.length && a.every((v, i) => v === b[i]);
+const codeBytes = k => k.bytesB64 ? b64ToBytes(k.bytesB64) : new TextEncoder().encode(k.text || '');
+// 給人看的條碼內容（QR 若是 Shift_JIS 就照 Shift_JIS 顯示）
+function codeLabel(k) {
+  if (!k || k.format === 'image') return '';
+  if (!k.bytesB64) return k.text || '';
+  try { return new TextDecoder(k.encoding === 'Shift_JIS' ? 'shift_jis' : 'utf-8', {fatal: true}).decode(codeBytes(k)); } catch { return k.preview || ''; }
+}
+// zxing 產生的 SVG 只有固定寬高、沒有 viewBox，加上 viewBox 才能隨螢幕放大
+function fitSvg(svg) {
+  return svg.replace(/<\?xml[^>]*>/, '').replace(/<!DOCTYPE[^>]*>/, '')
+    .replace(/<svg width="(\d+(?:\.\d+)?)" height="(\d+(?:\.\d+)?)"/, '<svg viewBox="0 0 $1 $2" preserveAspectRatio="xMidYMid meet" shape-rendering="crispEdges" role="img" aria-label="條碼"');
+}
+const codeCache = new Map(); // 條碼內容 → {svg} 或 {err}
+// 重畫條碼並自我驗證：畫好的圖再讀一次，位元組一致才算成功
+async function drawCode(k) {
+  if (k.format === 'image') return {img: k.dataUrl};
+  const key = JSON.stringify([k.format, k.text, k.bytesB64, k.ecLevel]);
+  if (codeCache.has(key)) return codeCache.get(key);
+  const Z = await zx();
+  const w = await Z.writeBarcode(k.bytesB64 ? b64ToBytes(k.bytesB64) : k.text, {format: k.format, options: k.ecLevel ? `ecLevel=${k.ecLevel}` : '', scale: 4});
+  let out;
+  if (w.error || !w.svg) out = {err: '這個條碼畫不出來（' + (w.error || '未知錯誤') + '）'};
+  else {
+    const r = (await Z.readBarcodes(w.image, {formats: [k.format], tryHarder: true}))[0];
+    out = r && sameBytes(r.bytes, codeBytes(k)) ? {svg: fitSvg(w.svg)} : {err: '條碼重畫後比對不一致，請改出示原本的券圖。'};
+  }
+  codeCache.set(key, out); return out;
+}
+
+/* ── 資料 ── */
+const CP_TEXT = {ok: '沖繩可用', check: '沖繩適用待確認', pickup: '現場領取'};
+const CP_DISPLAY = {code: '條碼', official: '官方頁面', pickup: '現場領取'};
+const BASIS_TEXT = {taxIncl: '含稅', taxExcl: '未稅', unknown: '券面未寫含稅或未稅'};
+const RECHECK_TEXT = '11/1 後重新確認信用卡和優惠券資料庫（免稅新制）';
+function cpList() {
+  const ov = {}, own = [];
+  for (const d of S.cpUser) { if (d.kind === 'overlay' && d.base) ov[d.base] = d; else if (d.kind === 'own' && d.coupon) own.push(d); }
+  const base = (S.cpCat?.coupons || []).map(c => {
+    const o = ov[c.id]; if (!o) return {...c, src: 'cat'};
+    return {...c, src: 'cat', ovId: o.id, ovBy: o.createdBy, tiers: c.tiers.map((t, i) => o.codes?.[i] ? {...t, code: o.codes[i]} : t)};
+  });
+  return [...base, ...own.map(d => ({...d.coupon, id: d.id, src: 'user', createdBy: d.createdBy}))];
+}
+const cpById = id => cpList().find(c => c.id === id) || null;
+const cpToday = () => localDateOf(Date.now());
+const cpExpired = c => !!c.validTo && c.validTo < cpToday();
+const cpTiers = c => [...(c.tiers || [])].sort((a, b) => (a.min || 0) - (b.min || 0));
+const yen = n => '¥' + Math.round(n).toLocaleString();
+function tierText(t) {
+  if (t.amount != null) return t.every ? `每滿 ${yen(t.every)} 折 ${yen(t.amount)}${t.cap ? `（最多 ${yen(t.cap)}）` : ''}` : `${t.min ? `滿 ${yen(t.min)} ` : ''}折 ${yen(t.amount)}`;
+  return `${t.min ? `滿 ${yen(t.min)} ` : ''}${t.label && /最高/.test(t.label) ? '最高 ' : ''}${t.pct}%`;
+}
+function cpMaxText(c) {
+  const ts = cpTiers(c); if (!ts.length) return '領取';
+  const pcts = ts.filter(t => t.pct != null);
+  if (pcts.length) return `${pcts.length > 1 || /最高/.test(pcts[0].label || '') ? '最高 ' : ''}${Math.max(...pcts.map(t => t.pct))}%`;
+  const t = ts[ts.length - 1]; return t.every ? `折 ${yen(t.cap || t.amount)}` : yen(t.amount);
+}
+// 比對購買地點或店名：英數字關鍵字要整個字相符（避免 BIC 比對到 bicycle），中日文用包含
+function kwHit(text, kw) {
+  const t = String(text || ''), k = String(kw || '').trim(); if (!t || !k) return false;
+  if (/^[\x20-\x7e]+$/.test(k)) return new RegExp(`(^|[^a-z0-9])${k.toLowerCase().replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}($|[^a-z0-9])`, 'i').test(t);
+  return t.toLowerCase().includes(k.toLowerCase());
+}
+function cpMatch(text) {
+  if (!String(text || '').trim()) return [];
+  return cpList().filter(c => !cpExpired(c) && (c.keywords || []).some(k => kwHit(text, k)) && !(c.excludeKeywords || []).some(k => kwHit(text, k)));
+}
+const cpByChannel = ch => cpList().filter(c => !cpExpired(c) && (c.channels || []).includes(ch));
+// 依金額（日圓、店內標價）算這張券：適用哪一級、折多少、下一級還差多少（差額也用標價表示）
+function cpEval(c, amt) {
+  const ts = cpTiers(c), k = c.basis === 'taxExcl' ? 1.1 : 1, base = (amt || 0) / k;
+  let hit = -1;
+  ts.forEach((t, i) => { if (base >= (t.min || 0) && (t.amount != null || t.pct != null)) hit = i; });
+  const t = hit >= 0 ? ts[hit] : null;
+  let disc = 0;
+  if (t && amt > 0) {
+    if (t.pct != null) disc = Math.floor(amt * t.pct / 100);
+    else if (t.every) disc = Math.min(Math.floor(base / t.every) * t.amount, t.cap || Infinity);
+    else disc = Math.min(t.amount, amt);
+  }
+  const nxt = ts.find((x, i) => i > hit && (x.min || 0) > base && (x.pct != null || x.amount != null));
+  return {tiers: ts, idx: hit, tier: t, disc, next: nxt || null, need: nxt ? Math.ceil((nxt.min - base) * k) : 0, approx: !!t?.label};
+}
+// 自己清單裡，這張券比對得到的未買項目（預算 × 數量）合計
+function cpSubtotal(c) {
+  return (S.shopping[S.me] || []).filter(x => !x.bought && cpMatch(x.place).some(m => m.id === c.id))
+    .reduce((s, x) => s + (Number(x.budget) || 0) * (Number(x.qty) || 1), 0);
+}
+// 一個購物項目：在比對到的券裡，以「這家店清單合計」算折扣最多的那張，按金額比例分到這個項目
+function cpForItem(x) {
+  // 現場領取的券（例如來客夢 ¥500 購物券）不是結帳現折，不算進折扣
+  const ms = cpMatch(x.place).filter(c => c.display !== 'pickup'); if (!ms.length) return null;
+  const itemYen = (Number(x.budget) || 0) * (Number(x.qty) || 1);
+  let best = null;
+  for (const c of ms) {
+    const sub = cpSubtotal(c), ev = cpEval(c, sub);
+    const share = sub > 0 && itemYen > 0 ? ev.disc * itemYen / sub : 0;
+    if (!best || share > best.share || (share === best.share && (ev.next && !best.ev.next))) best = {c, ev, sub, share, itemYen};
+  }
+  return {...best, all: ms};
+}
+
+/* ── 出發前重新確認（日本 11/1 起免稅新制） ── */
+function recheckHTML() {
+  const today = cpToday(), stale = [];
+  const ra = S.catalog?.recheckAfter;
+  if (ra && today >= ra) {
+    const checks = (S.catalog.cards || []).flatMap(c => (c.sources || []).map(s => s.checked)).filter(Boolean).sort();
+    if (!checks.length || checks[0] < ra) stale.push('信用卡');
+  }
+  const rb = S.cpCat?.recheckAfter;
+  if (rb && today >= rb && (!S.cpCat.checked || S.cpCat.checked < rb)) stale.push('優惠券');
+  if (!stale.length) return '';
+  return `<div class="card remind recheck"><div class="rh">${ic.alert}<b>出發前請重新確認</b></div>
+    <p class="small" style="margin:6px 0 0">免稅新制已上路，${stale.join('／')}資料庫是 11/1 前查的，請在出發前重新確認並匯入新版。</p></div>`;
+}
+
+/* ── 優惠券頁 ── */
+function goCoupons() {
+  closeSheet();
+  if (S.tab !== 'coupons') S.prevTab = S.tab === 'cards' ? (S.prevTab || 'shop') : S.tab;
+  S.tab = 'coupons'; renderHeader(); render(); scrollTo({top: 0});
+}
+function leaveCoupons() { S.tab = S.prevTab || 'shop'; renderHeader(); render(); scrollTo({top: 0}); }
+function cpRowHTML(c) {
+  const off = cpExpired(c), noCode = c.display === 'code' && !cpTiers(c).some(t => t.code);
+  return `<button class="cpl ${off ? 'off' : ''}" data-cp="${esc(c.id)}" style="--b:${esc(c.color || '#1BA5A8')}"><span class="sw" aria-hidden="true"></span>
+    <span class="body"><span class="nm">${esc(c.chain)}</span><span class="tiny muted" style="display:block">${esc(c.title)}</span>
+      <span class="sub"><span class="chip ${c.status === 'ok' ? 'sea' : c.status === 'check' ? 'cpw' : ''}">${esc(CP_TEXT[c.status] || '')}</span><span class="chip">${esc(CP_DISPLAY[c.display] || '')}</span>
+      ${noCode ? '<span class="chip hib">還沒存條碼</span>' : ''}${c.src === 'user' ? `<span class="chip">${avatar(c.createdBy, 's').replace('data-profile', 'data-x')} ${esc(nm(c.createdBy))} 新增</span>` : ''}
+      ${off ? `<span class="chip">已過期 ${md(c.validTo)}</span>` : c.validTo ? `<span class="chip">到 ${esc(c.validTo.slice(0, 4))}/${md(c.validTo)}</span>` : ''}</span></span>
+    <span class="big">${esc(cpMaxText(c))}<small>${c.display === 'pickup' ? '' : '折扣'}</small></span></button>`;
+}
+function renderCoupons() {
+  const head = `<div class="pagehead"><button class="btn sm" id="cpBack" aria-label="返回">${ic.chev.replace('<svg', '<svg style="transform:rotate(180deg)"')}返回</button><h2>優惠券</h2></div>`;
+  const list = cpList();
+  if (!S.cpCat && !list.length) {
+    $('#main').innerHTML = head + (S.me === 'qi' ? cpImportHTML() : `<div class="card empty">${ic.ticket}${nm('qi')} 還沒匯入優惠券資料庫。<br>也可以先用下面的按鈕，掃描自己存的券圖新增。</div>`)
+      + `<button class="btn full" id="cpAdd" style="margin-top:14px">${ic.plus}新增優惠券（掃描券圖）</button>`;
+    bindCoupons(); return;
+  }
+  const live = list.filter(c => !cpExpired(c)), dead = list.filter(cpExpired);
+  const grp = (k, t) => { const xs = live.filter(c => c.status === k); return xs.length ? `<h2 class="sec">${t}<span class="chip" style="margin-left:auto">${xs.length} 張</span></h2><div class="card" style="padding:4px 12px">${xs.map(cpRowHTML).join('')}</div>` : ''; };
+  const notes = S.cpCat?.globalNotes || [], nOpen = localGet('open.cpNotes') !== '0';
+  $('#main').innerHTML = head + recheckHTML()
+    + (notes.length ? `<details class="card mini notes" data-keep="cpNotes" ${nOpen ? 'open' : ''}><summary>${ic.alert}<span>使用優惠券前先看</span><span class="chip">${notes.length}</span>${ic.chev.replace('<svg', '<svg class="chev"')}</summary><ul>${notes.map(n => `<li>${esc(n)}</li>`).join('')}</ul></details>` : '')
+    + `<div class="card zxst" id="zxSt"><span class="small muted">檢查條碼元件中…</span></div>`
+    + grp('ok', `${ic.ticket.replace('<svg', '<svg class="deco"')}確定沖繩可用`) + grp('check', `${ic.alert.replace('<svg', '<svg class="deco"')}沖繩適用待確認`) + grp('pickup', `${ic.store.replace('<svg', '<svg class="deco"')}現場領取`)
+    + (live.some(c => !['ok', 'check', 'pickup'].includes(c.status)) ? `<div class="card" style="padding:4px 12px;margin-top:12px">${live.filter(c => !['ok', 'check', 'pickup'].includes(c.status)).map(cpRowHTML).join('')}</div>` : '')
+    + (dead.length ? `<h2 class="sec">已過期</h2><div class="card" style="padding:4px 12px">${dead.map(cpRowHTML).join('')}</div>` : '')
+    + `<button class="btn full" id="cpAdd" style="margin-top:16px">${ic.plus}新增優惠券（掃描券圖）</button>
+      <p class="tiny muted" style="margin:6px 4px 0">只能從官方發放的券圖或券頁截圖掃描新增，不能手動輸入條碼數字。</p>`
+    + `<h2 class="sec">${ic.hib.replace('<svg', '<svg class="deco"')}優惠券資料庫</h2><div class="card">${S.cpCat ? `<div class="small">版本 <b class="num">${esc(S.cpMeta?.version || S.cpCat.version)}</b>・${esc(nm(S.cpMeta?.importedBy))} 於 ${fmtTime(S.cpMeta?.importedAt)} 匯入・${esc(S.cpCat.checked || '')} 查詢</div>
+      <p class="tiny muted" style="margin:6px 0 0">${esc(S.cpCat.description || '')}</p>` : '<div class="small">還沒匯入</div>'}
+      <p class="tiny muted" style="margin:6px 0 0">網頁上不能修改資料庫，要更新請由${nm('qi')}重新匯入整份新版 JSON。</p>
+      ${S.me === 'qi' ? cpImportHTML(!!S.cpCat) : ''}</div>`;
+  bindCoupons(); paintZxStatus();
+}
+async function paintZxStatus() {
+  const el = $('#zxSt'); if (!el) return;
+  const ok = await zxCached();
+  if (!$('#zxSt')) return;
+  el.innerHTML = ok ? `<span class="small">${ic.check.replace('<svg', '<svg style="width:15px;height:15px;color:var(--sea-deep);vertical-align:-2px"')} 條碼元件已存在這支手機，沒有網路也能出示條碼型的券</span>`
+    : `<div class="small"><b>條碼元件還沒下載</b>（約 1.6MB）</div><p class="tiny muted" style="margin:2px 0 8px">下載一次就會存在手機裡，在店裡沒訊號也能出示。建議在有 Wi-Fi 的地方先下載。</p><button class="btn sm pri" id="zxGet">${navigator.onLine ? '現在下載' : '需要網路'}</button>`;
+  $('#zxGet')?.addEventListener('click', async ev => {
+    ev.target.disabled = true; ev.target.textContent = '下載中…';
+    try { await zx(); toast('條碼元件已下載'); } catch (e) { toast('下載失敗：' + (e.message || e)); }
+    paintZxStatus();
+  });
+}
+function bindCoupons() {
+  const M = $('#main');
+  $('#cpBack').onclick = leaveCoupons;
+  M.querySelectorAll('details[data-keep]').forEach(d => d.ontoggle = () => localSet('open.' + d.dataset.keep, d.open ? '1' : '0'));
+  M.querySelectorAll('[data-cp]').forEach(b => b.onclick = () => openCoupon(b.dataset.cp));
+  $('#cpAdd')?.addEventListener('click', () => openAddCoupon(null));
+  bindCpImport();
+}
+function cpImportHTML(inline = false) {
+  return `<div class="${inline ? '' : 'card'}" style="${inline ? 'margin-top:12px;padding-top:12px;border-top:1.5px dashed var(--line)' : ''}">
+    ${inline ? '<b class="small">匯入更新版</b>' : `<b>匯入優惠券資料庫</b><p class="small muted">請選擇 <b>coupon-catalog</b> 開頭的 JSON 檔。匯入後 4 人都能讀取，網頁上不能修改。</p>`}
+    <label class="f" style="margin-top:6px"><span>選擇檔案</span><input class="in" type="file" accept=".json,application/json" id="cpFile"></label>
+    <button class="btn pri full" id="cpGo" disabled>匯入</button><p class="small muted" id="cpMsg"></p></div>`;
+}
+function bindCpImport() {
+  const f = $('#cpFile'); if (!f) return;
+  let text = null, j = null;
+  f.onchange = async e => {
+    text = null; $('#cpGo').disabled = true;
+    try {
+      j = JSON.parse(await e.target.files[0].text());
+      if (!j.version || !Array.isArray(j.coupons) || !j.coupons.every(c => c.id && c.chain && Array.isArray(c.tiers))) throw new Error('不是優惠券資料庫格式');
+      if (S.cpMeta?.version === j.version) throw new Error(`版本 ${j.version} 已經匯入過了，新版請改版本號`);
+      text = JSON.stringify(j); $('#cpGo').disabled = false;
+      const codes = j.coupons.reduce((n, c) => n + c.tiers.filter(t => t.code).length, 0);
+      $('#cpMsg').textContent = `版本 ${j.version}・${j.coupons.length} 張券・${codes} 個條碼`;
+    } catch (err) { $('#cpMsg').textContent = '無法讀取：' + err.message; }
+  };
+  $('#cpGo').onclick = async () => {
+    $('#cpGo').disabled = true; $('#cpMsg').textContent = '匯入中…';
+    try {
+      requireOnline();
+      await setDoc(doc(db, 'couponCatalog', 'current'), {version: j.version, json: text, importedBy: S.me, importedAt: serverTimestamp()});
+      if (j.recheckAfter && !S.checklist.some(x => x.text === RECHECK_TEXT)) {
+        const cats = [...new Set([...S.checklist].sort((a, b) => a.catOrder - b.catOrder).map(i => i.cat))];
+        const cat = cats.find(x => x.includes('出發前')) || cats[0] || '一、出發前必做事項';
+        await setDoc(doc(collection(db, 'checklist')), {text: RECHECK_TEXT, cat, catOrder: Math.max(0, cats.indexOf(cat)),
+          note: '日本 11/1 起免稅改為「先付含稅價、出境時退稅」。重新查各卡回饋和各店優惠券的條件，更新兩份 JSON 後重新匯入。',
+          scope: 'assign', who: ['qi'], claimBy: null, booking: '', order: Date.now(), createdBy: S.me, updatedBy: S.me, updatedAt: serverTimestamp()});
+      }
+      toast('優惠券資料庫已匯入');
+    } catch (e) { $('#cpMsg').textContent = errMsg(e); $('#cpGo').disabled = false; }
+  };
+}
+
+/* ── 出示畫面（全螢幕白底） ── */
+const CPS = {id: null, amt: 0, tier: null, force: false, lock: null, n: 0};
+async function wakeOn() { try { CPS.lock = await navigator.wakeLock?.request('screen'); } catch { CPS.lock = null; } }
+function wakeOff() { try { CPS.lock?.release(); } catch {} CPS.lock = null; }
+document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible' && $('#cpShow')) wakeOn(); });
+function openCoupon(id, opt = {}) {
+  const c = cpById(id); if (!c) return;
+  if (!opt.keep) closeSheet();
+  Object.assign(CPS, {id, amt: opt.amt != null ? Math.round(opt.amt) : Math.round(cpSubtotal(c)), tier: null, force: false});
+  let el = $('#cpShow');
+  if (!el) { el = document.createElement('div'); el.id = 'cpShow'; el.setAttribute('role', 'dialog'); el.setAttribute('aria-modal', 'true'); document.body.append(el); }
+  document.documentElement.classList.add('locked');
+  paintCoupon(); wakeOn();
+  history.pushState({cpShow: 1}, '');
+}
+function closeCoupon(fromPop = false) {
+  const el = $('#cpShow'); if (!el) return;
+  el.remove(); wakeOff();
+  if (!$('#sheet.on')) document.documentElement.classList.remove('locked');
+  if (!fromPop && history.state?.cpShow) history.back();
+}
+addEventListener('popstate', () => { if ($('#cpShow')) closeCoupon(true); });
+addEventListener('keydown', e => { if (e.key === 'Escape' && $('#cpShow')) closeCoupon(); });
+function paintCoupon() {
+  const el = $('#cpShow'), c = cpById(CPS.id); if (!el || !c) return closeCoupon();
+  const token = ++CPS.n;
+  const ev = cpEval(c, CPS.amt), ts = ev.tiers;
+  const sel = CPS.tier != null ? CPS.tier : (ev.idx >= 0 ? ev.idx : 0), t = ts[sel] || null;
+  const reached = t && ev.idx >= sel;
+  const R = c.requires || {}, st = c.stacking || {};
+  const cond = [
+    R.passport ? ['🛂', R.passportOriginal ? '<b>需出示護照正本</b>（照片、影本不收）' : '需出示護照'] : null,
+    R.showBeforePay !== false ? ['⏰', '結帳<b>前</b>出示，付款後不能補折'] : null,
+    R.taxFreeOnly ? ['🧾', '限免稅顧客'] : null,
+    ['💴', c.basis === 'taxIncl' ? '門檻以含稅金額（店內標價）計算' : c.basis === 'taxExcl' ? '門檻以未稅金額計算（清單金額 ÷1.1 估算）' : '券面沒寫門檻是含稅還是未稅，接近門檻時以收銀機金額為準'],
+    ['🔗', `${st.otherCoupons === false ? '不可和其他優惠券併用' : st.otherCoupons === true ? '可和其他優惠券併用' : '能否和其他券併用：待確認'}${st.taxFree === false ? '・可能不能和免稅併用' : st.taxFree === 'unknown' ? '・能否和免稅併用：待確認' : ''}${st.note ? '・' + esc(st.note) : ''}`],
+    R.network || c.display === 'official' ? ['📶', '出示時需要網路'] : null
+  ].filter(Boolean);
+  let codeBox = '';
+  if (c.display === 'pickup') codeBox = `<div class="cps-box"><b>${ic.store} 現場領取</b><p>${esc(c.howToGet || '到服務台出示護照領取')}</p>${c.tiers?.length ? `<p class="tiny">內容：${cpTiers(c).map(x => esc(x.label || tierText(x))).join('、')}</p>` : ''}</div>`;
+  else if (c.display === 'official') codeBox = `<a class="btn pri full cps-open" href="${esc(c.officialUrl || '#')}" target="_blank" rel="noopener">${ic.ticket}開啟官方券</a>
+    <p class="cps-net">需要網路・<b>截圖無效</b>・請在官方頁面出示條碼</p>${c.howToGet ? `<p class="tiny" style="margin:0">${esc(c.howToGet)}</p>` : ''}`;
+  else {
+    const k = t?.code;
+    codeBox = `<div class="cps-code ${k?.format === 'QRCode' ? 'qr' : ''}" id="cpsCode">${k ? '<span class="tiny">畫條碼中…</span>' : `<b>還沒存條碼</b><span class="tiny">請用官方券圖掃描新增</span><button class="btn sm pri" id="cpsAddCode">${ic.plus}掃描券圖補上條碼</button>`}
+      ${k && !reached && !CPS.force && t.min ? `<div class="cps-veil"><b>還沒達到 ${yen(t.min)}${c.basis === 'taxExcl' ? '（未稅）' : ''}</b><span class="tiny">實際結帳金額可能和清單不同</span><button class="btn sm" id="cpsForce">仍要出示</button></div>` : ''}</div>
+      ${k ? `<div class="cps-txt">${esc(codeLabel(k)).slice(0, 120)}</div>` : ''}
+      <p class="cps-net">把螢幕亮度調到最高${k?.format === 'image' ? '・這張是存下來的原圖' : ''}</p>`;
+  }
+  const amtBox = ts.some(x => x.pct != null || x.amount != null) ? `<div class="cps-amt">
+      <label class="cps-in"><span>這家店要買多少（日圓・店內標價）</span><input type="number" inputmode="numeric" min="0" id="cpsAmt" value="${CPS.amt || ''}" placeholder="0"></label>
+      <div class="small">${ev.tier ? `適用 <b>${esc(tierText(ev.tier))}</b>${ev.disc ? `・約折 <b class="num">${yen(ev.disc)}</b>${ev.approx ? '（依商品而定）' : ''}` : ''}` : CPS.amt ? '還沒達到最低門檻' : '輸入金額可以算出適用哪一級'}
+        ${ev.next ? `<br>👉 再買 <b class="num">${yen(ev.need)}</b> 可${ev.tier ? '升到' : '用'} ${esc(tierText(ev.next))}` : ''}</div></div>` : '';
+  el.innerHTML = `<div class="cps-wrap">
+    <div class="cps-top" style="--b:${esc(c.color || '#1BA5A8')}"><span class="sw"></span><div class="t"><b>${esc(c.chain)}</b><small>${esc(c.title)}</small></div><button class="btn sm" id="cpsX">${ic.x}關閉</button></div>
+    ${c.status === 'check' ? `<div class="cps-check">⚠️ 結帳前先問店員：這張券能用嗎？<small>沖繩店是否適用還沒確認</small></div>` : ''}
+    ${cpExpired(c) ? `<div class="cps-check">這張券 ${esc(c.validTo)} 已過期</div>` : ''}
+    ${c.display === 'code' && ts.length > 1 ? `<div class="cps-tiers" id="cpsTiers">${ts.map((x, i) => `<button type="button" data-ti="${i}" aria-pressed="${i === sel}">${ev.idx >= i ? '✓ ' : ''}${esc(tierText(x))}</button>`).join('')}</div>` : ''}
+    ${codeBox}${amtBox}
+    <ul class="cps-cond">${cond.map(([i, x]) => `<li><span aria-hidden="true">${i}</span><span>${x}</span></li>`).join('')}</ul>
+    ${(c.warnings || []).length ? `<ul class="cps-warn">${c.warnings.map(w => `<li>${esc(w)}</li>`).join('')}</ul>` : ''}
+    ${(c.excludes || []).length ? `<details class="cps-more"><summary>不適用的商品／店舖（${c.excludes.length}）</summary><p>${c.excludes.map(esc).join('、')}</p></details>` : ''}
+    ${(c.stores || []).length ? `<details class="cps-more"><summary>適用店舖（${c.stores.length}）</summary><ul>${c.stores.map(s => `<li>${esc(s.name)}${s.note ? `<span class="tiny">・${esc(s.note)}</span>` : ''}</li>`).join('')}</ul></details>` : ''}
+    <div class="cps-foot">${c.validTo ? `到期日 ${esc(c.validTo)}` : '券面未標期限'}${(c.sources || []).length ? `・資料查詢日 ${esc(c.sources[0].checked || '')}` : ''}
+      ${(c.sources || []).filter(s => s.url).map(s => `<br><a href="${esc(s.url)}" target="_blank" rel="noopener">${esc(s.title)} ›</a>`).join('')}
+      ${(c.sources || []).filter(s => !s.url).map(s => `<br>${esc(s.title)}`).join('')}</div>
+    ${c.src === 'user' && c.createdBy === S.me ? `<button class="btn full" id="cpsDel" style="margin-top:4px">${ic.trash}刪除這張券</button>` : ''}
+    ${c.ovId && c.ovBy === S.me ? `<button class="btn full" id="cpsDelOv" style="margin-top:4px">${ic.trash}移除我補上的條碼</button>` : ''}
+    ${c.ovId && c.ovBy !== S.me ? `<p class="tiny" style="color:#56667A;margin:0">條碼由 ${esc(nm(c.ovBy))} 掃描補上</p>` : ''}
+  </div>`;
+  el.querySelector('#cpsX').onclick = () => closeCoupon();
+  el.querySelector('#cpsTiers')?.addEventListener('click', e => { const b = e.target.closest('[data-ti]'); if (!b) return; CPS.tier = +b.dataset.ti; CPS.force = false; paintCoupon(); });
+  el.querySelector('#cpsForce')?.addEventListener('click', () => { CPS.force = true; paintCoupon(); });
+  el.querySelector('#cpsAddCode')?.addEventListener('click', () => { closeCoupon(); openAddCoupon(c.src === 'cat' ? c.id : null); });
+  const ai = el.querySelector('#cpsAmt');
+  ai?.addEventListener('change', () => { CPS.amt = Math.max(0, Number(ai.value) || 0); CPS.tier = null; CPS.force = false; paintCoupon(); });
+  ai?.addEventListener('keydown', e => { if (e.key === 'Enter') ai.blur(); });
+  el.querySelector('#cpsDel')?.addEventListener('click', async () => {
+    if (!await confirmDialog({title: '刪除這張券？', body: `${c.chain}・${c.title}\n4 人都會看不到這張券。`, ok: '刪除', danger: true})) return;
+    deleteDoc(doc(db, 'coupons', c.id)).catch(e => toast(errMsg(e))); closeCoupon(); toast('已刪除');
+  });
+  el.querySelector('#cpsDelOv')?.addEventListener('click', async () => {
+    if (!await confirmDialog({title: '移除補上的條碼？', body: `${c.chain}・${c.title}`, ok: '移除', danger: true})) return;
+    deleteDoc(doc(db, 'coupons', c.ovId)).catch(e => toast(errMsg(e))); closeCoupon(); toast('已移除');
+  });
+  const k = c.display === 'code' ? t?.code : null, box = el.querySelector('#cpsCode');
+  if (k && box) {
+    drawCode(k).then(r => {
+      if (token !== CPS.n || !$('#cpsCode')) return;
+      const veil = box.querySelector('.cps-veil');
+      box.innerHTML = r.svg ? r.svg : r.img ? `<img src="${esc(r.img)}" alt="券圖">` : `<b style="color:#B32F3B">${esc(r.err)}</b>`;
+      if (veil) box.append(veil);
+    }).catch(e => {
+      if (token !== CPS.n || !$('#cpsCode')) return;
+      box.innerHTML = `<b style="color:#B32F3B">條碼元件還沒下載</b><span class="tiny">${navigator.onLine ? '載入失敗：' + esc(e.message || e) : '目前沒有網路。請改出示原本的券圖，下次有網路時到「優惠券」頁下載條碼元件。'}</span>`;
+    });
+  }
+}
+
+/* ── 新增：掃描券圖（條碼只能來自官方券圖，不能手動輸入數字） ── */
+const SCAN_FORMATS = ['QRCode', 'Code128', 'EAN13', 'EAN8', 'Code39', 'ITF', 'DataMatrix', 'PDF417', 'UPCA'];
+async function shrinkImage(file, max = 1000) {
+  const bmp = await createImageBitmap(file), k = Math.min(1, max / Math.max(bmp.width, bmp.height));
+  const cv = document.createElement('canvas'); cv.width = Math.round(bmp.width * k); cv.height = Math.round(bmp.height * k);
+  cv.getContext('2d').drawImage(bmp, 0, 0, cv.width, cv.height);
+  for (const q of [0.82, 0.7, 0.55]) { const u = cv.toDataURL('image/webp', q); if (u.length < 300000) return u; }
+  return cv.toDataURL('image/jpeg', 0.6);
+}
+function openAddCoupon(baseId) {
+  const base = baseId ? cpById(baseId) : null, bts = base ? cpTiers(base) : [];
+  let found = [], imgUrl = null;
+  openSheet(`<h3>${base ? `補上條碼：${esc(base.chain)}` : '新增優惠券'}<button class="iconbtn x" data-close aria-label="關閉">${ic.x}</button></h3>
+    <p class="small muted" style="margin:0 0 10px">選一張官方券圖或券頁截圖，會自動找出圖裡所有條碼。只能從券圖新增，不能手動輸入條碼數字。</p>
+    <label class="btn pri full" for="aImg">${ic.plus}選擇券圖</label><input id="aImg" type="file" accept="image/*" class="sr">
+    <div id="aRes" style="margin-top:12px"></div>
+    ${base ? '' : `<div id="aMeta" class="hidden">
+      <label class="f"><span>店名 <em>*</em></span><input class="in" id="aChain" maxlength="40" placeholder="例如 Drug Eleven"></label>
+      <label class="f"><span>券名</span><input class="in" id="aTitle" maxlength="60" placeholder="例如 免稅優惠券"></label>
+      <label class="f"><span>比對關鍵字 <span class="tiny muted">（用逗號分隔，購物清單的購買地點含這些字就會顯示這張券）</span></span><input class="in" id="aKw" maxlength="200"></label>
+      <div class="f"><span>門檻金額怎麼算</span><div class="seg" id="aBasis"><button type="button" data-b="taxIncl" aria-pressed="false">含稅</button><button type="button" data-b="taxExcl" aria-pressed="false">未稅</button><button type="button" data-b="unknown" aria-pressed="true">券上沒寫</button></div></div>
+      <div class="row2"><label class="f"><span>到期日</span><input class="in" id="aTo" type="date"></label>
+        <div class="f"><span>&nbsp;</span>${optHTML('aPass', false, '需出示護照')}</div></div>
+      <label class="f"><span>券上的注意事項</span><textarea class="in" id="aNote" maxlength="500" placeholder="例如 不可與其他優惠併用、部分商品不適用"></textarea></label>
+      <label class="f"><span>券的來源網址（選填）</span><input class="in" id="aUrl" type="url" maxlength="300"></label></div>`}
+    <div class="sheet-acts"><button class="btn" data-close>取消</button><button class="btn pri" id="aSave" disabled>儲存</button></div>`, s => {
+    let basis = 'unknown', pass = false;
+    s.querySelector('#aBasis')?.addEventListener('click', e => { const b = e.target.closest('[data-b]'); if (!b) return; basis = b.dataset.b; s.querySelectorAll('#aBasis [data-b]').forEach(x => x.setAttribute('aria-pressed', String(x === b))); });
+    s.querySelector('[data-opt="aPass"]')?.addEventListener('click', e => { pass = !pass; e.currentTarget.setAttribute('aria-checked', String(pass)); });
+    const res = s.querySelector('#aRes');
+    const paintFound = () => {
+      if (!found.length) { res.innerHTML = imgUrl ? `<div class="warn">圖裡找不到條碼。可以換一張比較清楚的圖，或把整張圖存起來出示（店家不一定掃得到）。</div><img src="${imgUrl}" alt="" style="max-height:180px;display:block;margin:0 auto 8px;border-radius:10px"><button class="btn full" id="aUseImg">改存整張圖</button>` : ''; return; }
+      res.innerHTML = `<div class="small" style="margin-bottom:6px">找到 <b>${found.length}</b> 個條碼${base ? '，請對應到資料庫的級距' : '，請填每一個的門檻和折扣'}：</div>` + found.map((f, i) => `<div class="cardbox">
+        <div class="lbl">${f.format}・${f.ok === true ? '<span style="color:var(--sea-deep)">✓ 重畫比對一致</span>' : f.ok === false ? '<span style="color:#B32F3B">重畫不一致，會改存原圖</span>' : '比對中…'}</div>
+        <div class="tiny muted" style="word-break:break-all;margin-bottom:6px">${esc(f.label.slice(0, 90))}</div>
+        ${base ? `<select class="in" data-ft="${i}"><option value="">不使用這個條碼</option>${bts.map((t, j) => `<option value="${j}" ${f.tier === j ? 'selected' : ''}>${esc(tierText(t))}</option>`).join('')}</select>`
+          : `<div class="row2"><label class="f" style="margin:0"><span>滿多少（日圓）</span><input class="in" type="number" inputmode="numeric" min="0" data-fmin="${i}" value="${f.min ?? ''}" placeholder="0"></label>
+            <label class="f" style="margin:0"><span>折扣 %</span><input class="in" type="number" inputmode="decimal" min="0" max="100" step="0.5" data-fpct="${i}" value="${f.pct ?? ''}"></label></div>`}</div>`).join('');
+      res.querySelectorAll('[data-ft]').forEach(x => x.onchange = () => { found[+x.dataset.ft].tier = x.value === '' ? null : +x.value; });
+      res.querySelectorAll('[data-fmin]').forEach(x => x.oninput = () => { found[+x.dataset.fmin].min = x.value === '' ? null : Number(x.value); });
+      res.querySelectorAll('[data-fpct]').forEach(x => x.oninput = () => { found[+x.dataset.fpct].pct = x.value === '' ? null : Number(x.value); });
+    };
+    s.querySelector('#aImg').onchange = async e => {
+      const file = e.target.files[0]; if (!file) return;
+      found = []; res.innerHTML = '<p class="small muted">讀取中…（第一次要下載條碼元件）</p>'; s.querySelector('#aSave').disabled = true;
+      try {
+        const Z = await zx();
+        imgUrl = await shrinkImage(file);
+        const rs = (await Z.readBarcodes(file, {formats: SCAN_FORMATS, tryHarder: true, maxNumberOfSymbols: 8})).filter(r => r.isValid !== false && r.bytes?.length);
+        rs.sort((a, b) => a.position.topLeft.y - b.position.topLeft.y || a.position.topLeft.x - b.position.topLeft.x);
+        const seen = new Set();
+        for (const r of rs) {
+          const ascii = r.bytes.every(v => v >= 0x20 && v < 0x7f);
+          const key = bytesToB64(r.bytes); if (seen.has(key)) continue; seen.add(key);
+          const code = ascii ? {format: r.format, text: r.text} : {format: r.format, bytesB64: key, encoding: (() => { try { new TextDecoder('utf-8', {fatal: true}).decode(r.bytes); return 'UTF-8'; } catch { return 'Shift_JIS'; } })(), ecLevel: r.ecLevel || 'M'};
+          found.push({format: r.format, code, label: codeLabel(code) || r.text, ok: null, tier: base ? (found.length < bts.length ? found.length : null) : null, min: null, pct: null});
+        }
+        if (!base && found.length) s.querySelector('#aMeta').classList.remove('hidden');
+        if (!base && !found.length) s.querySelector('#aMeta').classList.add('hidden');
+        paintFound(); s.querySelector('#aSave').disabled = !found.length;
+        for (const f of found) { const d = await drawCode(f.code).catch(() => ({err: 1})); f.ok = !!d.svg; }
+        paintFound();
+        s.querySelector('#aUseImg')?.addEventListener('click', useImg);
+      } catch (err) { res.innerHTML = `<div class="warn">${navigator.onLine ? '讀取失敗：' + esc(err.message || err) : '第一次掃描需要網路下載條碼元件。'}</div>`; }
+    };
+    function useImg() {
+      found = [{format: 'image', code: {format: 'image', dataUrl: imgUrl}, label: '整張券圖', ok: true, tier: base ? 0 : null, min: null, pct: null}];
+      if (!base) s.querySelector('#aMeta').classList.remove('hidden');
+      paintFound(); s.querySelector('#aSave').disabled = false;
+    }
+    s.querySelector('#aSave').onclick = async () => {
+      const fixCode = f => f.ok === false && imgUrl ? {format: 'image', dataUrl: imgUrl} : f.code;
+      try {
+        if (base) {
+          const codes = {};
+          for (const f of found) if (f.tier != null) { if (codes[f.tier]) { toast('同一個級距選了兩個條碼'); return; } codes[f.tier] = fixCode(f); }
+          if (!Object.keys(codes).length) { toast('請至少選一個級距'); return; }
+          await setDoc(doc(db, 'coupons', 'ov_' + base.id), {kind: 'overlay', base: base.id, codes, createdBy: S.me, updatedAt: serverTimestamp()});
+          closeSheet(); toast('已補上條碼'); setTimeout(() => openCoupon(base.id), 300); return;
+        }
+        const chain = s.querySelector('#aChain').value.trim(); if (!chain) { toast('請填店名'); return; }
+        const tiers = found.map(f => ({min: f.min || 0, pct: f.pct || 0, code: fixCode(f)}));
+        if (tiers.some(t => !(t.pct > 0)) && found.length > 1) { toast('請填每個條碼的折扣 %'); return; }
+        const to = s.querySelector('#aTo').value || null;
+        if (to && to < TRIP_START && !await confirmDialog({title: '這張券旅行前就到期了', body: `到期日 ${to}，旅行是 ${TRIP_START} 開始。還是要存嗎？`, ok: '還是要存'})) return;
+        const kw = s.querySelector('#aKw').value.split(/[,，、]/).map(x => x.trim()).filter(Boolean);
+        const note = s.querySelector('#aNote').value.trim(), url = s.querySelector('#aUrl').value.trim();
+        const coupon = {chain, title: s.querySelector('#aTitle').value.trim() || '優惠券', color: '#1BA5A8', status: 'ok', display: 'code',
+          channels: [autoChannel(chain)], keywords: kw.length ? kw : [chain], excludeKeywords: [], stores: [], basis,
+          tiers: tiers.map(t => t.pct > 0 ? t : {...t, pct: null}),
+          requires: {passport: pass, passportOriginal: false, taxFreeOnly: false, showBeforePay: true, network: false},
+          stacking: {taxFree: 'unknown', otherCoupons: 'unknown', note: ''}, excludes: [], validFrom: null, validTo: to, officialUrl: url || null,
+          warnings: note ? [note] : [], sources: [{title: `${nm(S.me)} 從券圖新增`, url: url || null, checked: cpToday()}]};
+        await setDoc(doc(collection(db, 'coupons')), {kind: 'own', coupon, createdBy: S.me, updatedAt: serverTimestamp()});
+        closeSheet(); toast('已新增優惠券');
+      } catch (e) { toast(errMsg(e)); }
+    };
+  });
+}
+
+/* ── 購物清單：優惠券標籤、本次可用優惠券 ── */
+function shopCpChipHTML(x, mine) {
+  const ms = cpMatch(x.place); if (!ms.length) return '';
+  const best = mine ? cpForItem(x) : null, c = best?.c || ms[0];
+  const txt = ms.length > 1 ? `${ms.length} 張券` : c.display === 'pickup' ? '現場領券' : best?.ev?.tier?.pct != null ? `折 ${best.ev.tier.pct}%` : cpMaxText(c);
+  return `<span class="chip cp" role="button" tabindex="0" data-cpi="${esc(x.id)}" aria-label="這家店的優惠券">${ic.ticket}${esc(txt)}</span>`;
+}
+function shopCpTopHTML() {
+  const list = cpList(); if (!list.length) return '';
+  const used = new Map();
+  for (const x of S.shopping[S.me] || []) if (!x.bought) for (const c of cpMatch(x.place)) used.set(c.id, c);
+  const open = localGet('open.cpMini') !== '0';
+  const rows = [...used.values()].map(c => {
+    const sub = cpSubtotal(c), ev = c.display === 'pickup' ? {} : cpEval(c, sub);
+    return `<button class="cprow" data-cp="${esc(c.id)}" style="--b:${esc(c.color || '#1BA5A8')}"><span class="sw"></span><span class="body"><b>${esc(c.chain)}</b>${c.status === 'check' ? ' <span class="chip cpw">待確認</span>' : ''}
+      <span class="tiny muted" style="display:block">清單 ${yen(sub)}・${ev.tier ? `適用 ${esc(tierText(ev.tier))}${ev.disc ? `，約折 ${yen(ev.disc)}` : ''}` : c.display === 'pickup' ? '現場領取' : '還沒達到門檻'}${ev.next ? `・再 ${yen(ev.need)} 可${ev.tier ? '升到' : '用'} ${esc(tierText(ev.next))}` : ''}</span></span>${ic.chev}</button>`;
+  }).join('');
+  return `<details class="card mini" data-keep="cpMini" ${open ? 'open' : ''}><summary>${ic.ticket}<span>本次可用優惠券</span><span class="chip">${used.size}</span>${ic.chev.replace('<svg', '<svg class="chev"')}</summary>
+    <div style="margin-top:6px">${rows || '<p class="tiny muted" style="margin:4px 0">清單的購買地點還沒對到任何優惠券。購買地點寫店名（例如 大國藥妝 新都心店）就會自動比對。</p>'}</div>
+    <button class="btn sm" id="toCoupons" style="margin-top:8px">${ic.ticket}全部優惠券 ›</button></details>`;
+}
+function bindShopCoupons(root) {
+  root.querySelectorAll('[data-cpi]').forEach(b => b.onkeydown = e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); b.click(); } });
+  root.querySelectorAll('[data-cpi]').forEach(b => b.onclick = e => {
+    e.stopPropagation(); e.preventDefault();
+    const who = S.shopWho || S.me, x = (S.shopping[who] || []).find(i => i.id === b.dataset.cpi); if (!x) return;
+    const ms = cpMatch(x.place); if (!ms.length) return;
+    if (ms.length === 1) return openCoupon(ms[0].id, who === S.me ? {} : {amt: 0});
+    openSheet(`<h3>${esc(x.place)} 可用的券<button class="iconbtn x" data-close aria-label="關閉">${ic.x}</button></h3>
+      <p class="tiny muted" style="margin:0 0 8px">同一筆結帳通常只能用一張，選折扣最多的那張。</p>
+      <div class="card" style="padding:4px 12px">${ms.map(cpRowHTML).join('')}</div>`, s => s.querySelectorAll('[data-cp]').forEach(r => r.onclick = () => openCoupon(r.dataset.cp, who === S.me ? {} : {amt: 0})));
+  });
+  root.querySelectorAll('.cprow[data-cp]').forEach(b => b.onclick = () => openCoupon(b.dataset.cp));
+  $('#toCoupons')?.addEventListener('click', goCoupons);
+  $('#toCoupons0')?.addEventListener('click', goCoupons);
+}
+
+/* ── 刷卡試算：套用優惠券 ── */
+function calcCpCands() {
+  const byText = CALC.store ? cpMatch(CALC.store) : [];
+  const xs = byText.length ? byText : CALC.ch ? cpByChannel(CALC.ch) : [];
+  return xs.filter(c => c.display !== 'pickup' && cpTiers(c).some(t => t.pct != null || t.amount != null));
+}
+function calcCpState() {
+  const {a, fx} = calcTwd(), cands = calcCpCands();
+  const yenAmt = a ? (CALC.cur === 'JPY' ? a : a / fx) : 0;
+  let c = null;
+  if (CALC.cp === 'none' || !cands.length) c = null;
+  else if (CALC.cp && CALC.cp !== 'auto') c = cands.find(x => x.id === CALC.cp) || null;
+  if (!c && CALC.cp !== 'none' && cands.length) {
+    let best = null;
+    for (const x of cands) { const ev = cpEval(x, yenAmt); if (!best || ev.disc > best.ev.disc) best = {c: x, ev}; }
+    c = best.c;
+  }
+  const ev = c ? cpEval(c, yenAmt) : null, disc = ev?.disc || 0;
+  return {cands, c, ev, yenAmt, disc, paidYen: Math.max(0, yenAmt - disc), fx};
+}
+function paintCalcCp(s) {
+  const el = s.querySelector('#kCp'); if (!el) return;
+  const st = calcCpState();
+  if (!st.cands.length) { el.innerHTML = ''; return; }
+  const sel = st.c?.id || 'none';
+  el.innerHTML = `<div class="f" style="margin:4px 0 2px"><span>${ic.ticket.replace('<svg', '<svg style="width:15px;height:15px;vertical-align:-2px"')} 套用優惠券</span>
+    <div class="chips">${[{id: 'none', t: '不使用'}, ...st.cands.map(c => ({id: c.id, t: `${c.chain} ${cpMaxText(c)}`}))].map(o => `<button type="button" class="chpick" data-kcp="${esc(o.id)}" aria-pressed="${o.id === sel}">${esc(o.t)}</button>`).join('')}</div>
+    ${st.c ? `<div class="kcp">${st.yenAmt ? `${yen(st.yenAmt)} → ${st.ev.tier ? `套用 ${esc(st.c.chain)} ${esc(tierText(st.ev.tier))}（−${yen(st.disc)}）→ 實付 <b class="num">${yen(st.paidYen)}</b>` : `還沒達到 ${esc(st.c.chain)} 的門檻，先不折`}` : `輸入金額後算優惠券折扣`}
+      ${st.ev.next && st.yenAmt ? `<div class="tiny">👉 再買 ${yen(st.ev.need)} 可${st.ev.tier ? '升到' : '用'} ${esc(tierText(st.ev.next))}</div>` : ''}
+      ${st.ev.approx ? '<div class="tiny">實際折扣依商品而定</div>' : ''}
+      ${st.c.status === 'check' ? '<div class="tiny warnline">⚠️ 沖繩適用待確認，結帳前先問店員</div>' : ''}
+      <button type="button" class="btn sm" data-kshow="${esc(st.c.id)}" style="margin-top:6px">${ic.ticket}出示這張券</button></div>` : ''}</div>`;
+}
+
+// 剛勾「已買」的項目：小計把它算回去，才不會因為它已買而掉到門檻以下
+function cpForItemBought(x) {
+  const was = x.bought; x.bought = false;
+  try { return cpForItem(x); } finally { x.bought = was; }
 }
 
 /* ───────────── service worker ───────────── */
