@@ -542,9 +542,16 @@ ul.bd li.hint::before{content:"💡 "}
 /* ── 優惠券 ── */
 .chip.cp{background:#FFF0D2;color:#8A5A00;cursor:pointer}
 .chip.cpw{background:#FFF0D2;color:#8A5A00}
-.cpl{display:flex;align-items:center;gap:11px;width:100%;text-align:left;padding:11px 2px}
+/* 店家標誌：白底圓角小方塊；沒有標誌時顯示品牌色店名徽章 */
+.cplogo{--s:44px;flex:none;position:relative;width:var(--s);height:var(--s);border-radius:12px 13px 11px 12px;background:#fff;box-shadow:inset 0 0 0 1.5px var(--line),1.5px 2px 0 rgba(43,58,78,.08);overflow:hidden;display:grid;place-items:center}
+.cplogo img{width:100%;height:100%;object-fit:contain;padding:4px}
+.cplogo>b{display:none;width:100%;height:100%;place-items:center;background:var(--b);color:#fff;font-family:var(--f-num);font-weight:800;font-size:calc(var(--s) * .36);letter-spacing:-.02em;line-height:1;text-shadow:0 1px 0 rgba(0,0,0,.18)}
+.cplogo.nologo img{display:none}
+.cplogo.nologo>b{display:grid}
+.cplogo.s{--s:36px;border-radius:10px 11px 9px 10px}
+.cplogo.l{--s:52px;border-radius:14px 15px 13px 14px}
+.cpl{display:flex;align-items:center;gap:12px;width:100%;text-align:left;padding:11px 2px}
 .cpl+.cpl{border-top:1px dashed var(--line)}
-.cpl .sw,.cprow .sw,.cps-top .sw{flex:none;width:9px;align-self:stretch;min-height:34px;border-radius:5px;background:var(--b);box-shadow:inset 0 0 0 1px rgba(43,58,78,.18)}
 .cpl .body{flex:1;min-width:0}
 .cpl .nm{display:block;font-family:var(--f-title);font-size:15.5px;line-height:1.3}
 .cpl .sub{display:flex;flex-wrap:wrap;gap:5px;margin-top:5px}
@@ -560,41 +567,44 @@ ul.bd li.hint::before{content:"💡 "}
 .kcp{margin-top:8px;padding:8px 10px;border-radius:10px;background:#FFF6E4;box-shadow:inset 0 0 0 1.5px rgba(138,90,0,.22);font-size:13.5px;line-height:1.5}
 .kcp .num{font-size:15px}
 .rec .cpline{font-size:12.5px;color:#8A5A00;margin:4px 2px 0}
-#cpShow{position:fixed;inset:0;z-index:90;background:#fff;color:#1d2624;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;
+/* 出示畫面：沿用 app 的紙張底色與卡片；只有條碼本身放在純白票券上，方便掃描 */
+#cpShow{position:fixed;inset:0;z-index:90;background:var(--paper);color:var(--ink);overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;
   padding:calc(var(--safe-t) + 12px) max(16px,env(safe-area-inset-right,0px)) calc(var(--safe-b) + 28px) max(16px,env(safe-area-inset-left,0px))}
 .cps-wrap{max-width:520px;margin:0 auto;display:flex;flex-direction:column;gap:12px}
-.cps-top{display:flex;align-items:center;gap:10px}
+.cps-top{display:flex;align-items:center;gap:12px}
 .cps-top .t{flex:1;min-width:0;line-height:1.3}
-.cps-top .t b{display:block;font-family:var(--f-title);font-weight:400;font-size:20px}
-.cps-top .t small{font-size:13px;color:#56667A}
-.cps-check{background:#FFF0D2;color:#7A4F00;border-radius:12px;padding:10px 12px;font-family:var(--f-title);font-size:16px}
+.cps-top .t b{display:block;font-family:var(--f-title);font-weight:400;font-size:21px}
+.cps-top .t small{font-size:13px;color:var(--ink-2)}
+.cps-check{background:#FFF0D2;color:#7A4F00;border-radius:var(--r-card);box-shadow:inset 0 0 0 1.5px rgba(138,90,0,.25);padding:10px 14px;font-family:var(--f-title);font-size:16px}
 .cps-check small{display:block;font-family:var(--f-body);font-size:12.5px}
 .cps-tiers{display:flex;flex-wrap:wrap;gap:6px}
-.cps-tiers button{min-height:38px;padding:0 13px;border-radius:999px;box-shadow:inset 0 0 0 1.5px #C9D0CD;font-size:14px;color:#1d2624;background:#fff}
-.cps-tiers button[aria-pressed=true]{background:#1d2624;color:#fff;box-shadow:none}
-.cps-code{position:relative;background:#fff;border:2px solid #1d2624;border-radius:14px;padding:22px 16px;min-height:190px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;text-align:center}
+.cps-tiers button{min-height:38px;padding:0 13px;border-radius:999px;background:var(--card);box-shadow:inset 0 0 0 1.5px var(--line-2);font-size:14px;color:var(--ink)}
+.cps-tiers button[aria-pressed=true]{background:var(--sea);color:#fff;box-shadow:2px 2px 0 rgba(11,116,120,.3)}
+.cps-code{position:relative;background:#fff;border-radius:var(--r-card);box-shadow:inset 0 0 0 1.5px var(--line-2),var(--shadow);padding:22px 16px;min-height:190px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;text-align:center}
 .cps-code svg,.cps-code img{display:block;width:100%;max-width:460px;height:auto}
 .cps-code.qr svg{max-width:300px}
-.cps-veil{position:absolute;inset:0;border-radius:12px;background:rgba(255,255,255,.95);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:12px}
-.cps-txt{font-family:ui-monospace,Menlo,monospace;font-size:12px;color:#56667A;text-align:center;word-break:break-all;margin-top:-4px}
-.cps-net{font-size:13px;color:#56667A;text-align:center;margin:-2px 0 0}
+.cps-veil{position:absolute;inset:0;border-radius:inherit;background:rgba(255,253,248,.96);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:12px}
+.cps-txt{font-family:ui-monospace,Menlo,monospace;font-size:12px;color:var(--ink-2);text-align:center;word-break:break-all;margin-top:-4px}
+.cps-net{font-size:13px;color:var(--ink-2);text-align:center;margin:-2px 0 0}
 .cps-open{min-height:58px;font-size:18px}
-.cps-box{background:#F4F6F5;border-radius:14px;padding:14px;font-size:15px}
+.cps-box{background:var(--card);border-radius:var(--r-card);box-shadow:inset 0 0 0 1.5px var(--line-2),var(--shadow);padding:14px;font-size:15px}
 .cps-box b{display:flex;align-items:center;gap:6px;font-family:var(--f-title);font-weight:400;font-size:17px}
-.cps-box b svg{width:20px;height:20px}
+.cps-box b svg{width:20px;height:20px;color:var(--terra)}
 .cps-box p{margin:6px 0 0}
-.cps-amt{background:#EEF8F6;border-radius:14px;padding:12px;display:flex;flex-direction:column;gap:6px;font-size:14px}
-.cps-in{display:flex;flex-direction:column;gap:4px;font-size:12.5px;color:#56667A}
-.cps-in input{font-family:var(--f-num);font-weight:800;font-size:22px;min-height:46px;border:0;border-radius:10px;padding:6px 12px;box-shadow:inset 0 0 0 1.5px #B9C9C6;background:#fff;color:#1d2624;text-align:right}
-.cps-cond,.cps-warn{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px;font-size:15px;line-height:1.45}
+.cps-amt{background:var(--sea-wash);border-radius:var(--r-card);box-shadow:inset 0 0 0 1.5px rgba(11,116,120,.22);padding:12px 14px;display:flex;flex-direction:column;gap:6px;font-size:14px}
+.cps-in{display:flex;flex-direction:column;gap:4px;font-family:var(--f-title);font-size:13px;color:var(--ink-2)}
+.cps-in input{font-family:var(--f-num);font-weight:800;font-size:22px;min-height:46px;border:0;border-radius:12px;padding:6px 12px;box-shadow:inset 0 0 0 1.5px var(--line-2);background:var(--card);color:var(--ink);text-align:right;outline:none}
+.cps-in input:focus{box-shadow:inset 0 0 0 2px var(--sea)}
+.cps-cond{list-style:none;margin:0;padding:12px 14px;display:flex;flex-direction:column;gap:9px;font-size:15px;line-height:1.45;background:var(--card);border-radius:var(--r-card);box-shadow:inset 0 0 0 1.5px var(--line-2),var(--shadow)}
 .cps-cond li{display:flex;gap:10px}
 .cps-cond li>span:first-child{flex:none;width:22px;text-align:center}
-.cps-warn li{background:#FCE6E6;color:#8E2430;border-radius:10px;padding:8px 11px;font-size:14px}
-.cps-more{font-size:14px;border-top:1px dashed #D3DAD8;padding-top:8px}
-.cps-more summary{cursor:pointer;color:#0B7478;font-family:var(--f-title)}
-.cps-more p,.cps-more ul{margin:6px 0 0;color:#3D4B5C}
+.cps-warn{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px}
+.cps-warn li{background:var(--hib-light);color:#9B2733;border-radius:12px;padding:8px 12px;font-size:14px;line-height:1.5}
+.cps-more{font-size:14px;border-top:1.5px dashed var(--line);padding-top:8px}
+.cps-more summary{cursor:pointer;color:var(--sea-deep);font-family:var(--f-title)}
+.cps-more p,.cps-more ul{margin:6px 0 0;color:var(--ink-2)}
 .cps-more ul{padding-left:18px}
-.cps-foot{font-size:12.5px;color:#56667A;line-height:1.7}
+.cps-foot{font-size:12.5px;color:var(--ink-2);line-height:1.7}
 
 /* ── gate screens ── */
 .gate{text-align:center;padding-top:10px}
@@ -3036,9 +3046,15 @@ function goCoupons() {
   S.tab = 'coupons'; renderHeader(); render(); scrollTo({top: 0});
 }
 function leaveCoupons() { S.tab = S.prevTab || 'shop'; renderHeader(); render(); scrollTo({top: 0}); }
+// 店家標誌：資料庫的 logo（店家官網的網站圖示）；讀不到或沒有時，改用品牌色的店名小徽章
+const cpBadge = c => c.badge || String(c.chain || '?').replace(/\s.*$/, '').slice(0, 2);
+function cpLogo(c, size = '') {
+  const b = `<b style="--b:${esc(c.color || '#1BA5A8')}">${esc(cpBadge(c))}</b>`;
+  return `<span class="cplogo ${size} ${c.logo ? '' : 'nologo'}" aria-hidden="true">${c.logo ? `<img src="${esc(c.logo)}" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.parentNode.classList.add('nologo')">` : ''}${b}</span>`;
+}
 function cpRowHTML(c) {
   const off = cpExpired(c), noCode = c.display === 'code' && !cpTiers(c).some(t => t.code);
-  return `<button class="cpl ${off ? 'off' : ''}" data-cp="${esc(c.id)}" style="--b:${esc(c.color || '#1BA5A8')}"><span class="sw" aria-hidden="true"></span>
+  return `<button class="cpl ${off ? 'off' : ''}" data-cp="${esc(c.id)}">${cpLogo(c)}
     <span class="body"><span class="nm">${esc(c.chain)}</span><span class="tiny muted" style="display:block">${esc(c.title)}</span>
       <span class="sub"><span class="chip ${c.status === 'ok' ? 'sea' : c.status === 'check' ? 'cpw' : ''}">${esc(CP_TEXT[c.status] || '')}</span><span class="chip">${esc(CP_DISPLAY[c.display] || '')}</span>
       ${noCode ? '<span class="chip hib">還沒存條碼</span>' : ''}${c.src === 'user' ? `<span class="chip">${avatar(c.createdBy, 's').replace('data-profile', 'data-x')} ${esc(nm(c.createdBy))} 新增</span>` : ''}
@@ -3174,14 +3190,14 @@ function paintCoupon() {
     codeBox = `<div class="cps-code ${k?.format === 'QRCode' ? 'qr' : ''}" id="cpsCode">${k ? '<span class="tiny">畫條碼中…</span>' : `<b>還沒存條碼</b><span class="tiny">請用官方券圖掃描新增</span><button class="btn sm pri" id="cpsAddCode">${ic.plus}掃描券圖補上條碼</button>`}
       ${k && !reached && !CPS.force && t.min ? `<div class="cps-veil"><b>還沒達到 ${yen(t.min)}${c.basis === 'taxExcl' ? '（未稅）' : ''}</b><span class="tiny">實際結帳金額可能和清單不同</span><button class="btn sm" id="cpsForce">仍要出示</button></div>` : ''}</div>
       ${k ? `<div class="cps-txt">${esc(codeLabel(k)).slice(0, 120)}</div>` : ''}
-      <p class="cps-net">把螢幕亮度調到最高${k?.format === 'image' ? '・這張是存下來的原圖' : ''}</p>`;
+      ${k?.format === 'image' ? '<p class="cps-net">這張是存下來的原圖</p>' : ''}`;
   }
   const amtBox = ts.some(x => x.pct != null || x.amount != null) ? `<div class="cps-amt">
       <label class="cps-in"><span>這家店要買多少（日圓・店內標價）</span><input type="number" inputmode="numeric" min="0" id="cpsAmt" value="${CPS.amt || ''}" placeholder="0"></label>
       <div class="small">${ev.tier ? `適用 <b>${esc(tierText(ev.tier))}</b>${ev.disc ? `・約折 <b class="num">${yen(ev.disc)}</b>${ev.approx ? '（依商品而定）' : ''}` : ''}` : CPS.amt ? '還沒達到最低門檻' : '輸入金額可以算出適用哪一級'}
         ${ev.next ? `<br>👉 再買 <b class="num">${yen(ev.need)}</b> 可${ev.tier ? '升到' : '用'} ${esc(tierText(ev.next))}` : ''}</div></div>` : '';
   el.innerHTML = `<div class="cps-wrap">
-    <div class="cps-top" style="--b:${esc(c.color || '#1BA5A8')}"><span class="sw"></span><div class="t"><b>${esc(c.chain)}</b><small>${esc(c.title)}</small></div><button class="btn sm" id="cpsX">${ic.x}關閉</button></div>
+    <div class="cps-top">${cpLogo(c, 'l')}<div class="t"><b>${esc(c.chain)}</b><small>${esc(c.title)}</small></div><button class="btn sm" id="cpsX">${ic.x}關閉</button></div>
     ${c.status === 'check' ? `<div class="cps-check">⚠️ 結帳前先問店員：這張券能用嗎？<small>沖繩店是否適用還沒確認</small></div>` : ''}
     ${cpExpired(c) ? `<div class="cps-check">這張券 ${esc(c.validTo)} 已過期</div>` : ''}
     ${c.display === 'code' && ts.length > 1 ? `<div class="cps-tiers" id="cpsTiers">${ts.map((x, i) => `<button type="button" data-ti="${i}" aria-pressed="${i === sel}">${ev.idx >= i ? '✓ ' : ''}${esc(tierText(x))}</button>`).join('')}</div>` : ''}
@@ -3340,7 +3356,7 @@ function shopCpTopHTML() {
   const open = localGet('open.cpMini') !== '0';
   const rows = [...used.values()].map(c => {
     const sub = cpSubtotal(c), ev = c.display === 'pickup' ? {} : cpEval(c, sub);
-    return `<button class="cprow" data-cp="${esc(c.id)}" style="--b:${esc(c.color || '#1BA5A8')}"><span class="sw"></span><span class="body"><b>${esc(c.chain)}</b>${c.status === 'check' ? ' <span class="chip cpw">待確認</span>' : ''}
+    return `<button class="cprow" data-cp="${esc(c.id)}">${cpLogo(c, 's')}<span class="body"><b>${esc(c.chain)}</b>${c.status === 'check' ? ' <span class="chip cpw">待確認</span>' : ''}
       <span class="tiny muted" style="display:block">清單 ${yen(sub)}・${ev.tier ? `適用 ${esc(tierText(ev.tier))}${ev.disc ? `，約折 ${yen(ev.disc)}` : ''}` : c.display === 'pickup' ? '現場領取' : '還沒達到門檻'}${ev.next ? `・再 ${yen(ev.need)} 可${ev.tier ? '升到' : '用'} ${esc(tierText(ev.next))}` : ''}</span></span>${ic.chev}</button>`;
   }).join('');
   return `<details class="card mini" data-keep="cpMini" ${open ? 'open' : ''}><summary>${ic.ticket}<span>本次可用優惠券</span><span class="chip">${used.size}</span>${ic.chev.replace('<svg', '<svg class="chev"')}</summary>
