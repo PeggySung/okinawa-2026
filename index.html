@@ -630,18 +630,20 @@ ul.bd li.hint::before{content:"💡 "}
 .hbfoot{margin:22px 4px 0;text-align:center}
 .hbfoot .hbimp{margin-top:8px;text-align:left}
 .hbfoot .hbimp>summary{cursor:pointer;text-align:center;color:var(--sea-deep)}
-.sosrow{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
-.sosbtn{min-height:64px;display:flex;align-items:center;justify-content:center;gap:8px;border-radius:var(--r-btn);font-family:var(--f-title);font-size:19px;
-  box-shadow:inset 0 0 0 1.5px rgba(0,0,0,.08),2px 3px 0 rgba(43,58,78,.14)}
-.sosbtn span{font-size:24px;line-height:1}
-.sosbtn.acc{background:var(--hib);color:#fff;box-shadow:2px 3px 0 rgba(160,40,52,.32)}
-.sosbtn.brk{background:var(--terra-light);color:var(--terra);box-shadow:inset 0 0 0 1.5px rgba(192,96,58,.35),2px 3px 0 rgba(192,96,58,.18)}
-.sosbtn:active{transform:translate(1px,1px)}
-.sosrow.sm{margin:0 0 12px}
-.sosrow.sm .sosbtn{min-height:46px;font-size:15.5px}
-.sosrow.sm .sosbtn span{font-size:18px}
-.remind+h2.sec,.sosrow+h2.sec{margin-top:16px}
-.sosrow+.remind,.remind+.remind{margin-top:12px}
+.sosguide{padding:10px 14px 4px;margin-bottom:12px}
+.sosguide .sg-h{display:flex;align-items:center;gap:8px;font-family:var(--f-title)}
+.sosguide .sg-h svg{width:19px;height:19px;color:var(--terra);flex:none}
+.sosguide .sg-h b{font-weight:400;font-size:15px;flex:1}
+.sg-row{display:flex;align-items:center;gap:10px;width:100%;text-align:left;padding:9px 0}
+.sg-row+.sg-row,.sg-h+.sg-row{border-top:1px dashed var(--line)}
+.sg-h+.sg-row{margin-top:8px}
+.sg-row .ico{flex:none;width:30px;height:30px;border-radius:10px;display:grid;place-items:center;font-size:16px;background:var(--sand)}
+.sg-row .body{flex:1;min-width:0;display:flex;flex-direction:column}
+.sg-row .body b{font-weight:500;font-size:14.5px}
+.sg-row>svg{width:16px;height:16px;color:var(--ink-3);flex:none}
+.sg-row:active{opacity:.7}
+.remind+h2.sec,.sosguide+h2.sec{margin-top:16px}
+.sosguide+.remind,.remind+.remind{margin-top:12px}
 .rent-head{display:flex;align-items:flex-start;gap:10px;flex-wrap:wrap;justify-content:space-between}
 .rent-head>div>b{display:block;font-family:var(--f-title);font-weight:400;font-size:18px;line-height:1.3}
 .rent-head>div{flex:1;min-width:0}
@@ -3664,7 +3666,9 @@ function rentalStatus(R) {
 const inRental = R => { const t = hbNow().slice(0, 10); return R && t >= R.pickup.at.slice(0, 10) && t <= R.return.at.slice(0, 10); };
 const waMain = R => (R.contacts || []).find(c => c.whatsapp)?.whatsapp;
 function sosRowHTML(small = false) {
-  return `<div class="sosrow ${small ? 'sm' : ''}"><button type="button" class="sosbtn acc" data-sos="accident"><span aria-hidden="true">🚨</span>發生事故</button><button type="button" class="sosbtn brk" data-sos="breakdown"><span aria-hidden="true">🔧</span>車子故障</button></div>`;
+  return `<div class="card sosguide ${small ? 'sm' : ''}"><div class="sg-h">${ic.car}<b>開車遇到狀況時</b><span class="tiny muted">點開看處理步驟</span></div>
+    <button type="button" class="sg-row" data-sos="accident"><span class="ico" aria-hidden="true">🚨</span><span class="body"><b>發生事故怎麼處理</b><span class="tiny muted">報警、通知租車公司、拍照記錄…</span></span>${ic.chev}</button>
+    <button type="button" class="sg-row" data-sos="breakdown"><span class="ico" aria-hidden="true">🔧</span><span class="body"><b>車子故障怎麼處理</b><span class="tiny muted">停到安全的地方、聯絡租車公司</span></span>${ic.chev}</button></div>`;
 }
 function rentalBannerHTML(R) {
   const now = hbNow(), N = tMin(now), today = now.slice(0, 10), {p, pr, cr} = rentalTimes(R), wa = waMain(R);
