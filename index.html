@@ -367,7 +367,7 @@ select.in{-webkit-appearance:none;appearance:none;padding-right:42px;cursor:poin
 #lightbox .cap small{display:block;font-size:13px;opacity:.8}
 #lightbox .hint{color:rgba(255,255,255,.7);font-size:12.5px}
 [data-full]{cursor:zoom-in}
-#toast{position:fixed;left:50%;bottom:calc(var(--safe-b) + 86px);z-index:70;transform:translate(-50%,20px);opacity:0;transition:.2s;pointer-events:none;
+#toast{position:fixed;left:50%;bottom:calc(var(--safe-b) + 86px);z-index:100;transform:translate(-50%,20px);opacity:0;transition:.2s;pointer-events:none;
   background:var(--ink);color:#fff;padding:9px 16px;border-radius:12px;font-size:14px;max-width:calc(100% - 40px);text-align:center}
 #toast.on{opacity:1;transform:translate(-50%,0)}
 
@@ -623,6 +623,130 @@ ul.bd li.hint::before{content:"💡 "}
 .profile div.full{color:var(--ink-2);font-family:var(--f-title)}
 .profile .ttl{display:inline-block;margin-top:12px;font-family:var(--f-title);font-size:17px;padding:3px 16px;border-radius:999px;color:#fff;background:var(--c)}
 .profile blockquote{margin:14px 10px 6px;font-family:var(--f-title);font-size:16px;color:var(--ink);line-height:1.7}
+
+/* ── 手冊 ── */
+.gseg{margin-bottom:14px}
+.gseg button{font-size:13.5px;padding:0 2px}
+.hbfoot{margin:22px 4px 0;text-align:center}
+.hbfoot .hbimp{margin-top:8px;text-align:left}
+.hbfoot .hbimp>summary{cursor:pointer;text-align:center;color:var(--sea-deep)}
+.sosrow{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
+.sosbtn{min-height:64px;display:flex;align-items:center;justify-content:center;gap:8px;border-radius:var(--r-btn);font-family:var(--f-title);font-size:19px;
+  box-shadow:inset 0 0 0 1.5px rgba(0,0,0,.08),2px 3px 0 rgba(43,58,78,.14)}
+.sosbtn span{font-size:24px;line-height:1}
+.sosbtn.acc{background:var(--hib);color:#fff;box-shadow:2px 3px 0 rgba(160,40,52,.32)}
+.sosbtn.brk{background:var(--terra-light);color:var(--terra);box-shadow:inset 0 0 0 1.5px rgba(192,96,58,.35),2px 3px 0 rgba(192,96,58,.18)}
+.sosbtn:active{transform:translate(1px,1px)}
+.sosrow.sm{margin:0 0 12px}
+.sosrow.sm .sosbtn{min-height:46px;font-size:15.5px}
+.sosrow.sm .sosbtn span{font-size:18px}
+.remind+h2.sec,.sosrow+h2.sec{margin-top:16px}
+.sosrow+.remind,.remind+.remind{margin-top:12px}
+.rent-head{display:flex;align-items:flex-start;gap:10px;flex-wrap:wrap;justify-content:space-between}
+.rent-head>div>b{display:block;font-family:var(--f-title);font-weight:400;font-size:18px;line-height:1.3}
+.rent-head>div{flex:1;min-width:0}
+.rent-head .pill{flex:none;white-space:nowrap}
+.rent-leg{display:flex;align-items:flex-start;gap:10px;padding:11px 0 2px;margin-top:9px;border-top:1px dashed var(--line)}
+.rent-leg .lbl{flex:none;font-family:var(--f-title);font-size:13px;background:var(--sea-light);color:var(--sea-deep);border-radius:8px;padding:1px 8px;margin-top:2px}
+.rent-leg .body{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+.rent-leg .body b{font-size:17px}
+.rent-leg .btn{flex:none}
+.ctrow,.todo{display:flex;align-items:center;gap:10px;padding:9px 0}
+.ctrow+.ctrow,.todo+.todo{border-top:1px dashed var(--line)}
+.ctrow .body,.todo .body{flex:1;min-width:0;display:flex;flex-direction:column}
+.ctrow .body b,.todo .body b{font-weight:500;font-size:14px}
+.todo .btn,.todo .chip{flex:none}
+.cashbig{display:flex;align-items:baseline;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.cashbig b{font-size:30px;color:var(--terra)}
+ul.brk{list-style:none;margin:6px 0 0;padding:0;font-size:13.5px}
+ul.brk li{display:flex;justify-content:space-between;gap:10px;padding:3px 0}
+ul.brk li+li{border-top:1px dashed var(--line)}
+.warnline{margin:8px 0 0;color:#9B2733}
+.insbig{display:flex;flex-direction:column;gap:4px;align-items:flex-start}
+.insbig b{font-family:var(--f-title);font-weight:400;font-size:18px}
+details.more{margin-top:10px;font-size:13.5px}
+details.more>summary{cursor:pointer;color:var(--sea-deep);font-family:var(--f-title)}
+details.more ul{margin:6px 0 0;padding-left:18px;color:var(--ink-2)}
+details.more li+li{margin-top:4px}
+.irow{display:flex;gap:10px;font-size:14px;padding:7px 0}
+.irow+.irow{border-top:1px dashed var(--line)}
+.irow .ico{flex:none;width:22px;text-align:center}
+details.ph{margin-top:10px}
+details.ph>summary{list-style:none;display:flex;align-items:center;gap:9px;cursor:pointer;padding:6px 2px;font-family:var(--f-title);font-size:17px}
+details.ph>summary::-webkit-details-marker{display:none}
+details.ph .phn{flex:none;width:26px;height:26px;border-radius:50%;display:grid;place-items:center;background:var(--sea-light);color:var(--sea-deep);font-size:14px}
+details.ph .pht{flex:1;min-width:0}
+details.ph .chev{width:18px;height:18px;color:var(--ink-3);transition:transform .2s;flex:none}
+details.ph[open]>summary .chev{transform:rotate(90deg)}
+.phi{padding:9px 0}
+.phi+.phi{border-top:1px dashed var(--line)}
+.phi b{font-weight:500;font-size:15px;display:block}
+.phi p{margin:3px 0 0;font-size:13.5px;color:var(--ink-2);white-space:pre-line}
+.phi .acts{display:flex;align-items:center;gap:8px;margin-top:7px;flex-wrap:wrap}
+.srcs{margin-top:16px}
+.srcs ul{margin:6px 0 0;padding-left:18px;font-size:13px}
+.srcs li+li{margin-top:4px}
+.chip.ban{cursor:pointer}
+/* 日文卡 */
+ruby{ruby-position:over}
+rt{font-size:.45em;font-weight:400;letter-spacing:0;color:inherit;opacity:.85}
+[lang=ja]{font-family:"Noto Sans JP","Hiragino Sans","Hiragino Kaku Gothic ProN","Yu Gothic UI","Meiryo",var(--f-body)}
+.jphint{margin:0 4px 10px}
+.jpq{display:flex;align-items:center;gap:8px;background:var(--card);border-radius:14px;box-shadow:inset 0 0 0 1.5px var(--line-2);padding:0 12px;margin-bottom:6px}
+.jpq svg{width:18px;height:18px;color:var(--ink-3);flex:none}
+.jpq .in{border:0;box-shadow:none;background:transparent;padding-left:0;min-height:44px;flex:1;min-width:0}
+h2.jpsec{font-size:17px;margin-top:18px}
+.jplist{padding:2px 6px 2px 14px}
+.jprow{display:flex;align-items:center;gap:4px}
+.jprow+.jprow{border-top:1px dashed var(--line)}
+.jprow .body{flex:1;min-width:0;text-align:left;padding:10px 0;display:flex;flex-direction:column;gap:2px}
+.jprow .zh{font-size:15.5px;font-weight:500}
+.jprow .ja{font-size:14px;color:var(--ink-2);line-height:2}
+.jprow .ja rt{font-size:.6em}
+.iconbtn.star svg{width:22px;height:22px}
+.iconbtn.star.on{color:#D99A16}
+.iconbtn.star.on svg{fill:#F4C25B}
+.fillv{border-bottom:2px solid var(--sea);padding:0 2px}
+.fillv[role=button]{cursor:pointer}
+.ovl{position:fixed;inset:0;z-index:95;background:var(--paper);color:var(--ink);overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;
+  padding:calc(var(--safe-t) + 12px) max(16px,env(safe-area-inset-right,0px)) calc(var(--safe-b) + 28px) max(16px,env(safe-area-inset-left,0px))}
+.jps-wrap{max-width:720px;margin:0 auto;display:flex;flex-direction:column;gap:12px}
+.jps-top{display:flex;align-items:center;gap:8px}
+.jps-top .t{flex:1;font-family:var(--f-title);font-weight:400;font-size:20px}
+.jps-card{background:#fff;color:#1c2633;border-radius:var(--r-card);box-shadow:inset 0 0 0 1.5px var(--line-2),var(--shadow);padding:22px 18px;min-height:34vh;display:flex;align-items:center;justify-content:center;touch-action:pan-y}
+.jps-ja{margin:0;font-size:44px;line-height:2.05;font-weight:500;text-align:center;word-break:normal;word-break:auto-phrase;overflow-wrap:anywhere;line-break:strict;text-wrap:balance}
+.jps-ja rt{font-size:.42em;font-weight:500}
+.jps-zh{margin:0;text-align:center;font-size:17px;color:var(--ink-2)}
+.jps-note{margin:0;background:var(--sand);border-radius:12px;padding:9px 12px;line-height:2}
+.jps-note rt{font-size:.6em}
+.jps-say{min-height:52px;font-size:17px}
+.jps-nav{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.stepper{display:flex;align-items:center;gap:14px}
+.stepper b{font-size:26px;min-width:34px;text-align:center}
+.stepper .btn{width:48px;padding:0;font-size:22px}
+.optrow{display:flex;flex-wrap:wrap;gap:6px;margin:-4px 0 12px}
+.optrow .chip{cursor:pointer;font-size:14px;padding:4px 11px;line-height:1.9}
+.optrow .chip rt{font-size:.55em}
+.optrow.col{flex-direction:column;gap:8px}
+.itpick{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.itpick b{width:100%;color:var(--ink-2);font-family:var(--f-title);font-weight:400}
+.itpick .chip{white-space:normal;text-align:left}
+@media (orientation:landscape) and (max-height:520px){.jps-card{min-height:52vh;padding:12px}.jps-zh{font-size:15px}}
+/* 事故步驟 */
+.btn.big{min-height:56px;font-size:17px}
+.sos-step{background:var(--card);border-radius:var(--r-card);box-shadow:inset 0 0 0 1.5px var(--line-2),var(--shadow);padding:18px 16px;display:flex;flex-direction:column;gap:10px}
+.sos-step h3{margin:0;font-family:var(--f-title);font-weight:400;font-size:26px;line-height:1.35}
+.sos-step p{margin:0;font-size:17.5px;line-height:1.6}
+.sos-step.all h3{font-size:20px}
+.sos-step.all p{font-size:15.5px}
+.sos-no{display:flex;align-items:baseline;gap:4px;color:var(--hib)}
+.sos-no .num{font-size:30px;line-height:1}
+.sos.breakdown .sos-no{color:var(--terra)}
+.sos-dots{display:flex;justify-content:center;gap:7px}
+.sos-dots i{width:9px;height:9px;border-radius:50%;background:var(--line-2)}
+.sos-dots i.past{background:var(--sea)}
+.sos-dots i.on{background:var(--hib);transform:scale(1.3)}
+.cps-ask{align-self:flex-start}
 </style>
 </head>
 <body class="bare">
@@ -635,7 +759,7 @@ ul.bd li.hint::before{content:"💡 "}
   </div>
   <nav class="tabs" role="tablist" aria-label="主選單">
     <button class="tab" role="tab" data-tab="trip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-6.5-5.6-6.5-11a6.5 6.5 0 0113 0C18.5 15.4 12 21 12 21z"/><circle cx="12" cy="10" r="2.4"/></svg>行程</button>
-    <button class="tab" role="tab" data-tab="flight"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2z"/></svg>航班</button>
+    <button class="tab" role="tab" data-tab="guide"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 5h5a2.5 2.5 0 012.5 2.5V20a2 2 0 00-2-2H4.5zM19.5 5h-5A2.5 2.5 0 0012 7.5V20a2 2 0 012-2h5.5z"/></svg>手冊</button>
     <button class="tab" role="tab" data-tab="prep"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="4.5" y="4" width="15" height="17" rx="2.5"/><path d="M9 4V3h6v1M8.5 10.5l1.8 1.8 3.5-3.6M8.5 16h7"/></svg>準備</button>
     <button class="tab" role="tab" data-tab="shop"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M5 8h14l-1.2 11.2a2 2 0 01-2 1.8H8.2a2 2 0 01-2-1.8L5 8z"/><path d="M9 10V6.5a3 3 0 016 0V10"/></svg>購物</button>
     <button class="tab" role="tab" data-tab="money"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><path d="M8.8 7.5L12 12l3.2-4.5M12 12v5M9 12.5h6M9 15h6"/></svg>記帳</button>
@@ -789,9 +913,12 @@ const S = {
   catalog: null, catMeta: null, cardProfile: null, profLoaded: false, txns: [], fxManual: null, cardVer: 0,
   cardOpen: new Set(), recOpen: new Set(), expSynced: false, txSynced: false, prevTab: null,
   // 優惠券
-  cpCat: null, cpMeta: null, cpUser: []
+  cpCat: null, cpMeta: null, cpUser: [],
+  // 手冊
+  hb: null, hbMeta: null
 };
 if (S.tab === 'cards' || S.tab === 'coupons') S.tab = 'shop';
+if (S.tab === 'flight') { S.tab = 'guide'; localSet('guideSeg', 'flight'); }
 function localGet(k) { try { return localStorage.getItem('rlc.' + k); } catch { return null; } }
 function localSet(k, v) { try { localStorage.setItem('rlc.' + k, v); } catch {} }
 
@@ -967,7 +1094,7 @@ function startApp() {
   L(collection(db, 'itinerary'), s => { S.itinerary = s.docs.map(d => ({id: d.id, ...d.data()})); S.loaded.itinerary = true; if (S.tab === 'trip') render(); });
   L(collection(db, 'flights'), s => {
     S.flights = {}; s.docs.forEach(d => d.id === 'booking' ? S.booking = d.data() : S.flights[d.id] = d.data());
-    if (S.tab === 'flight') render();
+    if (S.tab === 'guide' && S.guideSeg === 'flight') render();
   });
   L(collection(db, 'checklist'), s => { S.checklist = s.docs.map(d => ({id: d.id, ...d.data()})); if (S.tab === 'prep') render(); });
   for (const id of IDS) L(collection(db, 'shopping', id, 'items'), s => {
@@ -1001,12 +1128,23 @@ function startApp() {
   });
   L(collection(db, 'coupons'), s => { S.cpUser = s.docs.map(d => ({id: d.id, ...d.data({serverTimestamps: 'estimate'})})); cpRedraw(); });
   L(doc(db, 'settings', 'fx'), d => { S.fxManual = d.exists() ? d.data({serverTimestamps: 'estimate'}) : null; S.cardVer++; if (S.tab === 'cards' && !inputFocused()) render(); });
+  // 手冊資料（租車、出入境、日文卡）
+  L(doc(db, 'handbook', 'current'), d => {
+    if (d.exists()) {
+      const x = d.data({serverTimestamps: 'estimate'});
+      try { S.hb = JSON.parse(x.json); S.hbMeta = {version: x.version, importedBy: x.importedBy, importedAt: x.importedAt}; }
+      catch (e) { console.warn('handbook', e); }
+    } else { S.hb = null; S.hbMeta = null; }
+    if (['guide', 'shop', 'trip'].includes(S.tab) && !$('#sheet.on') && !inputFocused()) render();
+    if ($('#jpShow')) paintJp();
+    if ($('#sosShow')) paintSos();
+  });
   fetchFx();
   L(collection(db, 'settlements'), s => { S.settlements = {}; s.docs.forEach(d => S.settlements[d.id] = d.data({serverTimestamps: 'estimate'})); if (S.tab === 'money') render(); });
   L(collection(db, 'ledger'), s => { S.ledger = {}; s.docs.forEach(d => S.ledger[d.id] = d.data()); });
   renderHeader(); render();
   setTimeout(() => maybeCalcFromUrl(true), 5000);
-  clearInterval(startApp.tick); startApp.tick = setInterval(() => { renderHeader(); if (S.tab === 'trip' && !$('#sheet.on')) render(); }, 60e3);
+  clearInterval(startApp.tick); startApp.tick = setInterval(() => { renderHeader(); if ((S.tab === 'trip' || (S.tab === 'guide' && ['rental', 'entry'].includes(S.guideSeg))) && !$('#sheet.on') && !inputFocused()) render(); }, 60e3);
 }
 
 /* ───────────── header & tabs ───────────── */
@@ -1031,7 +1169,7 @@ document.querySelectorAll('.tab').forEach(t => t.onclick = () => {
   if (S.tab === t.dataset.tab) { scrollTo({top: 0, behavior: 'smooth'}); return; }
   S.tab = t.dataset.tab; localSet('tab', S.tab); renderHeader(); render(); scrollTo({top: 0}); popTab();
 });
-const TAB_ORDER = ['trip', 'flight', 'prep', 'shop', 'money'];
+const TAB_ORDER = ['trip', 'guide', 'prep', 'shop', 'money'];
 function goTab(t, dir) {
   if (!t || t === S.tab) return;
   S.tab = t; localSet('tab', S.tab); renderHeader(); render(); scrollTo({top: 0});
@@ -1051,7 +1189,7 @@ let sw = null;
 document.addEventListener('touchstart', e => {
   sw = null;
   if (e.touches.length !== 1 || document.body.classList.contains('bare') || S.tab === 'cards' || S.tab === 'coupons') return;
-  if ($('#sheet.on') || $('#dlg.on') || $('#lightbox.on') || $('#cpShow')) return;
+  if ($('#sheet.on') || $('#dlg.on') || $('#lightbox.on') || $('#cpShow') || document.querySelector('.ovl')) return;
   const t = e.touches[0], el = e.target;
   if (t.clientX < 24 || t.clientX > innerWidth - 24) return;
   if (el.closest('input,textarea,select,.daybar,[data-noswipe]')) return;
@@ -1095,7 +1233,7 @@ addEventListener('online', syncNet); addEventListener('offline', syncNet); syncN
 function render() {
   if (!S.me) { $('#main').innerHTML = '<p class="empty">載入中…</p>'; return; }
   const fab = $('#fab'); fab.classList.add('hidden'); fab.onclick = null;
-  ({trip: renderTrip, flight: renderFlight, prep: renderPrep, shop: renderShop, money: renderMoney, cards: renderCards, coupons: renderCoupons})[S.tab]();
+  ({trip: renderTrip, guide: renderGuide, flight: renderGuide, prep: renderPrep, shop: renderShop, money: renderMoney, cards: renderCards, coupons: renderCoupons})[S.tab]();
 }
 
 /* avatar preview (tap to see the full picture) */
@@ -1184,12 +1322,14 @@ function renderTrip(animate = false) {
     : `<div class="empty">${ic.shell}${day === 0 ? '還沒有備案' : '這天還沒有行程'}</div>`;
   $('#main').innerHTML = `<div class="daybar" id="daybar">${chips}</div>
     <div class="dayhead"><h2>${day === 0 ? '備案' : `Day ${day}`}</h2><span class="muted small">${dinfo ? `${dinfo.date.replace(/-/g, '/')}（${dinfo.w}）・日本時間` : '有空檔或天氣不好時的選擇'}</span></div>
+    ${inRental(S.hb?.rental) ? sosRowHTML(true) : ''}
     ${body}
     <button class="btn full" id="addIt" style="margin-top:6px">${ic.plus}新增${day === 0 ? '備案' : '行程'}</button>`;
   $('#daybar').onclick = e => { const b = e.target.closest('[data-day]'); if (!b) return; S.dayScroll = $('#daybar').scrollLeft; S.day = +b.dataset.day; renderTrip(true); };
   centerDay(animate);
   dragScroll($('#daybar'));
   $('#addIt').onclick = () => editItem(null, day);
+  bindSos($('#main'));
   $('#main').querySelectorAll('[data-edit]').forEach(b => b.onclick = () => editItem(S.itinerary.find(x => x.id === b.dataset.edit)));
   $('#main').querySelectorAll('[data-copy]').forEach(b => b.onclick = () => copyText(b.dataset.copy));
   if (marks.now || marks.next) {
@@ -1289,9 +1429,9 @@ function editItem(x, day) {
 }
 
 /* ───────────── 航班 ───────────── */
-function renderFlight() {
+function renderFlight(pre = '') {
   const b = S.booking, legs = ['out', 'ret'].map(k => S.flights[k]).filter(Boolean);
-  if (!b) { $('#main').innerHTML = '<p class="empty">載入中…</p>'; return; }
+  if (!b) { $('#main').innerHTML = pre + '<p class="empty">載入中…</p>'; bindGuideSeg(); return; }
   const pass = f => `<div class="card pass">
     <div class="pass-top">
       <div class="pass-head"><span>${esc(f.label)}・${+f.depDate.slice(5, 7)}/${+f.depDate.slice(8)}（${DAYS.find(d => d.date === f.depDate)?.w || ''}）</span><b>${esc(f.no)}</b></div>
@@ -1306,7 +1446,7 @@ function renderFlight() {
       <div class="wave-div" style="margin:14px 0 10px"></div>
       <dl class="kv"><dt>報到時間</dt><dd>${esc(f.checkin)}</dd><dt>票價</dt><dd>${esc(f.fare)}・託運 1 件</dd></dl>
     </div></div>`;
-  $('#main').innerHTML = `
+  $('#main').innerHTML = pre + `
     <h2 class="sec">${ic.plane.replace('<svg', '<svg class="deco"')}訂位資訊</h2>
     <div class="card"><div class="pnr"><div><div class="small muted">${esc(b.airline)}・訂單編號</div><div class="code">${esc(b.pnr)}</div></div>
       <button class="btn sm" data-copy="${esc(b.pnr)}">${ic.copy}複製</button></div>
@@ -1322,6 +1462,7 @@ function renderFlight() {
     </div>
     <p class="tiny muted" style="text-align:center;margin-top:14px">航班資料唯讀，需要修改請到 Firebase 後台</p>`;
   $('#main').querySelectorAll('[data-copy]').forEach(x => x.onclick = () => copyText(x.dataset.copy));
+  bindGuideSeg();
 }
 
 /* ───────────── 行前準備 ───────────── */
@@ -1505,6 +1646,7 @@ function renderShop() {
   const list = items.length ? `<div class="card">${items.map(x => `<div class="sh ${x.bought ? 'done' : ''} ${recs[x.id] ? 'has-rec' : ''}">
       <button class="box" role="checkbox" aria-checked="${!!x.bought}" aria-label="${esc(x.name)}" data-buy="${x.id}" ${mine ? '' : 'disabled'} style="--c:${COLORS[who]}">${ic.check}</button>
       <${mine ? 'button' : 'div'} class="body" ${mine ? `data-ed="${x.id}"` : ''}><div class="nm">${esc(x.name)}</div>
+        ${banChipHTML(x.name) ? `<div class="sub">${banChipHTML(x.name)}</div>` : ''}
         ${x.day || x.qty || x.budget || x.note ? `<div class="sub">${x.day ? `<span class="chip sea">${dayLabel(x.day)}</span>` : ''}${x.qty ? `<span class="chip">× <span class="num">${esc(x.qty)}</span></span>` : ''}${x.budget ? `<span class="chip terra">預算 <span class="num">¥${Number(x.budget).toLocaleString()}</span></span>` : ''}${x.note ? `<span class="small muted">${esc(x.note)}</span>` : ''}</div>` : ''}
         ${x.fromWho && COLORS[x.fromWho] ? `<div class="sub"><span class="chip">${avatar(x.fromWho, 's').replace('data-profile', 'data-x')} 來自 ${nm(x.fromWho)}</span></div>` : ''}
         ${x.place ? `<div class="sub"><span class="small muted">${ic.map.replace('<svg', '<svg style="width:13px;height:13px;vertical-align:-2px"')} ${esc(x.place)}</span></div>` : ''}
@@ -1527,6 +1669,7 @@ function renderShop() {
   ['#toCards', '#toCards2'].forEach(k => $(k)?.addEventListener('click', goCards));
   $('#toCalc')?.addEventListener('click', openCalc);
   bindShopCoupons($('#main'));
+  bindBan($('#main'));
   bindCapView($('#main'), render);
   $('#main').querySelectorAll('[data-copy-item]').forEach(b => b.onclick = () => {
     const x = items.find(i => i.id === b.dataset.copyItem); if (!x) return;
@@ -3034,9 +3177,11 @@ function recheckHTML() {
   }
   const rb = S.cpCat?.recheckAfter;
   if (rb && today >= rb && (!S.cpCat.checked || S.cpCat.checked < rb)) stale.push('優惠券');
+  const rh = S.hb?.recheckAfter;
+  if (rh && today >= rh && (!S.hb.checkedAt || S.hb.checkedAt < rh)) stale.push('出入境規定');
   if (!stale.length) return '';
   return `<div class="card remind recheck"><div class="rh">${ic.alert}<b>出發前請重新確認</b></div>
-    <p class="small" style="margin:6px 0 0">免稅新制已上路，${stale.join('／')}資料庫是 11/1 前查的，請在出發前重新確認並匯入新版。</p></div>`;
+    <p class="small" style="margin:6px 0 0">免稅新制已上路，${stale.join('／')}的資料是 11/1 前查的，請在出發前重新確認並匯入新版。</p></div>`;
 }
 
 /* ── 優惠券頁 ── */
@@ -3164,8 +3309,8 @@ function closeCoupon(fromPop = false) {
   if (!$('#sheet.on')) document.documentElement.classList.remove('locked');
   if (!fromPop && history.state?.cpShow) history.back();
 }
-addEventListener('popstate', () => { if ($('#cpShow')) closeCoupon(true); });
-addEventListener('keydown', e => { if (e.key === 'Escape' && $('#cpShow')) closeCoupon(); });
+addEventListener('popstate', () => { if (popSkip || document.querySelector('.ovl')) return; if ($('#cpShow')) closeCoupon(true); });
+addEventListener('keydown', e => { if (e.key === 'Escape' && $('#cpShow') && !document.querySelector('.ovl')) closeCoupon(); });
 function paintCoupon() {
   const el = $('#cpShow'), c = cpById(CPS.id); if (!el || !c) return closeCoupon();
   const token = ++CPS.n;
@@ -3199,6 +3344,7 @@ function paintCoupon() {
   el.innerHTML = `<div class="cps-wrap">
     <div class="cps-top">${cpLogo(c, 'l')}<div class="t"><b>${esc(c.chain)}</b><small>${esc(c.title)}</small></div><button class="btn sm" id="cpsX">${ic.x}關閉</button></div>
     ${c.status === 'check' ? `<div class="cps-check">⚠️ 結帳前先問店員：這張券能用嗎？<small>沖繩店是否適用還沒確認</small></div>` : ''}
+    ${jpById('shop-coupon') ? `<button type="button" class="btn sm cps-ask" id="cpsAsk">🗣 問店員能不能用</button>` : ''}
     ${cpExpired(c) ? `<div class="cps-check">這張券 ${esc(c.validTo)} 已過期</div>` : ''}
     ${c.display === 'code' && ts.length > 1 ? `<div class="cps-tiers" id="cpsTiers">${ts.map((x, i) => `<button type="button" data-ti="${i}" aria-pressed="${i === sel}">${ev.idx >= i ? '✓ ' : ''}${esc(tierText(x))}</button>`).join('')}</div>` : ''}
     ${codeBox}${amtBox}
@@ -3214,6 +3360,7 @@ function paintCoupon() {
     ${c.ovId && c.ovBy !== S.me ? `<p class="tiny" style="color:#56667A;margin:0">條碼由 ${esc(nm(c.ovBy))} 掃描補上</p>` : ''}
   </div>`;
   el.querySelector('#cpsX').onclick = () => closeCoupon();
+  el.querySelector('#cpsAsk')?.addEventListener('click', () => openJp('shop-coupon'));
   el.querySelector('#cpsTiers')?.addEventListener('click', e => { const b = e.target.closest('[data-ti]'); if (!b) return; CPS.tier = +b.dataset.ti; CPS.force = false; paintCoupon(); });
   el.querySelector('#cpsForce')?.addEventListener('click', () => { CPS.force = true; paintCoupon(); });
   el.querySelector('#cpsAddCode')?.addEventListener('click', () => { closeCoupon(); openAddCoupon(c.src === 'cat' ? c.id : null); });
@@ -3422,6 +3569,445 @@ function cpForItemBought(x) {
 /* ───────────── service worker ───────────── */
 if ('serviceWorker' in navigator && location.protocol === 'https:') navigator.serviceWorker.register('sw.js').catch(() => {});
 window.__rlc = {S, minTransfers, balancesOf, animateProgress};
+
+/* ───────────── 手冊：航班・租車・出入境・日文卡 ───────────── */
+const GUIDE_SEGS = [['flight', '航班'], ['rental', '租車'], ['entry', '出入境'], ['jp', '日文卡']];
+S.guideSeg = GUIDE_SEGS.some(g => g[0] === localGet('guideSeg')) ? localGet('guideSeg') : 'flight';
+S.phOpen = null; S.jpQ = '';
+let popSkip = 0;
+// 日本時間 'YYYY-MM-DDTHH:MM'（網址加 ?hbnow=2026-11-15T14:30 可以模擬時間，測試用）
+const hbNow = () => { const q = new URLSearchParams(location.search).get('hbnow'); return q && /^\d{4}-\d\d-\d\dT\d\d:\d\d$/.test(q) ? q : new Date(Date.now() + 9 * 3600e3).toISOString().slice(0, 16); };
+const tMin = s => Date.parse(s + ':00Z') / 6e4;
+const hhmm = s => String(s || '').slice(11, 16);
+const mdw = s => { const d = DAYS.find(x => x.date === String(s).slice(0, 10)); return `${+s.slice(5, 7)}/${+s.slice(8, 10)}${d ? `（${d.w}）` : ''}`; };
+const waIcon = I('<path d="M4.5 19.5l1.2-3.6A8 8 0 1112 20a8 8 0 01-3.9-1z"/><path d="M9 8.6c0 3.3 3 6.4 6.4 6.4l1.1-1.6-2-1-1 .9c-1-.4-2-1.4-2.4-2.4l.9-1-1-2z"/>');
+const bookIcon = I('<path d="M4.5 5h5a2.5 2.5 0 012.5 2.5V20a2 2 0 00-2-2H4.5zM19.5 5h-5A2.5 2.5 0 0012 7.5V20a2 2 0 012-2h5.5z"/>');
+const spkIcon = I('<path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z"/><path d="M15.5 9a4 4 0 010 6M18 6.5a7.5 7.5 0 010 11"/>');
+const starIcon = I('<path d="M12 4.2l2.4 4.9 5.4.8-3.9 3.8.9 5.4-4.8-2.6-4.8 2.6.9-5.4-3.9-3.8 5.4-.8z"/>');
+
+function renderGuide() {
+  const seg = `<div class="seg gseg" id="gSeg" data-noswipe>${GUIDE_SEGS.map(([k, t]) => `<button type="button" data-g="${k}" aria-pressed="${S.guideSeg === k}">${t}</button>`).join('')}</div>`;
+  if (S.guideSeg === 'flight') return renderFlight(seg);
+  const H = S.hb;
+  const body = !H ? hbMissingHTML() : S.guideSeg === 'rental' ? rentalHTML(H) : S.guideSeg === 'entry' ? entryHTML(H) : jpListHTML(H);
+  $('#main').innerHTML = seg + body + (H ? hbFootHTML(H) : '');
+  bindGuideSeg();
+  if (H) ({rental: bindRental, entry: bindEntry, jp: bindJpList})[S.guideSeg]();
+  bindHbImport();
+}
+function bindGuideSeg() {
+  $('#gSeg')?.addEventListener('click', e => {
+    const b = e.target.closest('[data-g]'); if (!b || b.dataset.g === S.guideSeg) return;
+    S.guideSeg = b.dataset.g; localSet('guideSeg', S.guideSeg); renderGuide(); scrollTo({top: 0});
+  });
+}
+function hbMissingHTML() {
+  return S.me === 'qi' ? hbImportHTML() : `<div class="card empty">${bookIcon}${nm('qi')} 還沒匯入手冊資料（租車、出入境、日文卡）。</div>`;
+}
+function hbFootHTML(H) {
+  const m = S.hbMeta || {};
+  return `<div class="hbfoot tiny muted">手冊資料版本 <span class="num">${esc(m.version || H.version)}</span>・${esc(nm(m.importedBy))} 於 ${fmtTime(m.importedAt)} 匯入・${esc(H.checkedAt || '')} 查詢
+    ${S.me === 'qi' ? `<details class="hbimp"><summary>匯入更新版</summary>${hbImportHTML(true)}</details>` : ''}</div>`;
+}
+function hbImportHTML(inline = false) {
+  return `<div class="${inline ? '' : 'card'}">
+    ${inline ? '' : `<b>匯入手冊資料</b><p class="small muted">請選擇 <b>handbook</b> 開頭的 JSON 檔。匯入後 4 人都能讀取，網頁上不能修改。</p>`}
+    <label class="f" style="margin-top:6px"><span>選擇檔案</span><input class="in" type="file" accept=".json,application/json" id="hbFile"></label>
+    <button class="btn pri full" id="hbGo" disabled>匯入</button><p class="small muted" id="hbMsg"></p></div>`;
+}
+function bindHbImport() {
+  const f = $('#hbFile'); if (!f) return;
+  let text = null, j = null;
+  f.onchange = async e => {
+    text = null; $('#hbGo').disabled = true;
+    try {
+      j = JSON.parse(await e.target.files[0].text());
+      if (!j.version || !j.rental?.pickup || !Array.isArray(j.entryExit?.phases) || !Array.isArray(j.phrases?.categories)) throw new Error('不是手冊資料格式');
+      if (S.hbMeta?.version === j.version) throw new Error(`版本 ${j.version} 已經匯入過了，新版請改版本號`);
+      text = JSON.stringify(j); $('#hbGo').disabled = false;
+      const n = j.phrases.categories.reduce((s, c) => s + (c.items || []).length, 0);
+      $('#hbMsg').textContent = `版本 ${j.version}・出入境 ${j.entryExit.phases.length} 個階段・日文卡 ${n} 張`;
+    } catch (err) { $('#hbMsg').textContent = '無法讀取：' + err.message; }
+  };
+  $('#hbGo').onclick = async () => {
+    $('#hbGo').disabled = true; $('#hbMsg').textContent = '匯入中…';
+    try { requireOnline(); await setDoc(doc(db, 'handbook', 'current'), {version: j.version, json: text, importedBy: S.me, importedAt: serverTimestamp()}); toast('手冊資料已匯入'); }
+    catch (e) { $('#hbMsg').textContent = errMsg(e); $('#hbGo').disabled = false; }
+  };
+}
+
+/* ── 加入準備清單 ── */
+function prepHas(text) { return S.checklist.some(x => x.text === text); }
+function hbAddPrep(text, note, perPerson) {
+  if (prepHas(text)) { toast('已在準備清單'); return; }
+  const cats = [...new Set([...S.checklist].sort((a, b) => a.catOrder - b.catOrder).map(i => i.cat))];
+  const cat = cats.find(x => x.includes('出發前')) || cats[0] || '一、出發前必做事項';
+  const base = {text: text.slice(0, 200), cat, catOrder: Math.max(0, cats.indexOf(cat)), note: (note || '').slice(0, 500), booking: '', order: Date.now(), createdBy: S.me, updatedBy: S.me, updatedAt: serverTimestamp()};
+  const data = perPerson ? {...base, scope: 'all', who: [], claimBy: null} : {...base, scope: 'claim', who: [], claimBy: S.me};
+  setDoc(doc(collection(db, 'checklist')), data).catch(e => toast(errMsg(e)));
+  toast(perPerson ? '已加入準備清單（每人都要做）' : '已加入準備清單，由你負責');
+}
+const prepBtn = (k, text) => prepHas(text) ? `<span class="chip sea">${ic.check}已在準備清單</span>` : `<button type="button" class="btn sm" data-prep="${esc(k)}">${ic.plus}加入準備清單</button>`;
+
+/* ── 租車 ── */
+function rentalTimes(R) { return {p: R.pickup.at, pr: R.return.plannedAt || R.return.at, cr: R.return.at}; }
+function rentalStatus(R) {
+  const now = hbNow(), N = tMin(now), {p, pr, cr} = rentalTimes(R);
+  if (N < tMin(p)) { const dd = dayDiff(now.slice(0, 10), p.slice(0, 10)); return {k: 'before', html: dd > 0 ? `距離取車 <b class="num">${dd}</b> 天` : `今天 <b class="num">${hhmm(p)}</b> 取車`}; }
+  if (N < tMin(pr)) {
+    const m = Math.round(tMin(pr) - N), h = Math.floor(m / 60), d = Math.floor(h / 24);
+    return {k: 'during', html: `租車中・距離預計還車 ${d ? `<b class="num">${d}</b> 天 <b class="num">${h % 24}</b> 小時` : `<b class="num">${h}</b> 小時 <b class="num">${m % 60}</b> 分`}`};
+  }
+  if (N < tMin(cr)) return {k: 'grace', html: `已過預計還車時間 ${hhmm(pr)}`};
+  return {k: 'after', html: '租車已結束'};
+}
+const inRental = R => { const t = hbNow().slice(0, 10); return R && t >= R.pickup.at.slice(0, 10) && t <= R.return.at.slice(0, 10); };
+const waMain = R => (R.contacts || []).find(c => c.whatsapp)?.whatsapp;
+function sosRowHTML(small = false) {
+  return `<div class="sosrow ${small ? 'sm' : ''}"><button type="button" class="sosbtn acc" data-sos="accident"><span aria-hidden="true">🚨</span>發生事故</button><button type="button" class="sosbtn brk" data-sos="breakdown"><span aria-hidden="true">🔧</span>車子故障</button></div>`;
+}
+function rentalBannerHTML(R) {
+  const now = hbNow(), N = tMin(now), today = now.slice(0, 10), {p, pr, cr} = rentalTimes(R), wa = waMain(R);
+  const out = [];
+  if (today === p.slice(0, 10) && N < tMin(p) + 60) {
+    const cash = R.price?.balance;
+    out.push(`<div class="card remind"><div class="rh">${ic.car}<b>今天 ${hhmm(p)} 取車</b></div>
+      ${R.pickup.how ? `<p class="small" style="margin:6px 0 0">${esc(R.pickup.how)}</p>` : ''}
+      ${cash ? `<p class="small" style="margin:6px 0 0">記得帶日幣現金 <b class="num">¥${cash.amountYen.toLocaleString()}</b>（不收信用卡）</p>` : ''}</div>`);
+  }
+  if (today === cr.slice(0, 10) && N < tMin(cr)) {
+    const fs = R.fuelStation;
+    out.push(`<div class="card remind"><div class="rh">${ic.car}<b>${hhmm(pr)} 還車（最晚 ${hhmm(cr)}）</b></div>
+      ${fs ? `<p class="small" style="margin:6px 0 8px">先到 ${esc(fs.name)} 加滿油，再到隔壁還車。</p><a class="btn sm" href="${esc(fs.map)}" target="_blank" rel="noopener">${ic.map}${esc(fs.name)}</a>` : ''}
+      ${N >= tMin(pr) ? `<p class="small" style="margin:8px 0 0;color:var(--sea-deep)"><b>合約 ${hhmm(cr)} 前還車都不算延遲。</b></p>` : ''}
+      ${N >= tMin(cr) - 30 ? `<p class="small" style="margin:6px 0 8px;color:#B32F3B"><b>會晚還要先在群組通知</b>，沒通知的延遲保險會全部失效。</p>${wa ? `<a class="btn sm hot" href="${esc(wa)}" target="_blank" rel="noopener">${waIcon}開啟 WhatsApp</a>` : ''}` : ''}</div>`);
+  }
+  return out.join('');
+}
+function rentalHTML(H) {
+  const R = H.rental, st = rentalStatus(R), {pr, cr} = rentalTimes(R), P = R.price || {}, B = P.balance || {}, Ins = R.insurance || {};
+  const chosen = (Ins.upgrades || []).find(u => u.chosen || u.id === Ins.chosen), others = (Ins.upgrades || []).filter(u => u !== chosen);
+  const contacts = (R.contacts || []).map(c => `<div class="ctrow"><div class="body"><b>${esc(c.label)}</b>${c.phone ? `<span class="tiny muted num">${esc(c.phone)}</span>` : ''}</div>
+    ${c.whatsapp ? `<a class="btn sm" href="${esc(c.whatsapp)}" target="_blank" rel="noopener">${waIcon}WhatsApp</a>` : c.link ? `<a class="btn sm" href="${esc(c.link)}" target="_blank" rel="noopener">開啟 ›</a>` : ''}</div>`).join('');
+  const todo = (R.beforeTrip || []).map((x, i) => `<div class="todo"><div class="body"><b>${esc(x.t)}</b><span class="tiny muted">${x.due ? `期限 ${mdw(x.due)}` : ''}${x.note ? `・${esc(x.note)}` : ''}</span></div>${prepBtn('r' + i, x.t)}</div>`).join('');
+  return `${sosRowHTML()}${rentalBannerHTML(R)}
+    <h2 class="sec">${ic.car.replace('<svg', '<svg class="deco"')}租車訂單</h2>
+    <div class="card rent">
+      <div class="rent-head"><div><b>${esc(R.company)}</b><span class="small muted">${esc(R.car)}</span></div><span class="pill ${st.k === 'during' || st.k === 'grace' ? 'go' : ''}">${st.html}</span></div>
+      <div class="rent-leg"><span class="lbl">取車</span><div class="body"><b class="num">${mdw(R.pickup.at)} ${hhmm(R.pickup.at)}</b><span class="small">${esc(R.pickup.place)}</span>${R.pickup.how ? `<span class="tiny muted">${esc(R.pickup.how)}</span>` : ''}</div>${R.pickup.map ? `<a class="btn sm" href="${esc(R.pickup.map)}" target="_blank" rel="noopener">${ic.map}地圖</a>` : ''}</div>
+      <div class="rent-leg"><span class="lbl">還車</span><div class="body"><b class="num">${mdw(pr)} ${hhmm(pr)}</b><span class="tiny muted">${pr !== cr ? `合約最晚 ${hhmm(cr)}${R.return.note ? '・' + esc(R.return.note) : ''}` : esc(R.return.note || '')}</span>
+        ${R.fuelStation ? `<span class="small">還車前加滿油：${esc(R.fuelStation.name)}</span>` : ''}</div>${R.fuelStation?.map ? `<a class="btn sm" href="${esc(R.fuelStation.map)}" target="_blank" rel="noopener">${ic.map}加油站</a>` : ''}</div>
+      ${R.hours ? `<p class="tiny muted" style="margin:8px 0 0">營業時間 ${esc(R.hours.office)}・免費接送最晚還車 ${esc(R.hours.lastFreeShuttleReturn)}</p>` : ''}
+    </div>
+    <div class="card" style="padding:6px 14px">${contacts}</div>
+    ${todo ? `<h2 class="sec">${ic.clock.replace('<svg', '<svg class="deco"')}出發前要做的事</h2><div class="card" style="padding:6px 14px">${todo}</div>` : ''}
+    <h2 class="sec">${ic.coin.replace('<svg', '<svg class="deco"')}費用</h2>
+    <div class="card">
+      <div class="cashbig"><span class="small">取車時付・${esc(B.method || '日幣現金')}</span><b class="num">¥${(B.amountYen || 0).toLocaleString()}</b></div>
+      ${(B.breakdown || []).length ? `<ul class="brk">${B.breakdown.map(x => `<li><span>${esc(x.t)}</span><span class="num">¥${x.yen.toLocaleString()}</span></li>`).join('')}</ul>` : ''}
+      ${B.warning ? `<p class="small warnline">${esc(B.warning)}</p>` : ''}
+      <dl class="kv" style="margin-top:10px"><dt>租金</dt><dd><span class="num">${P.days} 天 × ¥${(P.perDayYen || 0).toLocaleString()} = ¥${(P.totalYen || 0).toLocaleString()}</span><span class="tiny muted" style="display:block">${esc(P.includes || '')}</span></dd>
+        ${P.deposit ? `<dt>訂金</dt><dd><span class="num">NT$${P.deposit.amountTwd}</span>（= ¥${P.deposit.equalsYen.toLocaleString()}）已付${P.deposit.note ? `<span class="tiny muted">・${esc(P.deposit.note)}</span>` : ''}</dd>` : ''}</dl>
+    </div>
+    <h2 class="sec">${ic.lock.replace('<svg', '<svg class="deco"')}保險</h2>
+    <div class="card">
+      ${chosen ? `<div class="insbig"><span class="chip sea">${ic.check}我們的方案</span><b>${esc(chosen.name)}</b><span class="small">${esc(chosen.effect)}・每 24 小時 ¥${chosen.perDayYen.toLocaleString()}，4 天 ¥${chosen.fourDaysYen.toLocaleString()}</span></div>` : ''}
+      <p class="small" style="margin:8px 0 0">${esc(Ins.summary || '')}</p>
+      ${Ins.oneTime ? `<p class="small warnline">${esc(Ins.oneTime)}</p>` : ''}
+      ${Ins.upgradeWhen ? `<p class="tiny muted" style="margin:6px 0 0">${esc(Ins.upgradeWhen)}</p>` : ''}
+      ${others.length ? `<details class="more"><summary>其他方案</summary><ul>${others.map(u => `<li>${esc(u.name)}：${esc(u.effect)}・每 24 小時 ¥${u.perDayYen.toLocaleString()}</li>`).join('')}<li>基本保險：自負額 ¥${(Ins.deductibleYen || 0).toLocaleString()}（已含在租金）</li></ul></details>` : ''}
+      ${(R.notCovered || []).length ? `<details class="more"><summary>不保的情況（${R.notCovered.length}）</summary><ul>${R.notCovered.map(x => `<li>${esc(x)}</li>`).join('')}</ul></details>` : ''}
+    </div>
+    ${(R.rules || []).length ? `<h2 class="sec">${ic.alert.replace('<svg', '<svg class="deco"')}注意事項</h2><div class="card">${R.rules.map(r => `<div class="irow"><span class="ico" aria-hidden="true">${esc(r.icon)}</span><span>${esc(r.t)}</span></div>`).join('')}</div>` : ''}
+    ${R.drivers ? `<p class="tiny muted" style="margin:10px 4px 0">駕駛：每台含 ${R.drivers.included} 位，第 3 位起每 24 小時 ¥${R.drivers.extraDriverPerDayYen.toLocaleString()}；26 歲以下另加每 24 小時 ¥${R.drivers.under26PerDayYen.toLocaleString()}。${esc(R.drivers.documents || '')}</p>` : ''}`;
+}
+function bindSos(root) { root.querySelectorAll('[data-sos]').forEach(b => b.onclick = () => openSos(b.dataset.sos)); }
+function bindRental() {
+  const M = $('#main'), R = S.hb.rental;
+  bindSos(M);
+  M.querySelectorAll('[data-prep]').forEach(b => b.onclick = () => {
+    const x = R.beforeTrip[+b.dataset.prep.slice(1)]; if (!x) return;
+    hbAddPrep(x.t, [x.due ? `期限 ${mdw(x.due)}` : '', x.note || ''].filter(Boolean).join('・'), false);
+  });
+}
+
+/* ── 出入境 ── */
+function phaseNow(ph, t) { const w = ph.when || {}; return (!w.on || w.on === t) && (!w.from || t >= w.from) && (!w.until || t <= w.until) && (w.on || w.from || w.until); }
+function entryHTML(H) {
+  const E = H.entryExit, t = hbNow().slice(0, 10), phs = E.phases;
+  let cur = phs.filter(p => phaseNow(p, t)).map(p => p.id);
+  if (!cur.length && t > TRIP_END) cur = [phs[phs.length - 1].id];
+  const open = S.phOpen || new Set(cur);
+  const stale = H.recheckAfter && t >= H.recheckAfter && (!H.checkedAt || H.checkedAt < H.recheckAfter);
+  return `${stale ? `<div class="card remind"><div class="rh">${ic.alert}<b>11/1 後重新確認出入境規定</b></div><p class="small" style="margin:6px 0 0">這些規定是 ${esc(H.checkedAt)} 查的，日本免稅新制已上路，出發前請再確認一次並匯入新版。</p></div>` : ''}
+    ${phs.map((p, i) => `<details class="ph" data-ph="${esc(p.id)}" ${open.has(p.id) ? 'open' : ''}><summary><span class="phn num">${i + 1}</span><span class="pht">${esc(p.title)}</span>${cur.includes(p.id) ? '<span class="chip hib">現在</span>' : ''}${ic.chev.replace('<svg', '<svg class="chev"')}</summary>
+      <div class="card">${p.items.map((x, j) => `<div class="phi"><b>${esc(x.t)}</b>${x.d ? `<p>${esc(x.d)}</p>` : ''}${x.addToPrep ? `<div class="acts">${prepBtn(`${i}.${j}`, x.t)}${x.perPerson ? '<span class="tiny muted">每人都要做</span>' : ''}</div>` : ''}</div>`).join('')}</div></details>`).join('')}
+    ${(E.sources || []).length ? `<div class="card srcs"><b class="small">資料來源（${esc(H.checkedAt || '')} 查詢）</b><ul>${E.sources.map(s => `<li><a href="${esc(s.url)}" target="_blank" rel="noopener">${esc(s.title)}</a></li>`).join('')}</ul></div>` : ''}`;
+}
+function bindEntry() {
+  const M = $('#main'), phs = S.hb.entryExit.phases;
+  M.querySelectorAll('details.ph').forEach(d => d.ontoggle = () => {
+    if (!S.phOpen) S.phOpen = new Set([...M.querySelectorAll('details.ph[open]')].map(x => x.dataset.ph));
+    d.open ? S.phOpen.add(d.dataset.ph) : S.phOpen.delete(d.dataset.ph);
+  });
+  M.querySelectorAll('[data-prep]').forEach(b => b.onclick = () => {
+    const [i, j] = b.dataset.prep.split('.').map(Number), x = phs[i]?.items[j]; if (!x) return;
+    hbAddPrep(x.t, x.d || '', !!x.perPerson);
+  });
+}
+
+/* ── 不能帶回台灣（購物清單） ── */
+function hbBanned(name) {
+  const B = S.hb?.returnBanned; if (!B || !name) return false;
+  const n = String(name).toLowerCase(), hit = k => n.includes(String(k).toLowerCase());
+  return (B.keywords || []).some(hit) && !(B.allowKeywords || []).some(hit);
+}
+const banChipHTML = name => hbBanned(name) ? `<span class="chip hib ban" role="button" tabindex="0" data-ban="1">🚫 不能帶回台灣</span>` : '';
+function bindBan(root) {
+  root.querySelectorAll('[data-ban]').forEach(b => {
+    b.onkeydown = e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); b.click(); } };
+    b.onclick = e => {
+      e.stopPropagation(); e.preventDefault();
+      const B = S.hb?.returnBanned || {};
+      openSheet(`<h3>🚫 不能帶回台灣<button class="iconbtn x" data-close aria-label="關閉">${ic.x}</button></h3>
+        <p style="margin:0 0 10px">${esc(B.message || '')}</p><p class="small muted" style="margin:0 0 14px">${esc(B.note || '')}</p>
+        <button class="btn full" id="banEntry">看出入境規定 ›</button>`, s => s.querySelector('#banEntry').onclick = () => { closeSheet(); S.guideSeg = 'entry'; localSet('guideSeg', 'entry'); goTab('guide'); });
+    };
+  });
+}
+
+/* ── 日文卡 ── */
+const RUBY_RE = /\[([^|\]]+)\|([^\]]+)\]|\{(\w+)(:kana)?\}/g;
+function jpPhrases() { return (S.hb?.phrases?.categories || []).flatMap(c => (c.items || []).map(x => ({...x, cat: c.id, catTitle: c.title}))); }
+const jpById = id => jpPhrases().find(x => x.id === id);
+const jpKey = k => `jp.v.${S.me}.${k}`;
+function jpField(k) { return S.hb?.phrases?.fields?.[k] || {}; }
+function jpVal(k) {
+  const v = localGet(jpKey(k)); if (v != null && v !== '') return v;
+  const f = jpField(k);
+  if (f.type === 'number') return String(f.default ?? 1);
+  if (f.type === 'member') return S.members[S.me]?.passenger || '';
+  return '';
+}
+function jpKeys(p) { const ks = new Set(); for (const m of String(p.ja || '').matchAll(RUBY_RE)) if (m[3]) ks.add(m[3]); else if (m[1]) for (const n of (m[1] + m[2]).matchAll(/\{(\w+)/g)) ks.add(n[1]); for (const n of String(p.zh || '').matchAll(/\{(\w+)\}/g)) ks.add(n[1]); return [...ks]; }
+const kanaOf = k => jpField(k).kana?.[jpVal(k)] || '';
+const subVals = s => s.replace(/\{(\w+)(:kana)?\}/g, (_, k, kana) => kana ? kanaOf(k) : jpVal(k));
+// 使用者填的值裡也可能有 [漢字|かな]（例如食物選項）；mode: html | plain | kana
+function rubyOnly(s, mode) {
+  let out = '', last = 0;
+  for (const m of String(s).matchAll(/\[([^|\]]+)\|([^\]]+)\]/g)) {
+    out += mode === 'html' ? esc(s.slice(last, m.index)) : s.slice(last, m.index);
+    out += mode === 'html' ? `<ruby>${esc(m[1])}<rt>${esc(m[2])}</rt></ruby>` : mode === 'kana' ? m[2] : m[1];
+    last = m.index + m[0].length;
+  }
+  out += mode === 'html' ? esc(s.slice(last)) : s.slice(last);
+  return out;
+}
+function jpRender(s, mode = 'html', editable = false) {
+  s = String(s || ''); let out = '', last = 0;
+  const txt = t => mode === 'html' ? esc(t).replace(/\n/g, '<br>') : t;
+  for (const m of s.matchAll(RUBY_RE)) {
+    out += txt(s.slice(last, m.index)); last = m.index + m[0].length;
+    if (m[1] != null) {
+      const base = subVals(m[1]), rt = subVals(m[2]);
+      out += mode === 'html' ? (rt ? `<ruby>${esc(base)}<rt>${esc(rt)}</rt></ruby>` : esc(base)) : mode === 'kana' ? (rt || base) : base;
+    } else {
+      const v = jpVal(m[3]) || (mode === 'html' ? '＿＿' : '');
+      out += mode === 'html' ? `<span class="fillv" ${editable ? `role="button" tabindex="0" data-fill="${esc(m[3])}"` : ''}>${rubyOnly(v, 'html').replace(/\n/g, '<br>')}</span>` : rubyOnly(v, mode);
+    }
+  }
+  return out + txt(s.slice(last));
+}
+const zhRender = (s, mode = 'html') => { const t = String(s || '').replace(/\{(\w+)\}/g, (_, k) => rubyOnly(jpVal(k) || '＿＿', 'plain')); return mode === 'html' ? esc(t).replace(/\n/g, '<br>') : t; };
+function jpFavs() { try { return JSON.parse(localGet(`jp.fav.${S.me}`) || '[]'); } catch { return []; } }
+function jpToggleFav(id) { const f = jpFavs(), on = !f.includes(id), nf = on ? [...f, id] : f.filter(x => x !== id); localSet(`jp.fav.${S.me}`, JSON.stringify(nf)); toast(on ? '已加到常用' : '已從常用移除'); return on; }
+function jpSearchText(p) { return [p.zh, jpRender(p.ja, 'plain'), jpRender(p.ja, 'kana'), p.note ? rubyOnly(p.note, 'plain') : ''].join(' ').toLowerCase(); }
+function jpGroups() {
+  const all = jpPhrases(), favs = jpFavs(), q = S.jpQ.trim().toLowerCase();
+  if (q) return [{id: 'q', title: `搜尋「${S.jpQ.trim()}」`, items: all.filter(p => jpSearchText(p).includes(q))}];
+  const g = (S.hb.phrases.categories || []).map(c => ({id: c.id, title: c.title, items: all.filter(p => p.cat === c.id)}));
+  const fv = favs.map(jpById).filter(Boolean);
+  return fv.length ? [{id: 'fav', title: '⭐ 常用', items: fv}, ...g] : g;
+}
+function jpRowsHTML() {
+  const gs = jpGroups(), favs = jpFavs();
+  if (gs.length === 1 && !gs[0].items.length) return `<div class="empty">${ic.search}找不到符合的卡片</div>`;
+  return gs.map(g => `<h2 class="sec jpsec">${esc(g.title)}<span class="chip" style="margin-left:auto">${g.items.length}</span></h2>
+    <div class="card jplist">${g.items.map(p => `<div class="jprow"><button type="button" class="body" data-jp="${esc(p.id)}" data-grp="${esc(g.id)}"><span class="zh">${zhRender(p.zh)}</span><span class="ja" lang="ja">${jpRender(p.ja)}</span></button>
+      <button type="button" class="iconbtn star ${favs.includes(p.id) ? 'on' : ''}" data-fav="${esc(p.id)}" aria-label="${favs.includes(p.id) ? '從常用移除' : '加到常用'}" aria-pressed="${favs.includes(p.id)}">${starIcon}</button></div>`).join('')}</div>`).join('');
+}
+function jpListHTML() {
+  return `<div class="jphint small muted">點一張卡用大字給對方看${jpCanSpeak() ? '，也可以按 🔊 唸給對方聽' : ''}。按 ☆ 加到常用。</div>
+    <label class="jpq">${ic.search}<input class="in" id="jpQ" type="search" placeholder="搜尋中文、日文或假名" value="${esc(S.jpQ)}" autocomplete="off"></label>
+    <div id="jpRows">${jpRowsHTML()}</div>`;
+}
+function bindJpRows() {
+  const box = $('#jpRows'); if (!box) return;
+  box.querySelectorAll('[data-jp]').forEach(b => b.onclick = () => {
+    const g = jpGroups().find(x => x.id === b.dataset.grp);
+    openJp(b.dataset.jp, g ? g.items.map(p => p.id) : null, g?.title);
+  });
+  box.querySelectorAll('[data-fav]').forEach(b => b.onclick = () => { jpToggleFav(b.dataset.fav); $('#jpRows').innerHTML = jpRowsHTML(); bindJpRows(); });
+}
+function bindJpList() {
+  bindJpRows();
+  const q = $('#jpQ');
+  q.oninput = () => { S.jpQ = q.value; $('#jpRows').innerHTML = jpRowsHTML(); bindJpRows(); };
+}
+
+/* 唸給對方聽 */
+function jaVoice() { try { return speechSynthesis.getVoices().find(v => /^ja([-_]|$)/i.test(v.lang)) || null; } catch { return null; } }
+const jpCanSpeak = () => 'speechSynthesis' in window && !!jaVoice();
+try { speechSynthesis.getVoices(); speechSynthesis.addEventListener?.('voiceschanged', () => { if ($('#jpShow')) paintJp(); else if (S.tab === 'guide' && S.guideSeg === 'jp' && !inputFocused()) render(); }); } catch {}
+function jpSpeak(p) {
+  const v = jaVoice(); if (!v) return;
+  try {
+    speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(jpRender(p.ja, 'plain').replace(/\n+/g, '、'));
+    u.lang = 'ja-JP'; u.voice = v; u.rate = 0.9; speechSynthesis.speak(u);
+  } catch {}
+}
+
+/* 全螢幕覆蓋層（日文卡、事故步驟）：返回鍵關閉最上層 */
+const OVS = ['jpShow', 'sosShow'];
+let ovLock = null;
+async function ovWake() { try { ovLock = await navigator.wakeLock?.request('screen'); } catch { ovLock = null; } }
+function ovWakeOff() { if (OVS.some(id => $('#' + id))) return; try { ovLock?.release(); } catch {} ovLock = null; }
+document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible' && OVS.some(id => $('#' + id))) ovWake(); });
+function ovOpen(id) {
+  let el = $('#' + id);
+  if (!el) {
+    el = document.createElement('div'); el.id = id; el.className = 'ovl'; el.setAttribute('role', 'dialog'); el.setAttribute('aria-modal', 'true');
+    document.body.append(el); history.pushState({ov: id}, '');
+  }
+  document.documentElement.classList.add('locked'); ovWake();
+  return el;
+}
+function ovClose(id, fromPop = false) {
+  const el = $('#' + id); if (!el) return;
+  el.remove(); if (id === 'jpShow') try { speechSynthesis.cancel(); } catch {}
+  ovWakeOff();
+  if (!$('#sheet.on') && !$('#cpShow') && !OVS.some(x => $('#' + x))) document.documentElement.classList.remove('locked');
+  if (!fromPop && history.state?.ov === id) { popSkip++; history.back(); }
+}
+addEventListener('popstate', () => {
+  if (popSkip) { popSkip--; return; }
+  const top = [...document.querySelectorAll('.ovl')].pop();
+  if (top) ovClose(top.id, true);
+});
+addEventListener('keydown', e => { if (e.key !== 'Escape') return; const top = [...document.querySelectorAll('.ovl')].pop(); if (top) { e.stopImmediatePropagation(); ovClose(top.id); } }, true);
+
+const JPS = {id: null, list: [], title: '', mode: 'show', edit: null};
+function openJp(id, list = null, title = '') {
+  const p = jpById(id); if (!p) return;
+  const missing = jpKeys(p).filter(k => !jpVal(k));
+  Object.assign(JPS, {id, list: list && list.includes(id) ? list : jpPhrases().filter(x => x.cat === p.cat).map(x => x.id), title: title || p.catTitle, mode: missing.length ? 'form' : 'show', edit: null});
+  ovOpen('jpShow'); paintJp();
+}
+function fieldFormHTML(keys) {
+  return keys.map(k => {
+    const f = jpField(k), v = jpVal(k);
+    if (f.type === 'number') return `<div class="f"><span>${esc(f.label || k)}</span><div class="stepper"><button type="button" class="btn" data-step="-1" aria-label="減少">−</button><b class="num" id="jfv_${esc(k)}">${esc(v)}</b><button type="button" class="btn" data-step="1" aria-label="增加">＋</button></div></div>`;
+    const opts = (f.options || []).map(o => `<button type="button" class="chip jopt" data-opt="${esc(o)}" lang="ja">${rubyOnly(o, 'html')}</button>`).join('');
+    const its = f.type === 'itinerary' ? DAYS.map(d => {
+      const xs = S.itinerary.filter(x => x.day === d.d && x.kind !== 'move').sort(sortIt);
+      return xs.length ? `<div class="itpick"><b class="tiny">Day ${d.d}・${+d.date.slice(5, 7)}/${+d.date.slice(8)}</b>${xs.map(x => `<button type="button" class="chip" data-it="${esc(x.id)}">${esc(x.title)}</button>`).join('')}</div>` : '';
+    }).join('') : '';
+    return `<label class="f"><span>${esc(f.label || k)}</span>${f.type === 'itinerary' ? `<textarea class="in" id="jfv_${esc(k)}" rows="2" lang="ja" placeholder="選下面的行程，或直接輸入日文地址">${esc(v)}</textarea>` : `<input class="in" id="jfv_${esc(k)}" value="${esc(rubyOnly(v, 'plain'))}" ${v.includes('|') ? `data-ruby="${esc(v)}"` : ''} ${f.type === 'input' ? 'lang="ja"' : ''} autocomplete="off">`}</label>
+      ${f.hint ? `<p class="tiny muted" style="margin:-6px 0 8px">${esc(f.hint)}</p>` : ''}${opts ? `<div class="optrow" data-for="${esc(k)}">${opts}</div>` : ''}${its ? `<div class="optrow col" data-for="${esc(k)}">${its}</div>` : ''}`;
+  }).join('');
+}
+function paintJp() {
+  const el = $('#jpShow'), p = jpById(JPS.id); if (!el || !p) return ovClose('jpShow');
+  const keys = jpKeys(p), favs = jpFavs(), i = JPS.list.indexOf(p.id), n = JPS.list.length;
+  if (JPS.mode === 'form' || JPS.edit) {
+    const ks = JPS.edit ? [JPS.edit] : keys;
+    el.innerHTML = `<div class="jps-wrap"><div class="jps-top"><b class="t">先填好空格</b><button class="btn sm" id="jpsX">${ic.x}關閉</button></div>
+      <div class="card"><p class="small muted" style="margin:0 0 10px">${zhRender(p.zh)}</p>${fieldFormHTML(ks)}</div>
+      <button class="btn pri full" id="jpsOk">${JPS.edit ? '完成' : '出示'}</button></div>`;
+    el.querySelector('#jpsX').onclick = () => { if (JPS.edit) { JPS.edit = null; paintJp(); } else ovClose('jpShow'); };
+    el.querySelectorAll('[data-step]').forEach(b => b.onclick = () => { const k = ks.find(x => jpField(x).type === 'number'), v = Math.min(20, Math.max(1, (+jpVal(k) || 1) + +b.dataset.step)); localSet(jpKey(k), String(v)); el.querySelector('#jfv_' + k).textContent = v; });
+    el.querySelectorAll('.optrow').forEach(r => r.onclick = e => {
+      const k = r.dataset.for, inp = el.querySelector('#jfv_' + k); if (!inp) return;
+      const o = e.target.closest('[data-opt]'), it = e.target.closest('[data-it]');
+      if (o) { inp.value = rubyOnly(o.dataset.opt, 'plain'); inp.dataset.ruby = o.dataset.opt; }
+      if (it) { const x = S.itinerary.find(y => y.id === it.dataset.it); if (x) inp.value = x.map && x.map !== x.title ? `${x.map}\n${x.title}` : x.title; }
+    });
+    el.querySelector('#jpsOk').onclick = () => {
+      for (const k of ks) { const inp = el.querySelector('#jfv_' + k); if (!inp || inp.tagName === 'B') continue; let v = inp.value.trim(); if (inp.dataset.ruby && rubyOnly(inp.dataset.ruby, 'plain') === v) v = inp.dataset.ruby; localSet(jpKey(k), v); }
+      const still = keys.filter(k => !jpVal(k));
+      if (still.length && !JPS.edit) { toast('還有空格沒填'); return; }
+      JPS.mode = 'show'; JPS.edit = null; paintJp();
+    };
+    return;
+  }
+  const speak = jpCanSpeak();
+  el.innerHTML = `<div class="jps-wrap">
+    <div class="jps-top"><span class="chip">${esc(JPS.title)}${n > 1 ? ` <span class="num">${i + 1}/${n}</span>` : ''}</span>
+      <span style="flex:1"></span>
+      <button type="button" class="iconbtn star ${favs.includes(p.id) ? 'on' : ''}" id="jpsFav" aria-label="常用" aria-pressed="${favs.includes(p.id)}">${starIcon}</button>
+      <button class="btn sm" id="jpsX">${ic.x}關閉</button></div>
+    <div class="jps-card" id="jpsCard"><p class="jps-ja" lang="ja" id="jpsJa">${jpRender(p.ja, 'html', true)}</p></div>
+    <p class="jps-zh">${zhRender(p.zh)}</p>
+    ${p.note ? `<p class="jps-note small">${rubyOnly(p.note, 'html')}</p>` : ''}
+    ${speak ? `<button class="btn pri full jps-say" id="jpsSay">${spkIcon}唸給對方聽</button>` : ''}
+    ${keys.length ? `<p class="tiny muted" style="margin:0;text-align:center">點畫面上的底線文字可以修改${keys.map(k => esc(jpField(k).label || k)).join('、')}</p>` : ''}
+    ${n > 1 ? `<div class="jps-nav"><button class="btn" id="jpsPrev" ${i <= 0 ? 'disabled' : ''}>‹ 上一張</button><button class="btn" id="jpsNext" ${i >= n - 1 ? 'disabled' : ''}>下一張 ›</button></div>` : ''}
+  </div>`;
+  fitJa();
+  const go = d => { const j = i + d; if (j < 0 || j >= n) return; const np = jpById(JPS.list[j]); JPS.id = JPS.list[j]; JPS.mode = np && jpKeys(np).some(k => !jpVal(k)) ? 'form' : 'show'; paintJp(); };
+  el.querySelector('#jpsX').onclick = () => ovClose('jpShow');
+  el.querySelector('#jpsFav').onclick = () => { jpToggleFav(p.id); paintJp(); if (S.tab === 'guide' && S.guideSeg === 'jp' && $('#jpRows')) { $('#jpRows').innerHTML = jpRowsHTML(); bindJpRows(); } };
+  el.querySelector('#jpsSay')?.addEventListener('click', () => jpSpeak(p));
+  el.querySelector('#jpsPrev')?.addEventListener('click', () => go(-1));
+  el.querySelector('#jpsNext')?.addEventListener('click', () => go(1));
+  el.querySelectorAll('[data-fill]').forEach(f => { f.onclick = () => { JPS.edit = f.dataset.fill; paintJp(); }; f.onkeydown = e => { if (e.key === 'Enter') f.click(); }; });
+  const card = el.querySelector('#jpsCard'); let t0 = null;
+  card.ontouchstart = e => { t0 = e.touches.length === 1 ? {x: e.touches[0].clientX, y: e.touches[0].clientY} : null; };
+  card.ontouchend = e => { if (!t0) return; const t = e.changedTouches[0], dx = t.clientX - t0.x, dy = t.clientY - t0.y; t0 = null; if (Math.abs(dx) > 60 && Math.abs(dx) > Math.abs(dy) * 1.5) go(dx < 0 ? 1 : -1); };
+}
+// 日文自動縮放到放得下（最大 54px、最小 22px）
+function fitJa() {
+  const el = $('#jpsJa'), box = $('#jpsCard'); if (!el || !box) return;
+  const maxH = Math.max(160, innerHeight * (innerWidth > innerHeight ? .5 : .42));
+  let s = 54; el.style.fontSize = s + 'px';
+  el.style.maxWidth = '';
+  while (s > 22 && (el.scrollHeight > maxH || el.scrollWidth > box.clientWidth - 8)) { s -= 2; el.style.fontSize = s + 'px'; }
+  // 平均分配每行字數：在行數不變的前提下把寬度縮到最窄，避免最後一行只剩一兩個字
+  const h0 = el.offsetHeight; let lo = box.clientWidth * .35, hi = el.offsetWidth;
+  while (hi - lo > 4) { const mid = (lo + hi) / 2; el.style.maxWidth = mid + 'px'; if (el.offsetHeight > h0) lo = mid; else hi = mid; }
+  el.style.maxWidth = Math.ceil(hi) + 2 + 'px';
+}
+addEventListener('resize', () => { if ($('#jpsJa')) fitJa(); });
+
+/* ── 事故・故障步驟卡 ── */
+const SOS = {k: null, i: 0, all: false};
+function openSos(k) { if (!S.hb?.[k]) return; Object.assign(SOS, {k, i: 0, all: false}); ovOpen('sosShow'); paintSos(); }
+function sosActHTML(a) {
+  if (!a) return '';
+  if (a.type === 'tel') return `<a class="btn hot full big" href="tel:${esc(a.value)}">${ic.phone}${esc(a.label || a.value)}</a>`;
+  if (a.type === 'whatsapp' || a.type === 'link') return `<a class="btn pri full big" href="${esc(a.value)}" target="_blank" rel="noopener">${a.type === 'whatsapp' ? waIcon : ''}${esc(a.label || '開啟')}</a>`;
+  if (a.type === 'phrase') return `<button type="button" class="btn full big" data-phrase="${esc(a.value)}">🗣 ${esc(a.label || '出示日文卡')}</button>`;
+  return '';
+}
+function paintSos() {
+  const el = $('#sosShow'), D = S.hb?.[SOS.k]; if (!el || !D) return ovClose('sosShow');
+  const st = D.steps || [], n = st.length, i = Math.min(SOS.i, n - 1), x = st[i];
+  const step = (s, j) => `<div class="sos-step ${SOS.all ? 'all' : ''}"><div class="sos-no"><span class="num">${j + 1}</span>${SOS.all ? '' : `<span class="tiny">/ ${n}</span>`}</div><h3>${esc(s.t)}</h3>${s.d ? `<p>${esc(s.d)}</p>` : ''}${sosActHTML(s.action)}</div>`;
+  el.innerHTML = `<div class="jps-wrap sos ${SOS.k}">
+    <div class="jps-top"><b class="t">${SOS.k === 'accident' ? '🚨' : '🔧'} ${esc(D.title)}</b><button class="btn sm" id="sosX">${ic.x}關閉</button></div>
+    ${SOS.all ? st.map(step).join('') : step(x, i)}
+    ${SOS.all ? '' : `<div class="sos-dots" aria-hidden="true">${st.map((_, j) => `<i class="${j === i ? 'on' : j < i ? 'past' : ''}"></i>`).join('')}</div>
+      <div class="jps-nav"><button class="btn big" id="sosPrev" ${i <= 0 ? 'disabled' : ''}>‹ 上一步</button><button class="btn big ${i < n - 1 ? 'pri' : ''}" id="sosNext" ${i >= n - 1 ? 'disabled' : ''}>下一步 ›</button></div>`}
+    <button class="btn ghost full" id="sosAll">${SOS.all ? '一次看一步' : '展開全部步驟'}</button>
+  </div>`;
+  el.scrollTop = 0;
+  el.querySelector('#sosX').onclick = () => ovClose('sosShow');
+  el.querySelector('#sosPrev')?.addEventListener('click', () => { SOS.i = Math.max(0, i - 1); paintSos(); });
+  el.querySelector('#sosNext')?.addEventListener('click', () => { SOS.i = Math.min(n - 1, i + 1); paintSos(); });
+  el.querySelector('#sosAll').onclick = () => { SOS.all = !SOS.all; paintSos(); };
+  el.querySelectorAll('[data-phrase]').forEach(b => b.onclick = () => openJp(b.dataset.phrase));
+}
 </script>
 </body>
 </html>
