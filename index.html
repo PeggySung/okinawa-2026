@@ -306,6 +306,10 @@ details.cat>summary .cnt{margin-left:auto;font-size:13px}
 .ex .amt{text-align:right}
 .ex .amt b{display:block;font-size:17px}
 .ex .amt small{font-size:11.5px;color:var(--ink-3)}
+.ex .sub .av.s.ok{opacity:.45;filter:grayscale(.6)}
+.ex .extra .chip.ok{background:var(--sea-light);color:var(--sea-deep)}
+.pick.settled button[aria-pressed=true]{background:var(--sea-light)}
+.pick button.ghostm{visibility:hidden}
 .fab{position:fixed;right:max(16px,calc(50% - 264px));bottom:calc(var(--safe-b) + 18px);z-index:20;min-height:54px;padding:0 20px 0 16px;border-radius:999px;
   background:var(--hib);color:#fff;font-family:var(--f-title);font-size:16px;display:flex;align-items:center;gap:6px;box-shadow:3px 4px 0 rgba(160,40,52,.3)}
 .fab svg{width:22px;height:22px}
@@ -1749,19 +1753,26 @@ function editShop(x) {
 
 /* ───────────── 記帳與結算 ───────────── */
 function shareInfo(amount, n) { const A = cents(amount), base = n ? Math.floor(A / n) : 0; return {A, base, rem: A - base * n}; }
+// 已結清：旅途中已經先把自己那份還給付款人的人（不含付款人自己）。舊記帳沒有這個欄位當作沒人結清
+const settledOf = e => (Array.isArray(e.settled) ? e.settled : []).filter(m => m !== e.payer && e.split.includes(m));
+const owersOf = e => e.split.filter(m => m !== e.payer);
+// 已結清的人和付款人之間這筆已經兩清，不再列入結算；總支出照算
+function addBal(bal, e) {
+  const {A, base, rem} = shareInfo(e.amount, e.split.length), done = settledOf(e);
+  bal[e.payer] += A - rem - base * done.length;
+  for (const m of e.split) if (!done.includes(m)) bal[m] -= base;
+}
 function balances(cur) {
   const bal = {qi: 0, xuan: 0, yun: 0, yue: 0};
-  for (const e of S.expenses) if (e.cur === cur) {
-    const {A, base, rem} = shareInfo(e.amount, e.split.length);
-    bal[e.payer] += A; for (const m of e.split) bal[m] -= base; bal[e.payer] -= rem;
-  }
+  for (const e of S.expenses) if (e.cur === cur) addBal(bal, e);
   return bal;
 }
 function balancesOf(exps) {
   const bal = {qi: 0, xuan: 0, yun: 0, yue: 0};
-  for (const e of exps) { const {A, base, rem} = shareInfo(e.amount, e.split.length); bal[e.payer] += A; for (const m of e.split) bal[m] -= base; bal[e.payer] -= rem; }
+  for (const e of exps) addBal(bal, e);
   return bal;
 }
+const settledAmt = e => shareInfo(e.amount, e.split.length).base * settledOf(e).length;
 // 最少轉帳次數：找出最多個「總和為 0」的子群組，每個群組內 k 人需要 k-1 筆轉帳
 function minTransfers(bal) {
   const ids = Object.keys(bal).filter(k => bal[k] !== 0), n = ids.length;
@@ -1818,7 +1829,7 @@ async function setPaid(cur, i, val) {
 async function saveExpense(old, data) {
   requireOnline();
   let id = null;
-  const moneyChanged = !old || old.cur !== data.cur || cents(old.amount) !== cents(data.amount) || old.payer !== data.payer || !sameSet(old.split, data.split);
+  const moneyChanged = !old || old.cur !== data.cur || cents(old.amount) !== cents(data.amount) || old.payer !== data.payer || !sameSet(old.split, data.split) || !sameSet(settledOf(old), data.settled || []);
   const curs = [...new Set([data.cur, old?.cur].filter(Boolean))];
   await runTransaction(db, async tx => {
     const reads = {};
@@ -1869,7 +1880,7 @@ function renderMoney() {
   const cards = ['JPY', 'TWD'].map(cur => {
     const exps = S.expenses.filter(e => e.cur === cur), st = S.settlements[cur], locked = anyPaid(st);
     if (!exps.length && !st) return '';
-    const bal = balances(cur), total = exps.reduce((s, e) => s + cents(e.amount), 0);
+    const bal = balances(cur), total = exps.reduce((s, e) => s + cents(e.amount), 0), doneAmt = exps.reduce((s, e) => s + settledAmt(e), 0);
     let res;
     if (!st) res = `<p class="small muted" style="margin:8px 0 10px">記帳有變動，結算結果已清空。按下結算來計算最新結果。</p>
       <button class="btn pri full" data-settle="${cur}">${ic.coin}結算${CUR[cur].name}</button>`;
@@ -1883,6 +1894,7 @@ function renderMoney() {
         : `<button class="btn sm ghost" data-settle="${cur}" style="margin-top:4px">重新結算</button>`}`;
     return `<div class="card settle"><h3><span class="cur-badge">${CUR[cur].sym}</span>${CUR[cur].name}${locked ? `<span class="chip hib" style="margin-left:auto">${ic.lock}鎖定中</span>` : ''}</h3>
       <div class="small muted" style="margin-top:4px">共 ${exps.length} 筆・總支出 <b class="num" style="color:var(--ink)">${money(total, cur)}</b></div>
+      ${doneAmt ? `<div class="tiny muted" style="margin-top:2px">其中 <span class="num">${money(doneAmt, cur)}</span> 已在旅途中先結清，不列入下方的轉帳</div>` : ''}
       <div class="bal">${IDS.map(m => `<div>${avatar(m)}<span class="v num ${bal[m] > 0 ? 'pos' : bal[m] < 0 ? 'neg' : ''}">${bal[m] ? money(bal[m], cur, true) : '±0'}</span></div>`).join('')}</div>
       <div class="tiny muted" style="text-align:center">＋ 代表別人要給他・− 代表他要付出去</div>
       ${res}</div>`;
@@ -1898,9 +1910,11 @@ function renderMoney() {
     if (key !== lastDay) { rows += `<div class="exday">${key}</div>`; lastDay = key; }
     const {base, rem} = shareInfo(e.amount, e.split.length);
     let payTag = '';
-    if (e.payType === 'cash') payTag = '<span class="chip">現金</span>';
+    const done = settledOf(e), owers = owersOf(e);
+    if (done.length) payTag += `<span class="chip ok">✓ ${done.length === owers.length ? '已結清' : `${done.map(nm).join('、')} 已結清`}</span>`;
+    if (e.payType === 'cash') payTag += '<span class="chip">現金</span>';
     else if (e.payType === 'card') {
-      payTag = '<span class="chip">刷卡</span>';
+      payTag += '<span class="chip">刷卡</span>';
       if (e.payer === S.me && S.catalog) {
         const t = S.txns.find(x => x.id === e.id), res = t && txRes?.results[t.id];
         payTag += t ? `<span class="chip sea">${cdot(cardById(t.card))}${esc(cardShort(cardById(t.card)))}${res ? `・估回饋 ${twdFmt(res.net)}` : ''}</span>` : (S.txSynced ? '<span class="chip hib">待填卡片</span>' : '');
@@ -1908,7 +1922,7 @@ function renderMoney() {
     }
     rows += `<button class="card ex" data-ex="${e.id}">${avatar(e.payer, 'l').replace('data-profile', 'data-x')}
       <div class="body"><div class="nm">${esc(e.name || '（未命名）')}</div>
-        <div class="sub">${nm(e.payer)} 先付・分給 <span class="avs">${e.split.map(m => avatar(m, 's').replace('data-profile', 'data-x')).join('')}</span>${isLocked(e.cur) ? ic.lock.replace('<svg', '<svg style="width:14px;height:14px;color:#B32F3B"') : ''}</div>
+        <div class="sub">${nm(e.payer)} 先付・分給 <span class="avs">${e.split.map(m => avatar(m, done.includes(m) ? 's ok' : 's').replace('data-profile', 'data-x')).join('')}</span>${isLocked(e.cur) ? ic.lock.replace('<svg', '<svg style="width:14px;height:14px;color:#B32F3B"') : ''}</div>
 
         ${e.note ? `<div class="tiny muted" style="margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(e.note)}</div>` : ''}</div>
       <div class="amt"><b class="num">${money(cents(e.amount), e.cur)}</b><small>每人 <span class="num">${money(base, e.cur)}</span>${rem ? '…' : ''}</small></div>${payTag ? `<div class="extra">${payTag}</div>` : ''}</button>`;
@@ -1943,6 +1957,7 @@ function renderMoney() {
 function editExpense(e, pre = null) {
   const isNew = !e;
   let cur = e?.cur || pre?.cur || localGet('lastCur') || 'JPY', payer = e?.payer || S.me, split = e ? [...e.split] : pre?.split ? [...pre.split] : [...IDS];
+  let settled = e ? settledOf(e) : [];
   let payType = isNew ? 'card' : (e.payType || null);
   const hasCat = !!S.catalog;
   let chManual = !!(e?.channel && hasCat && e.channel !== autoChannel(e.name)) || !!(pre?.channel && hasCat && pre.channel !== autoChannel(pre.name));
@@ -1957,6 +1972,8 @@ function editExpense(e, pre = null) {
     <div class="f"><span>誰先付錢</span><div class="pick" id="ePayer"></div></div>
     <div class="f"><span>分攤的人（當分母）</span><div class="pick" id="eSplit"></div></div>
     <div class="share" id="eShare"></div>
+    <div class="f" id="eSetF"><span>已結清的人 <span class="tiny muted">（旅途中已經先把自己那份還給付款人，就不列入最後結算；總支出照算）</span></span><div class="pick settled" id="eSet"></div>
+      <div style="display:flex;justify-content:flex-end;margin-top:6px"><button type="button" class="btn sm ghost" id="eSetAll"></button></div></div>
     <label class="f"><span>品名</span><input class="in" id="eName" value="${esc(e?.name || pre?.name || '')}" maxlength="100" placeholder="例如 燒肉晚餐"></label>
     <label class="f"><span>付款日期 <span class="tiny muted">（大家都看得到，記帳明細依這個日期排）</span></span><input class="in" id="ePaid" type="date" value="${esc(sel.date)}"></label>
     ${hasCat ? `<label class="f"><span>通路類型 <span class="tiny muted" id="eChAuto"></span></span><select class="in" id="eCh">${channelOptions(e?.channel || pre?.channel || autoChannel(e?.name))}</select></label>` : ''}
@@ -2033,7 +2050,13 @@ function editExpense(e, pre = null) {
       s.querySelectorAll('#ePay [data-p]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.p === payType)));
       const a = parseAmt(amtEl.value);
       const {base, rem} = shareInfo(a || 0, split.length);
+      const owers = split.filter(m => m !== payer);
+      settled = settled.filter(m => owers.includes(m));
       s.querySelector('#eShare').innerHTML = split.length && a ? `<span>${split.length} 人分攤，每人</span><b class="num">${money(base, cur)}${rem ? ` <span class="tiny muted">（零頭 ${money(rem, cur)}）</span>` : ''}</b>` : `<span>${split.length ? '輸入總額後顯示每人金額' : '至少要勾一位分攤的人'}</span>`;
+      s.querySelector('#eSetF').style.display = owers.length ? '' : 'none';
+      s.querySelector('#eSet').innerHTML = IDS.map(m => owers.includes(m) ? `<button type="button" data-m="${m}" aria-pressed="${settled.includes(m)}" style="--c:${COLORS[m]}" ${moneyLocked ? 'disabled' : ''}>${avatar(m)}${nm(m)}</button>` : `<button type="button" class="ghostm" tabindex="-1" aria-hidden="true"></button>`).join('');
+      const allB = s.querySelector('#eSetAll'), allDone = owers.length && owers.every(m => settled.includes(m));
+      allB.textContent = allDone ? '全部取消結清' : '全部結清'; allB.disabled = moneyLocked;
       s.querySelector('#eSave').disabled = isNew && moneyLocked;
       const del = s.querySelector('#eDel'); if (del) del.disabled = moneyLocked;
       paintCard();
@@ -2047,12 +2070,14 @@ function editExpense(e, pre = null) {
     s.querySelector('#eCur').onclick = ev => { const b = ev.target.closest('[data-c]'); if (b && !b.disabled) { cur = b.dataset.c; paint(); } };
     s.querySelector('#ePayer').onclick = ev => { const b = ev.target.closest('[data-m]'); if (b && !b.disabled) { payer = b.dataset.m; paint(); } };
     s.querySelector('#ePay').onclick = ev => { const b = ev.target.closest('[data-p]'); if (b) { payType = b.dataset.p; paint(); } };
+    s.querySelector('#eSet').onclick = ev => { const b = ev.target.closest('[data-m]'); if (!b || b.disabled) return; const m = b.dataset.m; settled = settled.includes(m) ? settled.filter(x => x !== m) : IDS.filter(x => x === m || settled.includes(x)); paint(); };
+    s.querySelector('#eSetAll').onclick = () => { const owers = split.filter(m => m !== payer); settled = owers.every(m => settled.includes(m)) ? [] : [...owers]; paint(); };
     s.querySelector('#eSplit').onclick = ev => { const b = ev.target.closest('[data-m]'); if (!b || b.disabled) return; const m = b.dataset.m; split = split.includes(m) ? split.filter(x => x !== m) : IDS.filter(x => x === m || split.includes(x)); paint(); };
     s.querySelector('#eSave').onclick = async () => {
       const amount = parseAmt(amtEl.value);
       if (!amount || amount <= 0) { toast('請輸入總額'); return; }
       if (!split.length) { toast('至少要勾一位分攤的人'); return; }
-      const data = {cur, amount, payer, split, name: s.querySelector('#eName').value.trim(), note: s.querySelector('#eNote').value.trim(), paidDate: s.querySelector('#ePaid').value || sel.date};
+      const data = {cur, amount, payer, split, settled: settled.filter(m => m !== payer && split.includes(m)), name: s.querySelector('#eName').value.trim(), note: s.querySelector('#eNote').value.trim(), paidDate: s.querySelector('#ePaid').value || sel.date};
       if (payType) data.payType = payType;
       if (chSel) data.channel = chSel.value;
       const btn = s.querySelector('#eSave'); btn.disabled = true;
