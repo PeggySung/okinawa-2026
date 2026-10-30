@@ -1909,7 +1909,7 @@ function renderMoney() {
     const ds = exDay(e), key = ds === '9999-12-31' ? '剛剛' : `${+ds.slice(5, 7)}/${+ds.slice(8, 10)}（${'日一二三四五六'[new Date(ds + 'T00:00:00Z').getUTCDay()]}）`;
     if (key !== lastDay) { rows += `<div class="exday">${key}</div>`; lastDay = key; }
     const {base, rem} = shareInfo(e.amount, e.split.length);
-    let payTag = '';
+    let payTag = ds < TRIP_START ? '<span class="chip hib">出發前</span>' : '';
     const done = settledOf(e), owers = owersOf(e);
     if (done.length) payTag += `<span class="chip ok">✓ ${done.length === owers.length ? '已結清' : `${done.map(nm).join('、')} 已結清`}</span>`;
     if (e.payType === 'cash') payTag += '<span class="chip">現金</span>';
@@ -1961,6 +1961,7 @@ function editExpense(e, pre = null) {
   let payType = isNew ? 'card' : (e.payType || null);
   const hasCat = !!S.catalog;
   let chManual = !!(e?.channel && hasCat && e.channel !== autoChannel(e.name)) || !!(pre?.channel && hasCat && pre.channel !== autoChannel(pre.name));
+  const cur0 = cur; let curManual = !isNew || !!pre?.cur;
   // 私人卡片欄位（只在自己是付款人時使用）
   const oldTx = e ? S.txns.find(t => t.id === e.id) : null;
   // 付款日期（大家都看得到）：有填就用；舊記帳沒填時，自己的刷卡用卡片明細的消費日，否則用建立時間
@@ -1988,6 +1989,11 @@ function editExpense(e, pre = null) {
       if (!chSel) return;
       if (!chManual) chSel.value = autoChannel(s.querySelector('#eName').value);
       s.querySelector('#eChAuto').textContent = chManual ? '（手動選擇）' : '（依品名自動判斷，可改）';
+      // 出發前在台灣的消費（網卡、保險、車費）通常是台幣：新記帳自動切台幣，換回日本通路再切回原本的幣別
+      if (curManual) return false;
+      const want = S.catalog?.channels?.find(c => c.id === chSel.value)?.domestic ? 'TWD' : cur0;
+      if (want === cur || isLocked(want)) return false;
+      cur = want; return true;
     };
     // 卡片區：選單只在付款人／付款方式改變時重畫，金額、通路、日期變動只更新估算
     let boxMode = null;
@@ -2064,10 +2070,10 @@ function editExpense(e, pre = null) {
     syncCh(); paint();
     if (isNew && !pre?.amount) setTimeout(() => amtEl.focus(), 250);
     amtEl.oninput = paint;
-    s.querySelector('#eName').oninput = () => { syncCh(); paintCard(); };
+    s.querySelector('#eName').oninput = () => { if (syncCh()) paint(); else paintCard(); };
     s.querySelector('#ePaid').onchange = ev => { sel.date = ev.target.value || sel.date; paintCard(); };
-    chSel?.addEventListener('change', () => { chManual = true; syncCh(); paintCard(); });
-    s.querySelector('#eCur').onclick = ev => { const b = ev.target.closest('[data-c]'); if (b && !b.disabled) { cur = b.dataset.c; paint(); } };
+    chSel?.addEventListener('change', () => { chManual = true; if (syncCh()) paint(); else paintCard(); });
+    s.querySelector('#eCur').onclick = ev => { const b = ev.target.closest('[data-c]'); if (b && !b.disabled) { cur = b.dataset.c; curManual = true; paint(); } };
     s.querySelector('#ePayer').onclick = ev => { const b = ev.target.closest('[data-m]'); if (b && !b.disabled) { payer = b.dataset.m; paint(); } };
     s.querySelector('#ePay').onclick = ev => { const b = ev.target.closest('[data-p]'); if (b) { payType = b.dataset.p; paint(); } };
     s.querySelector('#eSet').onclick = ev => { const b = ev.target.closest('[data-m]'); if (!b || b.disabled) return; const m = b.dataset.m; settled = settled.includes(m) ? settled.filter(x => x !== m) : IDS.filter(x => x === m || settled.includes(x)); paint(); };
@@ -2104,7 +2110,7 @@ function parseAmt(v) {
 // 信用卡回饋計算（純函式，不碰畫面與資料庫）。金額單位一律為新台幣。
 const CardEngine = (() => {
   const ANY = ['card', 'applepay', 'googlepay', 'online'];
-  const ONLINE_CH = new Set(['jp_online', 'online_booking', 'airline']);
+  const ONLINE_CH = new Set(['jp_online', 'online_booking', 'airline', 'tw_online', 'tw_insurance']);
   const PHYS_METHODS = ['card', 'googlepay', 'applepay', 'paypay_taishin', 'paypay_esun'];
   const MPREF = ['card', 'googlepay', 'applepay', 'online', 'paypay_taishin', 'paypay_esun'];
   const EPS = 1e-9;
@@ -2257,10 +2263,11 @@ const CardEngine = (() => {
       items.push({rule: r, rate: r.rate, ...c});
     }
     const gross = items.reduce((s, i) => s + i.reward, 0);
-    const feeRate = waived ? 0 : (card.foreignFee ?? cat.defaultForeignFee ?? 0);
+    const domestic = !!P.channel[tx.channel]?.domestic; // 台灣國內消費（出發前的網卡、保險、車費）沒有國外交易手續費
+    const feeRate = waived || domestic ? 0 : (card.foreignFee ?? cat.defaultForeignFee ?? 0);
     const fee = tx.twd * feeRate / 100, net = gross - fee;
     return {card, cardId, method, plan, channel: tx.channel, twd: tx.twd, date: tx.date, items, hints, gross, fee, feeRate, net,
-      netRate: tx.twd > 0 ? net / tx.twd * 100 : items.reduce((s, i) => s + i.rate, 0) - feeRate, baseRate, waived, _local: local};
+      netRate: tx.twd > 0 ? net / tx.twd * 100 : items.reduce((s, i) => s + i.rate, 0) - feeRate, baseRate, waived, domestic, _local: local};
   }
 
   // 依消費日依序累積自己所有刷卡明細的已用額度
@@ -2544,7 +2551,7 @@ function breakdownHTML(r, fx) {
     if (i.capped) s += `<div class="tiny warnline">${i.remBefore > 0.005 ? `加碼只剩 ${twdFmt(i.remBefore)}，超過部分只算基本 ${pctFmt(r.baseRate)}` : '已達上限・只剩基本回饋'}</div>`;
     return s + '</li>';
   });
-  lines.push(r.feeRate ? `<li><span>國外交易手續費 <span class="num">${pctFmt(r.feeRate)}</span></span><b class="num neg">−${twdFmt(r.fee)}</b></li>` : `<li><span>免國外交易手續費</span><b class="num">NT$0</b></li>`);
+  lines.push(r.feeRate ? `<li><span>國外交易手續費 <span class="num">${pctFmt(r.feeRate)}</span></span><b class="num neg">−${twdFmt(r.fee)}</b></li>` : `<li><span>${r.domestic ? '台灣國內消費，沒有國外交易手續費' : '免國外交易手續費'}</span><b class="num">NT$0</b></li>`);
   const hints = r.hints.map(h => {
     if (h.type === 'noreg') return `<li class="hint">登錄「${esc(h.rule.name)}」後可多拿 ${twdFmt(h.reward)}${yen(h.reward)}${h.opens && h.opens > new Date().toISOString() ? `（${opensFmt(h.opens)} 開放登錄）` : ''}</li>`;
     if (h.type === 'threshold') return `<li class="hint">本季日本實體再刷 ${twdFmt(h.need)} 可解鎖 ${pctFmt(h.rule.rate)}（${esc(h.rule.name)}${h.noreg ? '，也要先登錄' : ''}）</li>`;
