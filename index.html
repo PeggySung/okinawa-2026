@@ -2762,8 +2762,10 @@ function cycleText(c, row) {
   return `${+c.start.slice(5, 7)} 月（自然月）`;
 }
 const FLAG_TEXT = {period: '不在活動期間', requires: '前提條件沒勾，不算', plan: '不是目前方案', noreg: '還沒登錄，不算', skip: '不參加'};
+// 額度區塊要列哪些：前提條件沒勾的（例如新戶加碼）不列；只差登錄的照常列出，提醒還能拿
+const capRowsShown = (card, ctx, date) => CardEngine.capStatus(ctx, card.id, date).filter(r => !r.flags.includes('requires'));
 function capRowsHTML(card, ctx, date, compact = false) {
-  const rows = CardEngine.capStatus(ctx, card.id, date); if (!rows.length) return '';
+  const rows = capRowsShown(card, ctx, date); if (!rows.length) return '';
   return rows.map(row => {
     const names = row.rules.map(r => r.name).join('／'), flags = row.flags.map(f => `<span class="chip">${FLAG_TEXT[f]}</span>`).join('');
     const off = row.flags.length > 0;
@@ -2813,7 +2815,7 @@ function cardBlockHTML(c, ctx, date) {
   const cp = myProf().cards[c.id], open = S.cardOpen.has(c.id);
   const wopts = cardWalletOpts(c), won = cardWalletsOn(c), wunset = wopts.length && !Array.isArray(cp.wallets);
   const regs = c.rules.filter(r => r.registration), unreg = regs.reduce((n, r) => n + regPeriodsOf(r).filter(p => !CardEngine.isReg(cp, r, p.date) && !CardEngine.isSkip(cp, r, p.date)).length, 0);
-  const rows = CardEngine.capStatus(ctx, c.id, date), fullN = rows.filter(r => r.full && !r.flags.length).length;
+  const rows = capRowsShown(c, ctx, date), fullN = rows.filter(r => r.full && !r.flags.length).length;
   return `<details class="card cardx" data-card="${esc(c.id)}" ${open ? 'open' : ''}><summary>
       ${cardArt(c)}<div class="body"><div class="nm">${esc(c.name)}</div>
       <div class="tiny muted">${esc(c.bank)}${c.network ? '・' + esc(c.network) : ''}${c.billingCurrency ? '・' + esc(c.billingCurrency) + ' 帳單' : ''}</div>
@@ -2841,7 +2843,7 @@ function cardBlockHTML(c, ctx, date) {
       <div class="sub-h">帳單結帳日</div>
       <div class="row2" style="align-items:center"><select class="in" data-close-day="${esc(c.id)}"><option value="">還沒填</option>${Array.from({length: 31}, (_, i) => `<option value="${i + 1}" ${cp.closeDay === i + 1 ? 'selected' : ''}>每月 ${i + 1} 號</option>`).join('')}</select>
         <span class="tiny muted">${cp.closeDay ? '用來切「每期帳單」的額度週期' : '沒填時「每期帳單」的額度以自然月估算'}</span></div>
-      ${rows.length ? `<div class="sub-h">剩餘額度 <span class="tiny muted">切換月份只影響這張卡</span></div>${capChipsHTML(c)}${capRowsHTML(c, ctx, date)}` : ''}
+      ${rows.length ? `<div class="sub-h">剩餘額度</div>${capChipsHTML(c)}${capRowsHTML(c, ctx, date)}` : ''}
       <details class="rules"><summary class="small">看回饋規則（${c.rules.length} 條）</summary><ul class="rl">${c.rules.map(r => ruleSummary(c, r, cp)).join('')}</ul></details>
       <div class="sub-h">資料來源</div>
       <ul class="src">${(c.sources || []).map(s => `<li><a href="${esc(s.url)}" target="_blank" rel="noopener">${esc(s.title)}</a> <span class="tiny muted">${esc(s.checked)} 查詢</span></li>`).join('')}</ul>
