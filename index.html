@@ -306,6 +306,10 @@ details.exgrp[open]>summary .chev{transform:rotate(90deg)}
 details.exgrp>summary .sum{margin-left:auto;font-family:var(--f-body,inherit);font-size:12.5px;color:var(--ink-3);text-align:right}
 .msum{display:flex;flex-wrap:wrap;gap:4px 14px;align-items:center;font-size:13px;color:var(--ink-2);margin:2px 2px 10px}
 .msum b{color:var(--ink)}
+.mchips{display:flex;gap:4px;flex-wrap:wrap;margin:4px 0 6px}
+.mchips button{font-family:var(--f-title);font-size:13px;padding:3px 10px;min-height:30px;border-radius:999px;color:var(--ink-2);box-shadow:inset 0 0 0 1.5px var(--line)}
+.mchips button[aria-pressed=true]{background:var(--sea-light);color:var(--sea-deep);box-shadow:inset 0 0 0 1.5px var(--sea)}
+.mtabs .chip{font-size:11px;padding:0 6px;margin-left:2px;vertical-align:2px}
 .mtabs{display:flex;gap:4px;border-bottom:1.5px solid var(--line);margin:0 0 10px}
 .mtabs button{flex:1;padding:8px 0 9px;font-family:var(--f-title);font-size:16.5px;color:var(--ink-3);position:relative}
 .mtabs button[aria-pressed=true]{color:var(--ink)}
@@ -2472,25 +2476,28 @@ function capMonths() {
   const [y, m] = TRIP_END.split('-').map(Number); ms.add(m === 12 ? `${y + 1}-01` : `${y}-${String(m + 1).padStart(2, '0')}`);
   return [...ms].sort();
 }
-function capSel() {
-  const v = localGet('capView');
-  if (v === 'today') return nowJST().date.slice(0, 7); // 舊版的「看今天」
+// 每張卡各自記住要看哪個週期（存在這支手機）：'trip' = 旅行期間（旅行中是今天），或月份 'YYYY-MM'
+function capSel(card) {
+  const v = card ? localGet('capView.' + card.id) : null;
   return v && capMonths().includes(v) ? v : 'trip';
 }
 // 這張卡要用哪一天去找週期：選月份時，有填結帳日的卡看「這個月結帳的那一期」，沒填的看自然月
 function capDate(card) {
-  const v = capSel(); if (v === 'trip') return refDate();
+  const v = capSel(card); if (v === 'trip') return refDate();
   const [y, m] = v.split('-').map(Number), dim = new Date(Date.UTC(y, m, 0)).getUTCDate();
   const cd = card ? myProf().cards?.[card.id]?.closeDay : null;
   return `${v}-${String(cd ? Math.min(cd, dim) : 15).padStart(2, '0')}`;
 }
-function capViewHTML() {
-  const v = capSel(), t = nowJST().date, during = t >= TRIP_START && t <= TRIP_END;
-  const anyClose = v !== 'trip' && ownedCards().some(c => myProf().cards[c.id]?.closeDay);
-  return `<div class="seg" data-capview style="margin:0 0 ${anyClose ? 4 : 10}px"><button type="button" data-v="trip" aria-pressed="${v === 'trip'}">${during ? '今天' : '旅行期間'}</button>${capMonths().map(mm => `<button type="button" data-v="${mm}" aria-pressed="${v === mm}">${+mm.slice(5)} 月</button>`).join('')}</div>`
-    + (anyClose ? '<p class="tiny muted" style="margin:0 2px 10px">有填結帳日的卡，看的是這個月結帳的那一期帳單；沒填的看整個月</p>' : '');
+const capSelLabel = c => { const v = capSel(c); return v === 'trip' ? '' : `${+v.slice(5)} 月`; };
+function capChipsHTML(c) {
+  const v = capSel(c), t = nowJST().date, during = t >= TRIP_START && t <= TRIP_END;
+  return `<div class="mchips" data-capcard="${esc(c.id)}"><button type="button" data-v="trip" aria-pressed="${v === 'trip'}">${during ? '今天' : '旅行期間'}</button>${capMonths().map(mm => `<button type="button" data-v="${mm}" aria-pressed="${v === mm}">${+mm.slice(5)} 月</button>`).join('')}</div>`
+    + (v !== 'trip' && myProf().cards[c.id]?.closeDay ? '<p class="tiny muted" style="margin:0 2px 6px">有填結帳日：看的是這個月結帳的那一期帳單</p>' : '');
 }
-function bindCapView(root, after) { root.querySelectorAll('[data-capview]').forEach(g => g.onclick = e => { const b = e.target.closest('[data-v]'); if (!b) return; localSet('capView', b.dataset.v); after(); }); }
+function bindCapView(root, after) {
+  root.querySelectorAll('[data-capcard]').forEach(g => g.onclick = e => { const b = e.target.closest('[data-v]'); if (!b) return; localSet('capView.' + g.dataset.capcard, b.dataset.v); after(); });
+  root.querySelectorAll('[data-capreset]').forEach(b => b.onclick = () => { for (const c of ownedCards()) localSet('capView.' + c.id, 'trip'); after(); });
+}
 function itemDate(x) { const d = DAYS.find(i => i.d === x.day); return d ? d.date : refDate(); }
 const cardById = id => S.catalog?.cards?.find(c => c.id === id) || null;
 const cardShort = c => c ? (c.name.includes(' ') ? c.name.split(' ').slice(1).join(' ') : c.name).replace(/（.*?）/g, '') : '（已移除的卡）';
@@ -2658,6 +2665,7 @@ function recText(r, fx) {
 function goCards() {
   closeSheet();
   if (S.tab !== 'cards') S.prevTab = S.tab;
+  S.cardTab = 'cards';
   S.tab = 'cards'; renderHeader(); render(); scrollTo({top: 0});
 }
 function leaveCards() { S.tab = S.prevTab && S.prevTab !== 'coupons' ? S.prevTab : 'shop'; renderHeader(); render(); scrollTo({top: 0}); }
@@ -2671,20 +2679,29 @@ function renderCards() {
   }
   if (!S.cardProfile && !S.profLoaded) { $('#main').innerHTML = head + '<p class="empty">載入中…</p>'; $('#cdBack').onclick = leaveCards; return; }
   const p = myProf(), own = ownedCards(), others = cat.cards.filter(c => !p.cards[c.id]);
-  const {ctx} = cardCtx();
-  $('#main').innerHTML = head + recheckHTML() + remindersHTML() + notesHTML('cdNotes') + fxCardHTML()
+  const {ctx} = cardCtx(), regN = regItems().length, f = fxNow();
+  const tab = ['remind', 'set'].includes(S.cardTab) ? S.cardTab : 'cards';
+  const summary = `<div class="msum"><span><b class="num">${own.length}</b> 張卡</span>${regN ? `<span>待登錄 <b class="num" style="color:#B32F3B">${regN}</b> 項</span>` : ''}<span>匯率 <b class="num">${f.rate.toFixed(4)}</b></span></div>`;
+  const tabs = `<div class="mtabs" id="cdTabs">${[['remind', `提醒${regN ? `<span class="chip hib">${regN}</span>` : ''}`], ['cards', '我的卡片'], ['set', '匯率與設定']].map(([k, t]) => `<button type="button" data-t="${k}" aria-pressed="${tab === k}">${t}</button>`).join('')}</div>`;
+  const addOpen = localGet('open.addCards') === '1';
+  let body;
+  if (tab === 'remind') body = (remindersHTML() || `<div class="card empty">${ic.shell}目前沒有要登錄的活動</div>`) + `<div style="margin-top:12px">${notesHTML('cdNotes')}</div>`;
+  else if (tab === 'set') body = fxCardHTML()
     + `<h2 class="sec">${ic.phone.replace('<svg', '<svg class="deco"')}我的行動支付</h2>
-      <div class="card"><p class="tiny muted" style="margin:0 0 4px">每張卡實際綁了哪些，在下面各張卡片裡設定（以卡片的設定為準）。這裡是還沒設定的卡的預設值。</p>
+      <div class="card"><p class="tiny muted" style="margin:0 0 4px">每張卡實際綁了哪些，在「我的卡片」各張卡片裡設定（以卡片的設定為準）。這裡是還沒設定的卡的預設值。</p>
       ${WALLETS.map(([k, t]) => optHTML(`w:${k}`, (p.wallets || []).includes(k), t)).join('')}</div>`
-    + `<h2 class="sec">${ic.coin.replace('<svg', '<svg class="deco"')}我的卡片<span class="chip" style="margin-left:auto">${own.length} 張</span></h2>` + (own.length ? capViewHTML() : '')
-    + (own.length ? own.map(c => cardBlockHTML(c, ctx, capDate(c))).join('') : `<div class="card empty">${ic.shell}還沒有卡片，從下面加入自己有的卡</div>`)
-    + (others.length ? `<h2 class="sec">${ic.plus.replace('<svg', '<svg class="deco"')}加入卡片</h2><div class="card">${others.map(c => `<div class="addrow">${cardArt(c)}
-        <div class="body"><div class="nm">${esc(c.name)}</div><div class="tiny muted">${esc(c.bank)}${c.network ? '・' + esc(c.network) : ''}</div></div>
-        <button class="btn sm" data-addcard="${esc(c.id)}">${ic.plus}加入</button></div>`).join('')}</div>` : '')
     + `<h2 class="sec">${ic.hib.replace('<svg', '<svg class="deco"')}卡片資料庫</h2><div class="card"><div class="small">版本 <b class="num">${esc(S.catMeta?.version || cat.version)}</b>・${esc(nm(S.catMeta?.importedBy))} 於 ${fmtTime(S.catMeta?.importedAt)} 匯入</div>
       <p class="tiny muted" style="margin:6px 0 0">${esc(cat.description || '')}</p>
       <p class="tiny muted" style="margin:6px 0 0">網頁上不能修改資料庫，要更新請由${nm('qi')}重新匯入整份新版 JSON。</p>
       ${S.me === 'qi' ? catalogImportHTML(true) : ''}</div>`;
+  else body = (own.some(c => capSel(c) !== 'trip') ? `<div style="display:flex;justify-content:flex-end;margin:-2px 0 8px"><button type="button" class="btn sm ghost" data-capreset>全部回到旅行期間</button></div>` : '')
+    + (own.length ? own.map(c => cardBlockHTML(c, ctx, capDate(c))).join('') : `<div class="card empty">${ic.shell}還沒有卡片，從下面加入自己有的卡</div>`)
+    + (others.length ? `<details class="card mini" data-keep="addCards" style="margin-top:12px" ${addOpen || !own.length ? 'open' : ''}><summary>${ic.plus}<span>加入卡片</span><span class="chip">${others.length} 張可加入</span>${ic.chev.replace('<svg', '<svg class="chev"')}</summary>
+        <div style="margin-top:8px">${others.map(c => `<div class="addrow">${cardArt(c)}
+        <div class="body"><div class="nm">${esc(c.name)}</div><div class="tiny muted">${esc(c.bank)}${c.network ? '・' + esc(c.network) : ''}</div></div>
+        <button class="btn sm" data-addcard="${esc(c.id)}">${ic.plus}加入</button></div>`).join('')}</div></details>` : '');
+  $('#main').innerHTML = head + recheckHTML() + summary + tabs + body;
+  $('#cdTabs').onclick = e => { const b = e.target.closest('[data-t]'); if (b && b.dataset.t !== tab) { S.cardTab = b.dataset.t; renderCards(); scrollTo({top: 0}); } };
   bindCards();
 }
 function optHTML(key, on, text, sub = '') {
@@ -2800,7 +2817,7 @@ function cardBlockHTML(c, ctx, date) {
   return `<details class="card cardx" data-card="${esc(c.id)}" ${open ? 'open' : ''}><summary>
       ${cardArt(c)}<div class="body"><div class="nm">${esc(c.name)}</div>
       <div class="tiny muted">${esc(c.bank)}${c.network ? '・' + esc(c.network) : ''}${c.billingCurrency ? '・' + esc(c.billingCurrency) + ' 帳單' : ''}</div>
-      <div class="sub">${unreg ? `<span class="chip hib">${unreg} 項待登錄</span>` : ''}${fullN ? `<span class="chip">${fullN} 項已刷滿</span>` : ''}${c.googlePay === false ? '<span class="chip terra">不支援 Google Pay</span>' : ''}${wunset ? '<span class="chip hib">行動支付未確認</span>' : wopts.filter(([k]) => won.includes(k)).map(([k]) => `<span class="chip sea">${ic.phone}${esc(METHOD_NAME[k])}</span>`).join('')}</div></div>
+      <div class="sub">${capSelLabel(c) ? `<span class="chip terra">看 ${capSelLabel(c)}</span>` : ''}${unreg ? `<span class="chip hib">${unreg} 項待登錄</span>` : ''}${fullN ? `<span class="chip">${fullN} 項已刷滿</span>` : ''}${c.googlePay === false ? '<span class="chip terra">不支援 Google Pay</span>' : ''}${wunset ? '<span class="chip hib">行動支付未確認</span>' : wopts.filter(([k]) => won.includes(k)).map(([k]) => `<span class="chip sea">${ic.phone}${esc(METHOD_NAME[k])}</span>`).join('')}</div></div>
       ${ic.chev.replace('<svg', '<svg class="chev"')}</summary>
     <div class="cbody">
       ${c.googlePayNote ? `<p class="${c.googlePay === false ? 'warn' : 'tiny muted'}" style="margin:4px 0 8px">${esc(c.googlePayNote)}</p>` : ''}
@@ -2824,7 +2841,7 @@ function cardBlockHTML(c, ctx, date) {
       <div class="sub-h">帳單結帳日</div>
       <div class="row2" style="align-items:center"><select class="in" data-close-day="${esc(c.id)}"><option value="">還沒填</option>${Array.from({length: 31}, (_, i) => `<option value="${i + 1}" ${cp.closeDay === i + 1 ? 'selected' : ''}>每月 ${i + 1} 號</option>`).join('')}</select>
         <span class="tiny muted">${cp.closeDay ? '用來切「每期帳單」的額度週期' : '沒填時「每期帳單」的額度以自然月估算'}</span></div>
-      ${rows.length ? `<div class="sub-h">剩餘額度 <span class="tiny muted">${md(date)} 所在週期</span></div>${capRowsHTML(c, ctx, date)}` : ''}
+      ${rows.length ? `<div class="sub-h">剩餘額度 <span class="tiny muted">切換月份只影響這張卡</span></div>${capChipsHTML(c)}${capRowsHTML(c, ctx, date)}` : ''}
       <details class="rules"><summary class="small">看回饋規則（${c.rules.length} 條）</summary><ul class="rl">${c.rules.map(r => ruleSummary(c, r, cp)).join('')}</ul></details>
       <div class="sub-h">資料來源</div>
       <ul class="src">${(c.sources || []).map(s => `<li><a href="${esc(s.url)}" target="_blank" rel="noopener">${esc(s.title)}</a> <span class="tiny muted">${esc(s.checked)} 查詢</span></li>`).join('')}</ul>
@@ -2962,9 +2979,9 @@ function shopCardTopHTML() {
   if (!S.catalog) return '';
   const own = ownedCards();
   if (!own.length) return `<button class="card mini cta" id="toCards">${ic.coin}<span>設定自己有哪些信用卡，清單會推薦最划算的刷法</span>${ic.chev}</button>`;
-  const {ctx} = cardCtx(), sel = capSel(), open = localGet('open.capMini') === '1';
-  return `<details class="card mini" data-keep="capMini" ${open ? 'open' : ''}><summary>${ic.coin}<span>我的卡片剩餘額度</span><span class="tiny muted">${sel === 'trip' ? md(refDate()) : `${+sel.slice(5)} 月`}</span>${ic.chev.replace('<svg', '<svg class="chev"')}</summary>
-    <div style="margin-top:8px">${capViewHTML()}</div>${own.map(c => { const rows = capRowsHTML(c, ctx, capDate(c), true); return `<div class="minicard"><div class="small">${cdot(c)} <b>${esc(cardShort(c))}</b></div>${rows || '<div class="tiny muted">沒有額度上限</div>'}</div>`; }).join('')}
+  const {ctx} = cardCtx(), open = localGet('open.capMini') === '1';
+  return `<details class="card mini" data-keep="capMini" ${open ? 'open' : ''}><summary>${ic.coin}<span>我的卡片剩餘額度</span><span class="tiny muted">${md(refDate())}</span>${ic.chev.replace('<svg', '<svg class="chev"')}</summary>
+    <p class="tiny muted" style="margin:8px 2px 4px">要看其他月份，到信用卡頁打開那張卡切換</p>${own.map(c => { const rows = capRowsHTML(c, ctx, capDate(c), true); return `<div class="minicard"><div class="small">${cdot(c)} <b>${esc(cardShort(c))}</b>${capSelLabel(c) ? ` <span class="chip terra">看 ${capSelLabel(c)}</span>` : ''}</div>${rows || '<div class="tiny muted">沒有額度上限</div>'}</div>`; }).join('')}
     <div style="display:flex;gap:8px;margin-top:8px"><button class="btn sm" id="toCalc">${ic.calc}刷卡試算</button><button class="btn sm ghost" id="toCards2">信用卡設定 ›</button></div></details>` + notesHTML('shopNotes');
 }
 function shopRec(x) {
