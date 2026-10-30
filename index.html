@@ -2477,25 +2477,26 @@ function capMonths() {
   return [...ms].sort();
 }
 // 每張卡各自記住要看哪個週期（存在這支手機）：'trip' = 旅行期間（旅行中是今天），或月份 'YYYY-MM'
-function capSel(card) {
-  const v = card ? localGet('capView.' + card.id) : null;
+// key：信用卡頁每張卡用 'capView.<卡片id>'；購物清單的剩餘額度自己用 'capViewShop'，兩邊不連動
+function capSel(card, key = card ? 'capView.' + card.id : null) {
+  const v = key ? localGet(key) : null;
   return v && capMonths().includes(v) ? v : 'trip';
 }
 // 這張卡要用哪一天去找週期：選月份時，有填結帳日的卡看「這個月結帳的那一期」，沒填的看自然月
-function capDate(card) {
-  const v = capSel(card); if (v === 'trip') return refDate();
+function capDate(card, v = capSel(card)) {
+  if (v === 'trip') return refDate();
   const [y, m] = v.split('-').map(Number), dim = new Date(Date.UTC(y, m, 0)).getUTCDate();
   const cd = card ? myProf().cards?.[card.id]?.closeDay : null;
   return `${v}-${String(cd ? Math.min(cd, dim) : 15).padStart(2, '0')}`;
 }
 const capSelLabel = c => { const v = capSel(c); return v === 'trip' ? '' : `${+v.slice(5)} 月`; };
-function capChipsHTML(c) {
-  const v = capSel(c), t = nowJST().date, during = t >= TRIP_START && t <= TRIP_END;
-  return `<div class="mchips" data-capcard="${esc(c.id)}"><button type="button" data-v="trip" aria-pressed="${v === 'trip'}">${during ? '今天' : '旅行期間'}</button>${capMonths().map(mm => `<button type="button" data-v="${mm}" aria-pressed="${v === mm}">${+mm.slice(5)} 月</button>`).join('')}</div>`
-    + (v !== 'trip' && myProf().cards[c.id]?.closeDay ? '<p class="tiny muted" style="margin:0 2px 6px">有填結帳日：看的是這個月結帳的那一期帳單</p>' : '');
+function capChipsHTML(c, key = 'capView.' + c.id, v = capSel(c, key)) {
+  const t = nowJST().date, during = t >= TRIP_START && t <= TRIP_END;
+  return `<div class="mchips" data-capkey="${esc(key)}"><button type="button" data-v="trip" aria-pressed="${v === 'trip'}">${during ? '今天' : '旅行期間'}</button>${capMonths().map(mm => `<button type="button" data-v="${mm}" aria-pressed="${v === mm}">${+mm.slice(5)} 月</button>`).join('')}</div>`
+    + (v !== 'trip' && (c ? myProf().cards[c.id]?.closeDay : ownedCards().some(x => myProf().cards[x.id]?.closeDay)) ? `<p class="tiny muted" style="margin:0 2px 6px">${c ? '有填結帳日' : '有填結帳日的卡'}：看的是這個月結帳的那一期帳單</p>` : '');
 }
 function bindCapView(root, after) {
-  root.querySelectorAll('[data-capcard]').forEach(g => g.onclick = e => { const b = e.target.closest('[data-v]'); if (!b) return; localSet('capView.' + g.dataset.capcard, b.dataset.v); after(); });
+  root.querySelectorAll('[data-capkey]').forEach(g => g.onclick = e => { const b = e.target.closest('[data-v]'); if (!b) return; localSet(g.dataset.capkey, b.dataset.v); after(); });
   root.querySelectorAll('[data-capreset]').forEach(b => b.onclick = () => { for (const c of ownedCards()) localSet('capView.' + c.id, 'trip'); after(); });
 }
 function itemDate(x) { const d = DAYS.find(i => i.d === x.day); return d ? d.date : refDate(); }
@@ -2981,9 +2982,9 @@ function shopCardTopHTML() {
   if (!S.catalog) return '';
   const own = ownedCards();
   if (!own.length) return `<button class="card mini cta" id="toCards">${ic.coin}<span>設定自己有哪些信用卡，清單會推薦最划算的刷法</span>${ic.chev}</button>`;
-  const {ctx} = cardCtx(), open = localGet('open.capMini') === '1';
-  return `<details class="card mini" data-keep="capMini" ${open ? 'open' : ''}><summary>${ic.coin}<span>我的卡片剩餘額度</span><span class="tiny muted">${md(refDate())}</span>${ic.chev.replace('<svg', '<svg class="chev"')}</summary>
-    <p class="tiny muted" style="margin:8px 2px 4px">要看其他月份，到信用卡頁打開那張卡切換</p>${own.map(c => { const rows = capRowsHTML(c, ctx, capDate(c), true); return `<div class="minicard"><div class="small">${cdot(c)} <b>${esc(cardShort(c))}</b>${capSelLabel(c) ? ` <span class="chip terra">看 ${capSelLabel(c)}</span>` : ''}</div>${rows || '<div class="tiny muted">沒有額度上限</div>'}</div>`; }).join('')}
+  const {ctx} = cardCtx(), open = localGet('open.capMini') === '1', v = capSel(null, 'capViewShop');
+  return `<details class="card mini" data-keep="capMini" ${open ? 'open' : ''}><summary>${ic.coin}<span>我的卡片剩餘額度</span><span class="tiny muted">${v === 'trip' ? md(refDate()) : `${+v.slice(5)} 月`}</span>${ic.chev.replace('<svg', '<svg class="chev"')}</summary>
+    <div style="margin-top:8px">${capChipsHTML(null, 'capViewShop', v)}</div>${own.map(c => { const rows = capRowsHTML(c, ctx, capDate(c, v), true); return `<div class="minicard"><div class="small">${cdot(c)} <b>${esc(cardShort(c))}</b></div>${rows || '<div class="tiny muted">沒有額度上限</div>'}</div>`; }).join('')}
     <div style="display:flex;gap:8px;margin-top:8px"><button class="btn sm" id="toCalc">${ic.calc}刷卡試算</button><button class="btn sm ghost" id="toCards2">信用卡設定 ›</button></div></details>` + notesHTML('shopNotes');
 }
 function shopRec(x) {
