@@ -305,7 +305,21 @@ details.exgrp[open]>summary .chev{transform:rotate(90deg)}
 details.exgrp>summary .sum{margin-left:auto;font-family:var(--f-body,inherit);font-size:12.5px;color:var(--ink-3);text-align:right}
 .msum{display:flex;flex-wrap:wrap;gap:4px 14px;align-items:center;font-size:13px;color:var(--ink-2);margin:2px 2px 10px}
 .msum b{color:var(--ink)}
-.mtabs{margin-bottom:12px}
+.mtabs{display:flex;gap:4px;border-bottom:1.5px solid var(--line);margin:0 0 10px}
+.mtabs button{flex:1;padding:8px 0 9px;font-family:var(--f-title);font-size:16.5px;color:var(--ink-3);position:relative}
+.mtabs button[aria-pressed=true]{color:var(--ink)}
+.mtabs button[aria-pressed=true]::after{content:"";position:absolute;left:22%;right:22%;bottom:-2.5px;height:4px;border-radius:4px;background:var(--sea)}
+.exf{display:flex;align-items:center;gap:2px;flex-wrap:wrap;font-size:13px;color:var(--ink-3);margin:0 2px 2px}
+.exf .lbl{margin-right:4px}
+.exf button{font-family:var(--f-title);font-size:13.5px;padding:3px 8px;min-height:30px;color:var(--ink-3);border-radius:8px}
+.exf button[aria-pressed=true]{color:var(--ink);background:var(--sand)}
+.exf .tog{margin-left:auto;display:inline-flex;align-items:center;gap:6px;color:var(--ink-2)}
+.exf .sw{width:34px;height:20px;border-radius:999px;background:var(--sand-2);position:relative;transition:background .15s;flex:none}
+.exf .sw::after{content:"";position:absolute;top:2px;left:2px;width:16px;height:16px;border-radius:50%;background:#fff;box-shadow:0 1px 2px rgba(0,0,0,.2);transition:left .15s}
+.exf .tog[aria-pressed=true] .sw{background:var(--sea)}
+.exf .tog[aria-pressed=true] .sw::after{left:16px}
+.ex .sub .av.s.fade{opacity:.3}
+.ex .amt small.me{color:var(--sea-deep);font-weight:700}
 .ex{display:flex;gap:10px;align-items:center;width:100%;text-align:left;padding:11px 12px}
 .ex+.ex{margin-top:8px}
 .ex .body{flex:1;min-width:0}
@@ -1909,7 +1923,8 @@ function renderMoney() {
   }).join('');
   // 依付款日期排；沒填付款日期的舊記帳用建立時間（台灣時間）
   const exDay = e => e.paidDate || (e.createdAt ? localDateOf(e.createdAt) : '9999-12-31');
-  const f = S.exFilter, exps = S.expenses.filter(e => f === 'all' || e.cur === f)
+  const f = S.exFilter, mineOnly = !!S.exMine, myPart = e => { const {base, rem} = shareInfo(e.amount, e.split.length); return base + (e.payer === S.me ? rem : 0); };
+  const exps = S.expenses.filter(e => (f === 'all' || e.cur === f) && (!mineOnly || e.split.includes(S.me)))
     .sort((a, b) => exDay(b).localeCompare(exDay(a)) || (tsDate(b.createdAt)?.getTime() || 0) - (tsDate(a.createdAt)?.getTime() || 0));
   // 依天分組，每天可以收合（預設全部展開，收起來的天數只記在這次開啟的畫面）
   const groups = [], txRes = S.catalog ? cardCtx() : null;
@@ -1918,7 +1933,7 @@ function renderMoney() {
     const ds = exDay(e), key = ds === '9999-12-31' ? '剛剛' : `${+ds.slice(5, 7)}/${+ds.slice(8, 10)}（${'日一二三四五六'[new Date(ds + 'T00:00:00Z').getUTCDay()]}）`;
     let g = groups[groups.length - 1];
     if (!g || g.key !== key) groups.push(g = {key, ds, n: 0, tot: {JPY: 0, TWD: 0}, rows: ''});
-    g.n++; if (g.tot[e.cur] !== undefined) g.tot[e.cur] += cents(e.amount);
+    g.n++; if (g.tot[e.cur] !== undefined) g.tot[e.cur] += mineOnly ? myPart(e) : cents(e.amount);
     let rows = '';
     const {base, rem} = shareInfo(e.amount, e.split.length);
     let payTag = '';
@@ -1934,14 +1949,14 @@ function renderMoney() {
     }
     rows += `<button class="card ex" data-ex="${e.id}">${avatar(e.payer, 'l').replace('data-profile', 'data-x')}
       <div class="body"><div class="nm">${esc(e.name || '（未命名）')}</div>
-        <div class="sub">${nm(e.payer)} 先付・分給 <span class="avs">${e.split.map(m => avatar(m, done.includes(m) ? 's ok' : 's').replace('data-profile', 'data-x')).join('')}</span>${isLocked(e.cur) ? ic.lock.replace('<svg', '<svg style="width:14px;height:14px;color:#B32F3B"') : ''}</div>
+        <div class="sub">${nm(e.payer)} 先付・分給 <span class="avs">${e.split.map(m => avatar(m, (done.includes(m) ? 's ok' : 's') + (mineOnly && m !== S.me ? ' fade' : '')).replace('data-profile', 'data-x')).join('')}</span>${isLocked(e.cur) ? ic.lock.replace('<svg', '<svg style="width:14px;height:14px;color:#B32F3B"') : ''}</div>
 
         ${e.note ? `<div class="tiny muted" style="margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(e.note)}</div>` : ''}</div>
-      <div class="amt"><b class="num">${money(cents(e.amount), e.cur)}</b><small>每人 <span class="num">${money(base, e.cur)}</span>${rem ? '…' : ''}</small></div>${payTag ? `<div class="extra">${payTag}</div>` : ''}</button>`;
+      <div class="amt"><b class="num">${money(cents(e.amount), e.cur)}</b>${mineOnly ? `<small class="me num">我的份 ${money(myPart(e), e.cur)}</small>` : `<small>每人 <span class="num">${money(base, e.cur)}</span>${rem ? '…' : ''}</small>`}</div>${payTag ? `<div class="extra">${payTag}</div>` : ''}</button>`;
     g.rows += rows;
   }
   const rows = groups.map(g => `<details class="exgrp" data-day="${esc(g.key)}" ${S.exClosed.has(g.key) ? '' : 'open'}><summary class="exday">${ic.chev.replace('<svg', '<svg class="chev"')}<span>${g.key}${g.ds < TRIP_START && g.ds !== '9999-12-31' ? ' <span class="chip hib">出發前</span>' : ''}</span>
-      <span class="sum">${g.n} 筆・<span class="num">${['JPY', 'TWD'].filter(c => g.tot[c]).map(c => money(g.tot[c], c)).join('＋')}</span></span></summary>${g.rows}</details>`).join('');
+      <span class="sum">${g.n} 筆・<span class="num">${['JPY', 'TWD'].filter(c => g.tot[c]).map(c => money(g.tot[c], c)).join('＋')}</span>${mineOnly ? '（我的份）' : ''}</span></summary>${g.rows}</details>`).join('');
   // 我的花費：每筆我分攤的那份加總（我付的那筆，除不盡的零頭也算我的），日圓用目前匯率換算台幣
   const myCard = (() => {
     const me = S.me, sum = {JPY: {pre: 0, trip: 0}, TWD: {pre: 0, trip: 0}}, paid = {JPY: 0, TWD: 0};
@@ -1975,15 +1990,15 @@ function renderMoney() {
   // 頁籤只記在這次開啟的期間，重新打開 app 一律回到「明細」
   const tab = ['settle', 'mine'].includes(S.moneyTab) ? S.moneyTab : 'list';
   const lockedAny = ['JPY', 'TWD'].some(isLocked);
-  const tabs = `<div class="seg mtabs" id="mTabs">${[['list', '明細'], ['settle', `結算${lockedAny ? ' 🔒' : ''}`], ['mine', '我的']].map(([k, t]) => `<button type="button" aria-pressed="${tab === k}" data-t="${k}">${t}</button>`).join('')}</div>`;
+  const tabs = `<div class="mtabs" id="mTabs">${[['list', '明細'], ['settle', `結算${lockedAny ? ' 🔒' : ''}`], ['mine', '我的']].map(([k, t]) => `<button type="button" aria-pressed="${tab === k}" data-t="${k}">${t}</button>`).join('')}</div>`;
   const body = tab === 'settle' ? (cards || `<div class="card empty">${ic.shell}還沒有任何記帳，按右下角「記一筆」開始</div>`)
     : tab === 'mine' ? (myCard.html || `<div class="card empty">${ic.shell}還沒有分給你的記帳</div>`)
     : `${pend.length ? `<div class="card pend">${ic.coin}<div class="body">有 <b class="num">${pend.length}</b> 筆你付的刷卡還沒填是哪張卡<div class="tiny muted">只有你看得到，用來計算回饋和剩餘額度</div></div><button class="btn sm pri" id="pendGo">補填</button></div>` : ''}
-    <div class="seg" id="exF" style="margin-bottom:6px">${[['all', '全部'], ['JPY', '日圓'], ['TWD', '台幣']].map(([k, t]) => `<button aria-pressed="${f === k}" data-f="${k}">${t}</button>`).join('')}</div>
-    ${rows || (S.expenses.length ? '<p class="empty">沒有記帳</p>' : `<div class="card empty">${ic.shell}還沒有任何記帳，按右下角「記一筆」開始</div>`)}`;
+    <div class="exf" id="exF"><span class="lbl">幣別</span>${[['all', '全部'], ['JPY', '日圓'], ['TWD', '台幣']].map(([k, t]) => `<button type="button" aria-pressed="${f === k}" data-f="${k}">${t}</button>`).join('')}<button type="button" class="tog" data-m aria-pressed="${mineOnly}">只看分給我的<span class="sw"></span></button></div>
+    ${rows || (S.expenses.length ? '<p class="empty">沒有符合的記帳</p>' : `<div class="card empty">${ic.shell}還沒有任何記帳，按右下角「記一筆」開始</div>`)}`;
   $('#main').innerHTML = summary + tabs + body;
   $('#mTabs').onclick = e => { const b = e.target.closest('[data-t]'); if (b && b.dataset.t !== tab) { S.moneyTab = b.dataset.t; renderMoney(); window.scrollTo(0, 0); } };
-  $('#exF')?.addEventListener('click', e => { const b = e.target.closest('[data-f]'); if (b) { S.exFilter = b.dataset.f; renderMoney(); } });
+  $('#exF')?.addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; if (b.dataset.f) S.exFilter = b.dataset.f; else if (b.hasAttribute('data-m')) S.exMine = !S.exMine; else return; renderMoney(); });
   $('#main').querySelectorAll('details.exgrp').forEach(d => d.addEventListener('toggle', () => { if (d.open) S.exClosed.delete(d.dataset.day); else S.exClosed.add(d.dataset.day); }));
   $('#main').querySelectorAll('[data-ex]').forEach(b => b.onclick = () => editExpense(S.expenses.find(e => e.id === b.dataset.ex)));
   $('#pendGo')?.addEventListener('click', () => editExpense(pend.sort((a, b) => (tsDate(a.createdAt)?.getTime() || 0) - (tsDate(b.createdAt)?.getTime() || 0))[0]));
