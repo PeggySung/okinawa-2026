@@ -1927,8 +1927,34 @@ function renderMoney() {
         ${e.note ? `<div class="tiny muted" style="margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(e.note)}</div>` : ''}</div>
       <div class="amt"><b class="num">${money(cents(e.amount), e.cur)}</b><small>每人 <span class="num">${money(base, e.cur)}</span>${rem ? '…' : ''}</small></div>${payTag ? `<div class="extra">${payTag}</div>` : ''}</button>`;
   }
+  // 我的花費：每筆我分攤的那份加總（我付的那筆，除不盡的零頭也算我的），日圓用目前匯率換算台幣
+  const myCard = (() => {
+    const me = S.me, sum = {JPY: {pre: 0, trip: 0}, TWD: {pre: 0, trip: 0}}, paid = {JPY: 0, TWD: 0};
+    let n = 0;
+    for (const e of S.expenses) {
+      if (!sum[e.cur]) continue;
+      if (e.payer === me) paid[e.cur] += cents(e.amount);
+      if (!e.split.includes(me)) continue;
+      const {base, rem} = shareInfo(e.amount, e.split.length);
+      sum[e.cur][exDay(e) < TRIP_START ? 'pre' : 'trip'] += base + (e.payer === me ? rem : 0);
+      n++;
+    }
+    if (!n) return '';
+    const fx = fxNow().rate, toTwd = (c, cur) => (cur === 'JPY' ? c * fx : c) / 100;
+    const part = k => toTwd(sum.JPY[k], 'JPY') + toTwd(sum.TWD[k], 'TWD');
+    const tot = cur => sum[cur].pre + sum[cur].trip;
+    const row = (label, val) => `<div class="share" style="margin:0 0 6px"><span>${label}</span><b class="num">${val}</b></div>`;
+    return `<h2 class="sec">${ic.coin.replace('<svg', '<svg class="deco"')}我的花費</h2>
+    <div class="card settle"><div class="small muted">${esc(nm(me))} 到目前為止分攤的花費・${n} 筆</div>
+      <div style="font-size:1.6em;font-weight:700;margin:4px 0 8px" class="num">約 ${twdFmt(part('pre') + part('trip'))}</div>
+      ${tot('JPY') ? row('日圓', `${money(tot('JPY'), 'JPY')} <span class="tiny muted">≈ ${twdFmt(toTwd(tot('JPY'), 'JPY'))}</span>`) : ''}
+      ${tot('TWD') ? row('台幣', money(tot('TWD'), 'TWD')) : ''}
+      ${part('pre') ? row('其中出發前', `≈ ${twdFmt(part('pre'))}`) + row('旅途中', `≈ ${twdFmt(part('trip'))}`) : ''}
+      ${paid.JPY || paid.TWD ? `<div class="tiny muted" style="margin-top:6px">我先付出去的總額：${[paid.JPY ? money(paid.JPY, 'JPY') : '', paid.TWD ? money(paid.TWD, 'TWD') : ''].filter(Boolean).join('・')}（別人的那份結算時會還我，不算在上面）</div>` : ''}
+      <div class="tiny muted" style="margin-top:4px">日圓用目前匯率 ${fx} 換算，實際刷卡金額以帳單為準</div></div>`;
+  })();
   const pend = pendingCardExps();
-  $('#main').innerHTML = `${pend.length ? `<div class="card pend">${ic.coin}<div class="body">有 <b class="num">${pend.length}</b> 筆你付的刷卡還沒填是哪張卡<div class="tiny muted">只有你看得到，用來計算回饋和剩餘額度</div></div><button class="btn sm pri" id="pendGo">補填</button></div>` : ''}<h2 class="sec">${ic.coin.replace('<svg', '<svg class="deco"')}結算</h2>
+  $('#main').innerHTML = `${myCard}${pend.length ? `<div class="card pend">${ic.coin}<div class="body">有 <b class="num">${pend.length}</b> 筆你付的刷卡還沒填是哪張卡<div class="tiny muted">只有你看得到，用來計算回饋和剩餘額度</div></div><button class="btn sm pri" id="pendGo">補填</button></div>` : ''}<h2 class="sec">${ic.coin.replace('<svg', '<svg class="deco"')}結算</h2>
     ${cards || `<div class="card empty">${ic.shell}還沒有任何記帳，按右下角「記一筆」開始</div>`}
     <h2 class="sec">${ic.hib.replace('<svg', '<svg class="deco"')}記帳明細</h2>
     <div class="seg" style="margin-bottom:6px">${[['all', '全部'], ['JPY', '日圓'], ['TWD', '台幣']].map(([k, t]) => `<button aria-pressed="${f === k}" data-f="${k}">${t}</button>`).join('')}</div>
