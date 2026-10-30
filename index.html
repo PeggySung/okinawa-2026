@@ -657,7 +657,7 @@ ul.bd li.hint::before{content:"💡 "}
 
 /* ── 手冊 ── */
 .gseg{margin-bottom:14px}
-.gseg button{font-size:13.5px;padding:0 2px}
+.gseg button{font-size:15.5px;padding:8px 2px 9px}
 .hbfoot{margin:22px 4px 0;text-align:center}
 .hbfoot .hbimp{margin-top:8px;text-align:left}
 .hbfoot .hbimp>summary{cursor:pointer;text-align:center;color:var(--sea-deep)}
@@ -1508,7 +1508,7 @@ function renderPrep() {
   const myItems = list.filter(x => applies(x, me));
   const myDone = myItems.filter(x => isDone(x, me)).length;
   const pct = myItems.length ? Math.round(myDone / myItems.length * 100) : 0;
-  const seg = `<div class="seg" style="margin-bottom:14px">${[['mine', '我的清單'], ['all', '全部項目'], ['team', '團隊進度']].map(([k, t]) => `<button aria-pressed="${S.prepView === k}" data-v="${k}">${t}</button>`).join('')}</div>`;
+  const seg = `<div class="mtabs" style="margin-bottom:14px">${[['mine', '我的清單'], ['all', '全部項目'], ['team', '團隊進度']].map(([k, t]) => `<button aria-pressed="${S.prepView === k}" data-v="${k}">${t}</button>`).join('')}</div>`;
   let body;
   if (S.prepView === 'team') {
     body = `<div class="team">${IDS.map(m => {
@@ -1544,7 +1544,7 @@ function renderPrep() {
     <button class="btn full" id="addCk" style="margin-top:16px">${ic.plus}新增項目</button>`;
   if (S.popTick && S.popTick.until > Date.now()) $(`#prepBody [data-tick="${S.popTick.id}"]`)?.animate(
     [{transform: 'scale(.6)'}, {transform: 'scale(1.25)'}, {transform: 'scale(1)'}], {duration: 380, easing: 'ease-out'});
-  $('#prepBody').querySelector('.seg').onclick = e => { const b = e.target.closest('[data-v]'); if (b) { S.prepView = b.dataset.v; renderPrep(); } };
+  $('#prepBody').querySelector('.mtabs').onclick = e => { const b = e.target.closest('[data-v]'); if (b) { S.prepView = b.dataset.v; renderPrep(); } };
   $('#main').querySelectorAll('details.cat').forEach(d => d.ontoggle = () => {
     if (!S.openCats.size) S.openCats.add([...new Set(list.map(x => x.cat))][0]);
     d.open ? S.openCats.add(d.dataset.cat) : S.openCats.delete(d.dataset.cat); localSet('openCats', JSON.stringify([...S.openCats]));
@@ -2497,13 +2497,18 @@ function capDate(card, v = capSel(card)) {
 }
 // 卡片收合時的標籤：不是這一期才標
 const capSelLabel = c => { const v = capSel(c); return v === 'now' || v === capCurMonth(c) ? '' : `${+v.slice(5)} 月`; };
+// 這張卡在這個月份選擇下，額度計算的日期區間
+function capRange(card, v) {
+  const d = capDate(card, v), cd = capCloseDay(card);
+  if (cd) { const cy = CardEngine.cycleOf('statement', d, cd); return `${md(cy.start)}–${md(cy.end)}`; }
+  const [y, m] = d.split('-').map(Number); return `${m}/1–${m}/${new Date(Date.UTC(y, m, 0)).getUTCDate()}`;
+}
+// 購物清單沒選過月份時：今天之後最近的那個月份（各卡的「這一期」不一定同一個月，這裡統一用一個月份）
+const capShopSel = () => { const v = capSel(null, 'capViewShop'); if (v !== 'now') return v; const t = nowJST().date.slice(0, 7), ms = capMonths(); return ms.find(m => m >= t) || ms[ms.length - 1]; };
 function capChipsHTML(c, key = 'capView.' + c.id, v = capSel(c, key)) {
   const on = v === 'now' ? (c ? capCurMonth(c) : null) : v;
-  const cd = capCloseDay(c);
-  const note = c ? (cd ? `結帳日每月 ${cd} 號：「11 月」是 11 月結帳的那一期` : '沒填結帳日：以自然月計算')
-    : (v === 'now' ? '目前顯示各卡「這一期」帳單；' : '') + '有填結帳日的卡，「11 月」是 11 月結帳的那一期';
-  return `<div class="mchips" data-capkey="${esc(key)}">${capMonths().map(mm => `<button type="button" data-v="${mm}" aria-pressed="${on === mm}">${+mm.slice(5)} 月</button>`).join('')}${!c && v !== 'now' ? '<button type="button" data-v="now">回到這一期</button>' : ''}</div>`
-    + `<p class="tiny muted" style="margin:0 2px 6px">${note}</p>`;
+  return `<div class="mchips" data-capkey="${esc(key)}">${capMonths().map(mm => `<button type="button" data-v="${mm}" aria-pressed="${on === mm}">${+mm.slice(5)} 月</button>`).join('')}</div>`
+;
 }
 function bindCapView(root, after) {
   root.querySelectorAll('[data-capkey]').forEach(g => g.onclick = e => { const b = e.target.closest('[data-v]'); if (!b) return; localSet(g.dataset.capkey, b.dataset.v); after(); });
@@ -2992,9 +2997,9 @@ function shopCardTopHTML() {
   if (!S.catalog) return '';
   const own = ownedCards();
   if (!own.length) return `<button class="card mini cta" id="toCards">${ic.coin}<span>設定自己有哪些信用卡，清單會推薦最划算的刷法</span>${ic.chev}</button>`;
-  const {ctx} = cardCtx(), open = localGet('open.capMini') === '1', v = capSel(null, 'capViewShop');
-  return `<details class="card mini" data-keep="capMini" ${open ? 'open' : ''}><summary>${ic.coin}<span>我的卡片剩餘額度</span><span class="tiny muted">${v === 'now' ? '這一期' : `${+v.slice(5)} 月`}</span>${ic.chev.replace('<svg', '<svg class="chev"')}</summary>
-    <div style="margin-top:8px">${capChipsHTML(null, 'capViewShop', v)}</div>${own.map(c => { const rows = capRowsHTML(c, ctx, capDate(c, v), true); return `<div class="minicard"><div class="small">${cdot(c)} <b>${esc(cardShort(c))}</b></div>${rows || '<div class="tiny muted">沒有額度上限</div>'}</div>`; }).join('')}
+  const {ctx} = cardCtx(), open = localGet('open.capMini') === '1', v = capShopSel();
+  return `<details class="card mini" data-keep="capMini" ${open ? 'open' : ''}><summary>${ic.coin}<span>我的卡片剩餘額度</span><span class="tiny muted">${+v.slice(5)} 月</span>${ic.chev.replace('<svg', '<svg class="chev"')}</summary>
+    <div style="margin-top:8px">${capChipsHTML(null, 'capViewShop', v)}</div>${own.map(c => { const rows = capRowsHTML(c, ctx, capDate(c, v), true); return `<div class="minicard"><div class="small" style="display:flex;align-items:center;gap:4px">${cdot(c)} <b>${esc(cardShort(c))}</b><span class="tiny muted" style="margin-left:auto">${capRange(c, v)}</span></div>${rows || '<div class="tiny muted">沒有額度上限</div>'}</div>`; }).join('')}
     <div style="display:flex;gap:8px;margin-top:8px"><button class="btn sm" id="toCalc">${ic.calc}刷卡試算</button><button class="btn sm ghost" id="toCards2">信用卡設定 ›</button></div></details>` + notesHTML('shopNotes');
 }
 function shopRec(x) {
@@ -3737,7 +3742,7 @@ const spkIcon = I('<path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z"/><path d="M15.5 9a4 
 const starIcon = I('<path d="M12 4.2l2.4 4.9 5.4.8-3.9 3.8.9 5.4-4.8-2.6-4.8 2.6.9-5.4-3.9-3.8 5.4-.8z"/>');
 
 function renderGuide() {
-  const seg = `<div class="seg gseg" id="gSeg" data-noswipe>${GUIDE_SEGS.map(([k, t]) => `<button type="button" data-g="${k}" aria-pressed="${S.guideSeg === k}">${t}</button>`).join('')}</div>`;
+  const seg = `<div class="mtabs gseg" id="gSeg" data-noswipe>${GUIDE_SEGS.map(([k, t]) => `<button type="button" data-g="${k}" aria-pressed="${S.guideSeg === k}">${t}</button>`).join('')}</div>`;
   if (S.guideSeg === 'flight') return renderFlight(seg);
   const H = S.hb;
   const body = !H ? hbMissingHTML() : S.guideSeg === 'rental' ? rentalHTML(H) : S.guideSeg === 'entry' ? entryHTML(H) : jpListHTML(H);
