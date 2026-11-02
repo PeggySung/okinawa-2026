@@ -2193,8 +2193,8 @@ function editExpense(e, pre = null) {
       const A = cents(parseAmt(amtEl.value) || 0), n = split.length;
       for (const k of Object.keys(shareIn)) delete shareIn[k];
       if (!A || !n) return;
-      // 日圓用整數平均（台幣算到角分），零頭給付最多的人（他沒分攤時給第一位）
-      const unit = cur === 'JPY' ? 100 : 1, base = Math.floor(A / n / unit) * unit, rem = A - base * n, c = calc(), k = split.includes(c.main) ? c.main : split[0];
+      // 平均算到小數第 2 位（日圓、台幣都一樣），最後不到 1 分的零頭給付最多的人（他沒分攤時給第一位）
+      const base = Math.floor(A / n), rem = A - base * n, c = calc(), k = split.includes(c.main) ? c.main : split[0];
       for (const m of split) shareIn[m] = fmtAmt(base + (m === k ? rem : 0));
     };
     const syncCh = () => {
