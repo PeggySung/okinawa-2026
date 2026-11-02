@@ -1,7 +1,8 @@
 // 離線快取：網頁本身先試網路、沒網路用快取；圖片、字體、Firebase 程式庫用快取
-const VERSION = 'rlc-v40';
+const VERSION = 'rlc-v41';
 const IMG_CACHE = 'rlc-card-img'; // 銀行官網卡面圖片（跨版本保留）
 const ZX_CACHE = 'rlc-zxing-3.1.4'; // 優惠券條碼元件（zxing-wasm，換版本才重新下載）
+const CP_CACHE = 'rlc-coupon-img'; // 優惠券的原始券圖（img/coupons/，跨版本保留）
 const SHELL = ['./', './index.html', './firebase-config.js', './manifest.webmanifest',
   './img/icon-192.png', './img/apple-touch-icon.png', './img/hero.webp',
   './img/qi.webp', './img/xuan.webp', './img/yun.webp', './img/yue.webp'];
@@ -9,7 +10,7 @@ self.addEventListener('install', e => {
   e.waitUntil(caches.open(VERSION).then(c => c.addAll(SHELL)).then(() => self.skipWaiting()));
 });
 self.addEventListener('activate', e => {
-  e.waitUntil(caches.keys().then(ks => Promise.all(ks.filter(k => k !== VERSION && k !== IMG_CACHE && k !== ZX_CACHE).map(k => caches.delete(k)))).then(() => self.clients.claim()));
+  e.waitUntil(caches.keys().then(ks => Promise.all(ks.filter(k => k !== VERSION && k !== IMG_CACHE && k !== ZX_CACHE && k !== CP_CACHE).map(k => caches.delete(k)))).then(() => self.clients.claim()));
 });
 self.addEventListener('fetch', e => {
   const req = e.request;
@@ -22,6 +23,14 @@ self.addEventListener('fetch', e => {
   if (url.hostname === 'cdn.jsdelivr.net' && url.pathname.startsWith('/npm/zxing-wasm@3.1.4/')) {
     e.respondWith(caches.open(ZX_CACHE).then(c => c.match(req, {ignoreVary: true}).then(hit => hit || fetch(req).then(r => {
       if (r.ok || r.type === 'opaque') c.put(req, r.clone());
+      return r;
+    }))));
+    return;
+  }
+  // 優惠券的原始券圖：先用快取，沒有才上網抓（在店裡沒訊號也能先核對券面說明）
+  if (sameOrigin && url.pathname.includes('/img/coupons/')) {
+    e.respondWith(caches.open(CP_CACHE).then(c => c.match(req, {ignoreSearch: true}).then(hit => hit || fetch(req).then(r => {
+      if (r.ok) c.put(req, r.clone());
       return r;
     }))));
     return;
