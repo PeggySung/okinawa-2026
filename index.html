@@ -1843,11 +1843,17 @@ function editShop(x) {
 function shareInfo(amount, n) { const A = cents(amount), base = n ? Math.floor(A / n) : 0; return {A, base, rem: A - base * n}; }
 /* 一筆記帳的付款與應付（單位：分）
    付款：paid {成員: 金額} 有兩位以上時是多人付款；沒有的舊記帳＝payer 付全額
-   應付：shares {成員: 金額} 是各自金額；沒有的話 split 平均分攤，每人四捨五入到小數第 2 位
-   四捨五入後和總額差的幾分錢（最多人數一半的分）由主要付款人（付最多的人）默默吸收，結算才會剛好打平 */
+   應付：shares {成員: 金額} 是各自金額；沒有的話 split 平均分攤（evenShares） */
 const multiPay = e => !!(e?.paid && typeof e.paid === 'object' && Object.keys(e.paid).length > 1);
 const customSplit = e => !!(e?.shares && typeof e.shares === 'object' && Object.keys(e.shares).length);
 const mainPayer = paid => IDS.filter(m => paid[m] > 0).sort((a, b) => paid[b] - paid[a] || IDS.indexOf(a) - IDS.indexOf(b))[0] || null;
+// 平均分攤：每人先無條件捨去到小數第 2 位，除不盡的幾分錢從第一個人開始每人加 0.01（差 0.01 給第一人、0.02 給前兩人…，照 IDS 順序）
+function evenShares(A, members) {
+  const ms = IDS.filter(m => members.includes(m)), n = ms.length, out = {}; if (!n) return out;
+  const base = Math.floor(A / n), rem = A - base * n;
+  ms.forEach((m, i) => out[m] = base + (i < rem ? 1 : 0));
+  return out;
+}
 const exPartsCache = new WeakMap();
 function exParts(e) {
   let r = exPartsCache.get(e); if (r) return r;
@@ -1855,7 +1861,8 @@ function exParts(e) {
   if (multiPay(e)) { for (const m of IDS) if (cents(e.paid[m] || 0) > 0) paid[m] = cents(e.paid[m]); }
   else paid[e.payer] = A;
   if (customSplit(e)) { for (const m of IDS) if (cents(e.shares[m] || 0) > 0) share[m] = cents(e.shares[m]); }
-  else { const n = e.split.length, base = n ? Math.round(A / n) : 0; for (const m of e.split) share[m] = base; }
+  else Object.assign(share, evenShares(A, e.split));
+  // 保險：各自金額合計和總額對不上的舊資料，差額算主要付款人的（存檔時已經檢查合計，正常不會發生）
   const diff = A - Object.values(share).reduce((a, b) => a + b, 0);
   if (diff) { const k = e.payer || mainPayer(paid); share[k] = (share[k] || 0) + diff; }
   r = {A, paid, share}; exPartsCache.set(e, r); return r;
@@ -1897,8 +1904,6 @@ function balancesOf(exps) {
   for (const e of exps) addBal(bal, e);
   return bal;
 }
-// 分攤金額合計可以和總額差幾分錢：每人四捨五入最多差 0.5 分，所以容許人數一半的分（3 人 0.01、4 人 0.02）
-const splitTol = n => Math.floor(n / 2);
 const settledAmt = e => { const d = settledOf(e); return d.length ? exTransfers(e).filter(t => d.includes(t.from)).reduce((s, t) => s + t.amt, 0) : 0; };
 // 最少轉帳次數：找出最多個「總和為 0」的子群組，每個群組內 k 人需要 k-1 筆轉帳
 function minTransfers(bal) {
@@ -2137,13 +2142,13 @@ function editExpense(e, pre = null) {
   // 付款人：可以多位。payers 照 IDS 順序；多位時每人金額自己填（預設空白＝0），只檢查合計
   let payers = e && multiPay(e) ? IDS.filter(m => m in e.paid) : [e?.payer || S.me];
   const paidIn = {}; if (e && multiPay(e)) for (const m of payers) paidIn[m] = String(e.paid[m]);
-  // 分攤：勾選要一起分的人，每人一個金額。勾選有變動時帶入平均金額（四捨五入到小數第 2 位），之後可以手動改；總額再改不會自動重算，只提醒合計不對
+  // 分攤：勾選要一起分的人，每人一個金額。勾選有變動時帶入平均金額（evenShares），之後可以手動改；總額再改不會自動重算，只提醒合計不對
   const shareIn = {};
   const fmtAmt = c => String(Math.round(c) / 100);
   if (e && customSplit(e)) { for (const m of e.split) if (e.shares[m]) shareIn[m] = String(e.shares[m]); }
   else if (e) { // 平均分攤的記帳：照平均帶入（零頭給付最多的人，他沒分攤時給第一位）
-    const A = cents(e.amount), n = e.split.length, base = n ? Math.round(A / n) : 0;
-    for (const m of e.split) shareIn[m] = fmtAmt(base);
+    const ev = evenShares(cents(e.amount), e.split);
+    for (const m of e.split) shareIn[m] = fmtAmt(ev[m] || 0);
   }
   let settled = e ? settledOf(e) : [];
   // 付款方式：一位付款人時用 payType；多位時每人各自（pts）
@@ -2165,8 +2170,8 @@ function editExpense(e, pre = null) {
     <div class="f" id="ePayF"><span>付款方式（大家都看得到）</span><div class="seg" id="ePay"><button type="button" data-p="cash">現金</button><button type="button" data-p="card">刷卡</button></div></div>
     <div class="f" id="eSplitF"><span>分攤的人 <span class="tiny muted">（勾選後帶入平均金額，可以改）</span></span><div class="pick" id="eSplit"></div><div id="eOwn"></div></div>
     <div id="eHow"></div>
-    <label class="f"><span>品名</span><input class="in" id="eName" value="${esc(e?.name || pre?.name || '')}" maxlength="100" placeholder="例如 燒肉晚餐"></label>
-    <label class="f"><span>付款日期 <span class="tiny muted">（大家都看得到，記帳明細依這個日期排）</span></span><input class="in" id="ePaid" type="date" value="${esc(sel.date)}"></label>
+    <label class="f"><span>品名 <em>*</em></span><input class="in" id="eName" required value="${esc(e?.name || pre?.name || '')}" maxlength="100" placeholder="例如 燒肉晚餐"></label>
+    <label class="f"><span>付款日期 <em>*</em> <span class="tiny muted">（大家都看得到，記帳明細依這個日期排）</span></span><input class="in" id="ePaid" type="date" value="${esc(sel.date)}"></label>
     ${hasCat ? `<label class="f"><span>通路類型 <span class="tiny muted" id="eChAuto"></span></span><select class="in" id="eCh">${channelOptions(e?.channel || pre?.channel || autoChannel(e?.name))}</select></label>` : ''}
     <div id="eCardBox"></div>
     <label class="f"><span>備註</span><input class="in" id="eNote" value="${esc(e?.note || pre?.note || '')}" maxlength="500"></label>
@@ -2179,16 +2184,17 @@ function editExpense(e, pre = null) {
       const A = cents(parseAmt(amtEl.value) || 0), paid = {}, share = {}, err = {};
       if (payers.length > 1) {
         for (const m of payers) { const v = cents(Number(String(paidIn[m] || '').replace(/[,，\s]/g, '')) || 0); if (v > 0) paid[m] = v; }
-        const d = A - Object.values(paid).reduce((a, b) => a + b, 0);
-        if (d) err.pay = d > 0 ? `付款合計還差 ${money(d, cur)}` : `付款合計超過總額 ${money(-d, cur)}`;
+        const d = A - Object.values(paid).reduce((a, b) => a + b, 0), zero = payers.filter(m => !paid[m]);
+        if (zero.length) err.pay = `${zero.map(nm).join('、')} 的付款金額要大於 0`;
+        else if (d) err.pay = d > 0 ? `付款合計還差 ${money(d, cur)}` : `付款合計超過總額 ${money(-d, cur)}`;
       } else paid[payers[0]] = A;
       const main = mainPayer(paid) || payers[0];
       const input = {};
       for (const m of split) { const v = cents(Number(String(shareIn[m] || '').replace(/[,，\s]/g, '')) || 0); if (v > 0) { share[m] = v; input[m] = v; } }
-      const d = A - Object.values(share).reduce((a, b) => a + b, 0);
+      const d = A - Object.values(share).reduce((a, b) => a + b, 0), zeroS = split.filter(m => !share[m]);
       if (!split.length) err.split = '至少要勾一位分攤的人';
-      else if (Math.abs(d) > splitTol(split.length)) err.split = d > 0 ? `分攤金額合計還差 ${money(d, cur)}` : `分攤金額合計超過總額 ${money(-d, cur)}`;
-      else if (d && Object.keys(share).length) share[main] = (share[main] || 0) + d; // 四捨五入的幾分錢：付最多的人吸收
+      else if (zeroS.length) err.split = `${zeroS.map(nm).join('、')} 的分攤金額要大於 0（不分攤請取消勾選）`;
+      else if (d) err.split = d > 0 ? `分攤金額合計還差 ${money(d, cur)}` : `分攤金額合計超過總額 ${money(-d, cur)}`;
       return {A, paid, share, input, main, err};
     };
     const myAmt = () => (calc().paid[S.me] || 0) / 100;
@@ -2196,9 +2202,9 @@ function editExpense(e, pre = null) {
       const A = cents(parseAmt(amtEl.value) || 0), n = split.length;
       for (const k of Object.keys(shareIn)) delete shareIn[k];
       if (!A || !n) return;
-      // 平均：每人都四捨五入到小數第 2 位（日圓、台幣都一樣），差的幾分錢不另外分配
-      const base = Math.round(A / n);
-      for (const m of split) shareIn[m] = fmtAmt(base);
+      // 平均：捨去到小數第 2 位，除不盡的幾分錢從第一個人開始每人加 0.01
+      const ev = evenShares(A, split);
+      for (const m of split) shareIn[m] = fmtAmt(ev[m]);
     };
     const syncCh = () => {
       if (!chSel) return;
@@ -2339,13 +2345,16 @@ function editExpense(e, pre = null) {
     s.querySelector('#eSplit').onclick = ev => { const b = ev.target.closest('[data-m]'); if (!b || b.disabled) return; const m = b.dataset.m; split = split.includes(m) ? split.filter(x => x !== m) : IDS.filter(x => x === m || split.includes(x)); reAverage(); paint(); };
     s.querySelector('#eSave').onclick = async () => {
       const amount = parseAmt(amtEl.value);
-      if (!amount || amount <= 0) { toast('請輸入總額'); return; }
+      if (!amount || amount <= 0) { toast('總額要大於 0'); amtEl.focus(); return; }
+      const nameEl = s.querySelector('#eName'), dateEl = s.querySelector('#ePaid');
+      if (!nameEl.value.trim()) { toast('請填品名'); nameEl.focus(); return; }
+      if (!dateEl.value) { toast('請填付款日期'); dateEl.focus(); return; }
       const c = calc();
       if (c.err.pay) { toast(c.err.pay); return; }
       if (c.err.split) { toast(c.err.split); return; }
       const paidM = Object.keys(c.paid), main = c.main;
       const sp = IDS.filter(m => c.input[m]);
-      const data = {cur, amount, payer: main, split: sp, name: s.querySelector('#eName').value.trim(), note: s.querySelector('#eNote').value.trim(), paidDate: s.querySelector('#ePaid').value || sel.date};
+      const data = {cur, amount, payer: main, split: sp, name: s.querySelector('#eName').value.trim(), note: s.querySelector('#eNote').value.trim(), paidDate: dateEl.value};
       if (paidM.length > 1) {
         data.paid = Object.fromEntries(paidM.map(m => [m, c.paid[m] / 100]));
         data.payTypes = Object.fromEntries(paidM.map(m => [m, pts[m] || 'cash']));
@@ -2353,7 +2362,7 @@ function editExpense(e, pre = null) {
       } else if (payers.length > 1 ? pts[main] : payType) data.payType = payers.length > 1 ? pts[main] : payType;
       // 和「平均分攤、零頭給付最多的人」一模一樣就不存 shares（舊版 app 也看得懂）；舊記帳沒動到分攤時也維持原樣
       const eqSig = JSON.stringify(exParts({amount, payer: main, split: sp, ...(data.paid ? {paid: data.paid} : {})}).share), mySig = JSON.stringify(c.share);
-      const eqIn = sp.every(m => c.input[m] === Math.round(c.A / sp.length)); // 每人都是四捨五入的平均＝平均分攤
+      const evIn = evenShares(c.A, sp), eqIn = sp.every(m => c.input[m] === evIn[m]); // 剛好是平均＝平均分攤
       // 舊的平均分攤記帳：總額、分攤的人、主要付款人和金額都沒動 → 維持平均分攤
       const keepOld = e && !customSplit(e) && sameSet(e.split, sp) && cents(e.amount) === c.A && main === e.payer && mySig === shareSig0;
       if (keepOld) data.split = [...e.split];

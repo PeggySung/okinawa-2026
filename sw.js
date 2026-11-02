@@ -1,5 +1,5 @@
 // 離線快取：網頁本身先試網路、沒網路用快取；圖片、字體、Firebase 程式庫用快取
-const VERSION = 'rlc-v45';
+const VERSION = 'rlc-v46';
 const IMG_CACHE = 'rlc-card-img'; // 銀行官網卡面圖片（跨版本保留）
 const ZX_CACHE = 'rlc-zxing-3.1.4'; // 優惠券條碼元件（zxing-wasm，換版本才重新下載）
 const CP_CACHE = 'rlc-coupon-img'; // 優惠券的原始券圖（img/coupons/，跨版本保留）
