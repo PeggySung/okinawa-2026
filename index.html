@@ -71,6 +71,7 @@ a{color:var(--sea-deep)} a.btn{text-decoration:none}
   border:1.5px dashed rgba(11,116,120,.35)}
 .pill.go{background:var(--hib-light);color:#B32F3B;border-color:rgba(228,80,94,.4)}
 #meBtn{flex:none}
+.hbtn[hidden]{display:none}
 .hbtn{flex:none;width:38px;height:38px;display:grid;place-items:center;border-radius:12px 13px 11px 12px;color:var(--sea-deep);background:var(--sea-wash);box-shadow:inset 0 0 0 1.5px rgba(11,116,120,.28)}
 .hbtn svg{width:21px;height:21px}
 .hbtn:active{transform:translate(1px,1px);background:var(--sea-light)}
@@ -340,14 +341,16 @@ details.exgrp>summary .sum{margin-left:auto;font-family:var(--f-body,inherit);fo
 .saverset .sw::after{content:"";position:absolute;top:2px;left:2px;width:20px;height:20px;border-radius:50%;background:#fff;box-shadow:0 1px 2px rgba(0,0,0,.2);transition:left .15s}
 .saverset[aria-pressed=true] .sw{background:var(--sea)}
 .saverset[aria-pressed=true] .sw::after{left:18px}
-details.emore{margin:0 0 14px;border-radius:var(--r-btn);background:var(--sand);padding:0 12px}
+details.emore{margin:0 0 14px;border-radius:var(--r-btn);background:var(--card);box-shadow:inset 0 0 0 1.5px var(--line);padding:0 12px}
 details.emore>summary{list-style:none;display:flex;align-items:center;gap:8px;cursor:pointer;min-height:46px;font-family:var(--f-title);font-size:15px}
 details.emore>summary::-webkit-details-marker{display:none}
 details.emore>summary .sum{margin-left:auto;font-family:var(--f-body);font-size:12.5px;color:var(--ink-3);text-align:right;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 details.emore>summary .chev{width:17px;height:17px;color:var(--ink-3);transition:transform .2s;flex:none}
 details.emore[open]>summary .chev{transform:rotate(90deg)}
 details.emore[open]{padding-bottom:4px}
-details.emore .in{background:var(--card)}
+details.emore[open]>summary{border-bottom:1.5px dashed var(--line);margin-bottom:12px}
+.mtabs .dot,.shtabs .dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--hib);margin-left:4px;vertical-align:4px}
+.sh .rec .line{margin-top:2px}
 details.shoptop>summary .sum{font-family:var(--f-body);font-size:12.5px;color:var(--ink-3);white-space:nowrap}
 details.shoptop>summary .dot{width:8px;height:8px;border-radius:50%;background:var(--hib);flex:none}
 details.shoptop .stin{margin-top:10px;display:flex;flex-direction:column;gap:10px}
@@ -726,6 +729,7 @@ ul.bd li.hint::before{content:"💡 "}
 .cps-foot{font-size:12.5px;color:var(--ink-2);line-height:1.7}
 .cps-codes{position:relative;display:flex;flex-direction:column;gap:8px}
 .cps-codes .cps-veil{z-index:2}
+.cps-under{background:var(--terra-light);color:#8A3B1E;border-radius:12px;padding:7px 12px;font-size:13.5px;margin:0 0 8px;text-align:center}
 .cps-clbl{font-family:var(--f-title);font-size:14px;color:var(--ink-2);margin-bottom:-2px}
 .cps-both{font-size:13.5px;color:#9B2733;text-align:center;margin:0}
 .cps-orig{display:flex;align-items:center;gap:12px;width:100%;text-align:left;background:var(--card);border-radius:var(--r-card);box-shadow:inset 0 0 0 1.5px var(--line-2),var(--shadow);padding:10px 12px;color:var(--ink)}
@@ -1053,7 +1057,7 @@ if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
 const S = {
   user: null, me: null, members: {}, itinerary: [], flights: {}, booking: null, checklist: [],
   shopping: {qi: [], xuan: [], yun: [], yue: []}, expenses: [], settlements: {}, ledger: {},
-  tab: localGet('tab') || 'trip', day: null, prepView: 'mine', shopWho: null, exFilter: 'all',
+  tab: localGet('tab') || 'trip', shopSeg: localGet('shopSeg') || 'list', day: null, prepView: 'mine', shopWho: null, exFilter: 'all',
   openCats: new Set(JSON.parse(localGet('openCats') || '[]')), loaded: {},
   // 信用卡
   catalog: null, catMeta: null, cardProfile: null, profLoaded: false, txns: [], fxManual: null, cardVer: 0,
@@ -1311,6 +1315,7 @@ function renderHeader() {
   else if (st.phase === 'during') { cd.textContent = `Day ${st.day}・旅行中`; cd.classList.add('go'); }
   else cd.textContent = '平安回家囉';
   $('#meBtn').innerHTML = avatar(S.me);
+  $('#calcBtn').hidden = !saverOn(); // 刷卡試算只給有開省錢小幫手的人
   document.querySelectorAll('.tab').forEach(t => t.setAttribute('aria-selected', String(t.dataset.tab === S.tab)));
 }
 document.querySelectorAll('.tab').forEach(t => t.onclick = () => {
@@ -1421,7 +1426,7 @@ function openProfile(id) {
       const b = ev.currentTarget, on = !saverOn();
       localSet('saver', on ? '1' : '0'); b.setAttribute('aria-pressed', String(on));
       toast(on ? '已開啟省錢小幫手' : '已關閉省錢小幫手，想用時再回來打開');
-      render(); // 背後的分頁跟著更新
+      renderHeader(); render(); // 背後的分頁跟著更新
     });
     s.querySelector('#logout')?.addEventListener('click', async () => {
       if (await confirmDialog({title: '要登出嗎？', ok: '登出'})) { closeSheet(); signOut(auth); }
@@ -1806,14 +1811,16 @@ function renderShop() {
         ${x.day || x.qty || x.budget || x.note ? `<div class="sub">${x.day ? `<span class="chip sea">${dayLabel(x.day)}</span>` : ''}${x.qty ? `<span class="chip">× <span class="num">${esc(x.qty)}</span></span>` : ''}${x.budget ? `<span class="chip terra">預算 <span class="num">¥${Number(x.budget).toLocaleString()}</span></span>` : ''}${x.note ? `<span class="small muted">${esc(x.note)}</span>` : ''}</div>` : ''}
         ${x.fromWho && COLORS[x.fromWho] ? `<div class="sub"><span class="chip">${avatar(x.fromWho, 's').replace('data-profile', 'data-x')} 來自 ${nm(x.fromWho)}</span></div>` : ''}
         ${x.place ? `<div class="sub"><span class="small muted">${ic.map.replace('<svg', '<svg style="width:13px;height:13px;vertical-align:-2px"')} ${esc(x.place)}</span></div>` : ''}
-        ${saver && (S.catalog && (x.channel || mine) || cpMatch(x.place).length) ? `<div class="sub">${S.catalog && (x.channel || mine) ? `<span class="chip">${esc(channelName(x.channel || autoChannel(x.place, x.name)))}</span>` : ''}${!x.bought ? shopCpChipHTML(x, mine) : ''}</div>` : ''}
+        ${saver && !x.bought && cpMatch(x.place).length ? `<div class="sub">${shopCpChipHTML(x, mine)}</div>` : ''}
       </${mine ? 'button' : 'div'}>${x.place || !mine ? `<div class="acts">${x.place ? `<a class="btn sm" href="${mapsSearch(x.place)}" target="_blank" rel="noopener" aria-label="在 Google Maps 開啟 ${esc(x.place)}">${ic.map}地圖</a>` : ''}${mine ? '' : have(x) ? `<button class="btn sm" disabled>${ic.check}已有</button>` : `<button class="btn sm" data-copy-item="${x.id}" aria-label="複製 ${esc(x.name)} 到我的清單">${ic.copy}複製</button>`}</div>` : ''}${recs[x.id] || ''}</div>`).join('')}
       ${totAll ? `<div class="totals"><span>預算合計 <b class="num">¥${totAll.toLocaleString()}</b></span><span>還沒買 <b class="num">¥${totLeft.toLocaleString()}</b></span></div>` : ''}</div>`
     : `<div class="empty">${ic.bag}${mine ? '還沒有想買的東西，按右下角新增' : `${nm(who)} 還沒有列清單`}</div>`;
-  const top = mine && saver ? shopTopHTML(items) : '';
+  const tabbed = mine && saver, seg = tabbed && S.shopSeg === 'save' ? 'save' : 'list', info = tabbed ? shopSaveInfo(items) : null;
+  const top = tabbed ? `<div class="mtabs shtabs" id="shTabs"><button type="button" data-s="list" aria-pressed="${seg === 'list'}">購物清單 <span class="chip">${items.filter(x => !x.bought).length}</span></button><button type="button" data-s="save" aria-pressed="${seg === 'save'}">省錢小幫手${info.n ? ` <span class="chip">${info.n}</span>` : ''}${info.re ? '<span class="dot" title="有資料要重新確認"></span>' : ''}</button></div>` : '';
   const cpBtn = !saver || !mine ? `<button type="button" class="btn sm ghost" id="toCoupons1" style="margin-left:auto">${ic.ticket}優惠券</button>` : '';
-  $('#main').innerHTML = `${bar}${top}<h2 class="sec">${ic.shell.replace('<svg', '<svg class="deco"')}${mine ? '我的購物清單' : nm(who) + ' 的購物清單'}${mine ? '' : '<span class="chip" style="margin-left:8px">只能看</span>'}${cpBtn}</h2>${!mine && copyable.length ? `<button class="btn full" id="copyAll" style="margin-bottom:12px">${ic.copy}把 ${copyable.length} 項全部複製到我的清單</button>` : ''}${list}`;
+  $('#main').innerHTML = seg === 'save' ? `${bar}${top}${shopSaveHTML(info)}` : `${bar}${top}${tabbed ? '' : `<h2 class="sec">${ic.shell.replace('<svg', '<svg class="deco"')}${mine ? '我的購物清單' : nm(who) + ' 的購物清單'}${mine ? '' : '<span class="chip" style="margin-left:8px">只能看</span>'}${cpBtn}</h2>`}${!mine && copyable.length ? `<button class="btn full" id="copyAll" style="margin-bottom:12px">${ic.copy}把 ${copyable.length} 項全部複製到我的清單</button>` : ''}${list}`;
   $('#main').querySelector('.whobar').onclick = e => { const b = e.target.closest('[data-w]'); if (b) { S.shopWho = b.dataset.w; renderShop(); } };
+  $('#shTabs')?.addEventListener('click', e => { const b = e.target.closest('[data-s]'); if (b && b.dataset.s !== seg) { S.shopSeg = b.dataset.s; localSet('shopSeg', S.shopSeg); renderShop(); scrollTo({top: 0}); } });
   $('#main').querySelectorAll('[data-buy]').forEach(b => b.onclick = () => {
     const x = S.shopping[S.me].find(i => i.id === b.dataset.buy); if (!x) return;
     x.bought = !x.bought; renderShop();
@@ -1837,7 +1844,7 @@ function renderShop() {
     if (!await confirmDialog({title: `複製 ${copyable.length} 項到我的清單？`, body: `${nm(who)} 清單裡、你還沒有的項目會全部加進你的清單（都是「還沒買」）。`, ok: '全部複製'})) return;
     copyToMine(copyable, who); toast(`已複製 ${copyable.length} 項`);
   });
-  if (mine) { const f = $('#fab'); f.classList.remove('hidden'); f.querySelector('span').textContent = '新增'; f.onclick = () => editShop(null); }
+  if (mine && seg === 'list') { const f = $('#fab'); f.classList.remove('hidden'); f.querySelector('span').textContent = '新增'; f.onclick = () => editShop(null); }
 }
 // 勾選「已買」後，問要不要順便記帳：帶入品名、預算×數量（日圓）、通路、今天日期，刷哪張卡自動用推薦第一名
 async function askShopExpense(x) {
@@ -2216,10 +2223,11 @@ function renderMoney() {
   // 頁籤只記在這次開啟的期間，重新打開 app 一律回到「明細」
   const tab = ['settle', 'mine'].includes(S.moneyTab) ? S.moneyTab : 'list';
   const lockedAny = ['JPY', 'TWD'].some(isLocked);
-  const tabs = `<div class="mtabs" id="mTabs">${[['list', '明細'], ['settle', `結算${lockedAny ? ' 🔒' : ''}`], ['mine', '我的']].map(([k, t]) => `<button type="button" aria-pressed="${tab === k}" data-t="${k}">${t}</button>`).join('')}</div>`;
+  const tabs = `<div class="mtabs" id="mTabs">${[['list', '明細'], ['settle', `結算${lockedAny ? ' 🔒' : ''}`], ['mine', `我的${pend.length ? '<span class="dot"></span>' : ''}`]].map(([k, t]) => `<button type="button" aria-pressed="${tab === k}" data-t="${k}">${t}</button>`).join('')}</div>`;
   const body = tab === 'settle' ? (cards || `<div class="card empty">${ic.shell}還沒有任何記帳，按右下角「記一筆」開始</div>`)
-    : tab === 'mine' ? (myCard.html || `<div class="card empty">${ic.shell}還沒有分給你的記帳</div>`)
-    : `${rfMineHTML()}${pend.length ? `<div class="card pend">${ic.coin}<div class="body">有 <b class="num">${pend.length}</b> 筆你付的刷卡還沒填是哪張卡<div class="tiny muted">只有你看得到，用來計算回饋和剩餘額度</div></div><button class="btn sm pri" id="pendGo">補填</button></div>` : ''}
+    // 「我的」頁籤：我的花費、待退稅、待填卡片（明細頁一打開就直接是記帳）
+    : tab === 'mine' ? `${pend.length ? `<div class="card pend">${ic.coin}<div class="body">有 <b class="num">${pend.length}</b> 筆你付的刷卡還沒填是哪張卡<div class="tiny muted">只有你看得到，用來計算回饋和剩餘額度</div></div><button class="btn sm pri" id="pendGo">補填</button></div>` : ''}${rfMineHTML()}${myCard.html || `<div class="card empty">${ic.shell}還沒有分給你的記帳</div>`}`
+    : `
     <div class="exf" id="exF"><span class="lbl">幣別</span>${[['all', '全部'], ['JPY', '日圓'], ['TWD', '台幣']].map(([k, t]) => `<button type="button" aria-pressed="${f === k}" data-f="${k}">${t}</button>`).join('')}<button type="button" class="tog" data-m aria-pressed="${mineOnly}">只看分給我的<span class="sw"></span></button></div>
     ${rows || (S.expenses.length ? '<p class="empty">沒有符合的記帳</p>' : `<div class="card empty">${ic.shell}還沒有任何記帳，按右下角「記一筆」開始</div>`)}`;
   $('#main').innerHTML = summary + tabs + body;
@@ -3460,25 +3468,22 @@ function bindCatalogImport() {
 }
 
 /* ───────────── 購物清單：推薦卡 ───────────── */
-// 購物清單頂端：重新確認、優惠券・退稅、卡片額度、刷卡提醒合併成一張可收合的「省錢小幫手」（預設收起來，清單一打開就看得到）
-function shopTopHTML(items) {
-  const re = recheckHTML();
-  const cpTop = shopCpTopHTML() || `<button class="card mini cta" id="toCoupons0">${ic.ticket}<span>優惠券：${S.me === 'qi' ? '匯入優惠券資料庫，或' : ''}掃描券圖新增</span>${ic.chev}</button>`;
-  const inner = re + cpTop + shopCardTopHTML();
+// 購物分頁的「省錢小幫手」頁籤：重新確認、優惠券・退稅、卡片額度、刷卡提醒
+function shopSaveInfo(items) {
   const left = items.filter(x => !x.bought), stores = new Set();
   for (const x of left) { for (const c of cpMatch(x.place)) stores.add(c.chain); const st = rfData() ? rfStoreFor(x.place) : null; if (st) stores.add(st.name); }
-  const nCards = S.catalog ? ownedCards().length : 0;
-  const bits = [stores.size ? `🎫 ${stores.size} 家店` : '', nCards ? `💳 ${nCards} 張卡` : ''].filter(Boolean).join('・');
-  const open = localGet('open.shopTop') === '1';
-  return `<details class="card mini shoptop" data-keep="shopTop" ${open ? 'open' : ''}><summary>${ic.coin}<span>省錢小幫手</span>${re ? '<span class="dot" title="有資料要重新確認"></span>' : ''}<span class="sum">${bits || '優惠券・刷卡・退稅'}</span>${ic.chev.replace('<svg', '<svg class="chev"')}</summary>
-    <div class="stin">${inner}</div>
-    <p class="tiny muted" style="margin:8px 2px 0">不需要的話，可以在自己的頭像（個人資訊）裡關掉省錢小幫手。</p></details>`;
+  return {n: stores.size, re: recheckHTML()};
 }
-function shopCardTopHTML() {
+function shopSaveHTML(info) {
+  const cp = shopCpTopHTML(true) || `<button class="card mini cta" id="toCoupons0">${ic.ticket}<span>優惠券：${S.me === 'qi' ? '匯入優惠券資料庫，或' : ''}掃描券圖新增</span>${ic.chev}</button>`;
+  return `<div class="stin" style="display:flex;flex-direction:column;gap:12px">${info.re}${cp}${shopCardTopHTML(true)}</div>
+    <p class="tiny muted" style="margin:14px 4px 0">不需要的話，可以在自己的頭像（個人資訊）裡關掉省錢小幫手，購物清單就只剩清單。</p>`;
+}
+function shopCardTopHTML(force) {
   if (!S.catalog) return '';
   const own = ownedCards();
   if (!own.length) return `<button class="card mini cta" id="toCards">${ic.coin}<span>設定自己有哪些信用卡，清單會推薦最划算的刷法</span>${ic.chev}</button>`;
-  const {ctx} = cardCtx(), open = localGet('open.capMini') === '1', v = capShopSel();
+  const {ctx} = cardCtx(), open = force || localGet('open.capMini') === '1', v = capShopSel();
   return `<details class="card mini" data-keep="capMini" ${open ? 'open' : ''}><summary>${ic.coin}<span>我的卡片剩餘額度</span><span class="tiny muted">${+v.slice(5)} 月</span>${ic.chev.replace('<svg', '<svg class="chev"')}</summary>
     <div style="margin-top:8px">${capChipsHTML(null, 'capViewShop', v)}</div>${own.map(c => { const rows = capRowsHTML(c, ctx, capDate(c, v), true); return `<div class="minicard"><div class="small" style="display:flex;align-items:center;gap:4px">${cdot(c)} <b>${esc(cardShort(c))}</b><span class="tiny muted" style="margin-left:auto">${capRange(c, v)}</span></div>${rows || '<div class="tiny muted">沒有額度上限</div>'}</div>`; }).join('')}
     <div style="display:flex;gap:8px;margin-top:8px"><button class="btn sm" id="toCalc">${ic.calc}刷卡試算</button><button class="btn sm ghost" id="toCards2">信用卡設定 ›</button></div></details>` + notesHTML('shopNotes');
@@ -3499,8 +3504,8 @@ function shopRecHTML(x) {
   const line = R.hasBud ? recText(top, R.fx) : `${top.net > 0 ? '推薦' : '沒有划算的卡：最好是'} ${esc(combo(top))}（約 ${pctFmt(top.netRate)}）・填預算可估金額`;
   const how = methodHow(top.card, top.method, top.channel);
   return `<div class="rec"><button class="line" data-rec="${x.id}" aria-expanded="${open}">${cdot(top.card)}<span class="txt">${line}</span>${ic.chev.replace('<svg', '<svg class="chev"')}</button>
-    ${how ? `<div class="how tiny">${esc(how)}</div>` : ''}
-    ${R.cp ? `<div class="cpline">${R.disc ? `已扣 ${esc(R.cp.c.chain)} ${esc(tierText(R.cp.ev.tier))}（約 −${yen(R.disc)}），以下按 ${yen(R.itemYen - R.disc)} 計算` : R.cp.ev.next ? `${esc(R.cp.c.chain)}：這家店清單再買 ${yen(R.cp.ev.need)} 可${R.cp.ev.tier ? '升到' : '用'} ${esc(tierText(R.cp.ev.next))}` : ''}${R.cp.c.status === 'check' && (R.disc || R.cp.ev.next) ? '・⚠️ 沖繩適用待確認' : ''}</div>` : ''}
+    ${open && how ? `<div class="how tiny">${esc(how)}</div>` : ''}
+    ${open && R.cp ? `<div class="cpline">${R.disc ? `已扣 ${esc(R.cp.c.chain)} ${esc(tierText(R.cp.ev.tier))}（約 −${yen(R.disc)}），以下按 ${yen(R.itemYen - R.disc)} 計算` : R.cp.ev.next ? `${esc(R.cp.c.chain)}：這家店清單再買 ${yen(R.cp.ev.need)} 可${R.cp.ev.tier ? '升到' : '用'} ${esc(tierText(R.cp.ev.next))}` : ''}${R.cp.c.status === 'check' && (R.disc || R.cp.ev.next) ? '・⚠️ 沖繩適用待確認' : ''}</div>` : ''}
     ${open ? `<div class="detail"><div class="tiny muted">通路：${esc(channelName(R.channel))}・${R.hasBud ? `約 ${twdFmt(R.twd)}` : '以 NT$1,000 試算'}・匯率 ${R.fx.toFixed(4)}</div>
       ${R.recs.slice(0, 3).map((r, i) => `<div class="rk"><div class="small"><b>${i + 1}. ${cdot(r.card)} ${esc(combo(r))}</b></div>${methodHow(r.card, r.method, r.channel) ? `<div class="tiny how">${esc(methodHow(r.card, r.method, r.channel))}</div>` : ''}${breakdownHTML(r, R.fx)}</div>`).join('')}
       ${R.recs.altPlan ? `<div class="tiny hintbox">💡 ${esc(cardShort(R.recs.altPlan.card))} 切換到「${esc(R.recs.altPlan.planName)}」並用 ${esc(METHOD_NAME[R.recs.altPlan.method])} 付，約 ${pctFmt(R.recs.altPlan.netRate)}。${esc(R.recs.altPlan.card.planNote || '')}</div>` : ''}
@@ -4044,11 +4049,13 @@ function paintCoupon() {
     <p class="cps-net">需要網路・<b>截圖無效</b>・請在官方頁面出示條碼</p>${c.howToGet ? `<p class="tiny" style="margin:0">${esc(c.howToGet)}</p>` : ''}`;
   else {
     const ks = tierCodes(t);
-    codeBox = `<div class="cps-codes" id="cpsCode">${ks.length ? ks.map((k, i) => `${ks.length > 1 ? `<div class="cps-clbl">${esc(k.label || `條碼 ${i + 1}`)}</div>` : ''}
+    // 還沒達到門檻也直接顯示條碼（實際結帳金額常和清單不同），只在上方加一行提醒
+    const under = ks.length && !reached && t.min ? `<div class="cps-under">清單還沒達到 ${yen(t.min)}${c.basis === 'taxExcl' ? '（未稅）' : ''}・實際結帳有滿就能用</div>` : '';
+    codeBox = `${under}<div class="cps-codes" id="cpsCode">${ks.length ? ks.map((k, i) => `${ks.length > 1 ? `<div class="cps-clbl">${esc(k.label || `條碼 ${i + 1}`)}</div>` : ''}
         <div class="cps-code ${k.format === 'QRCode' ? 'qr' : ''}" data-ci="${i}"><span class="tiny">畫條碼中…</span></div>
         ${k.format !== 'image' ? `<div class="cps-txt">${esc(codeLabel(k)).slice(0, 120)}</div>` : '<p class="cps-net">這張是存下來的原圖</p>'}`).join('')
       : `<div class="cps-code"><b>還沒存條碼</b><span class="tiny">請用官方券圖掃描新增</span><button class="btn sm pri" id="cpsAddCode">${ic.plus}掃描券圖補上條碼</button></div>`}
-      ${ks.length && !reached && !CPS.force && t.min ? `<div class="cps-veil"><b>還沒達到 ${yen(t.min)}${c.basis === 'taxExcl' ? '（未稅）' : ''}</b><span class="tiny">實際結帳金額可能和清單不同</span><button class="btn sm" id="cpsForce">仍要出示</button></div>` : ''}</div>
+</div>
       ${ks.length > 1 ? `<p class="cps-both">這 ${ks.length} 個條碼都要讓店員掃</p>` : ''}`;
   }
   const amtBox = ts.some(x => x.pct != null || x.amount != null) ? `<div class="cps-amt">
@@ -4061,8 +4068,8 @@ function paintCoupon() {
     ${jpById('shop-coupon') ? `<button type="button" class="btn sm cps-ask" id="cpsAsk">🗣 問店員能不能用</button>` : ''}
     ${cpExpired(c) ? `<div class="cps-check">這張券 ${esc(c.validTo)} 已過期</div>` : ''}
     ${c.display === 'code' && ts.length > 1 ? `<div class="cps-tiers" id="cpsTiers">${ts.map((x, i) => `<button type="button" data-ti="${i}" aria-pressed="${i === sel}">${ev.idx >= i ? '✓ ' : ''}${esc(tierText(x))}</button>`).join('')}</div>` : ''}
-    ${c.display === 'code' ? cpOrigHTML(c, sel) : ''}
-    ${codeBox}${amtBox}
+    ${codeBox}
+    ${c.display === 'code' ? cpOrigHTML(c, sel) : ''}${amtBox}
     <ul class="cps-cond">${cond.map(([i, x]) => `<li><span aria-hidden="true">${i}</span><span>${x}</span></li>`).join('')}</ul>
     ${(c.warnings || []).length ? `<ul class="cps-warn">${c.warnings.map(w => `<li>${esc(w)}</li>`).join('')}</ul>` : ''}
     ${(c.excludes || []).length ? `<details class="cps-more"><summary>不適用的商品／店舖（${c.excludes.length}）</summary><p>${c.excludes.map(esc).join('、')}</p></details>` : ''}
@@ -4265,7 +4272,7 @@ function shopCpChipHTML(x, mine) {
   const txt = ms.length > 1 ? `${ms.length} 張券` : c.display === 'pickup' ? '現場領券' : best?.ev?.tier?.pct != null ? `折 ${best.ev.tier.pct}%` : cpMaxText(c);
   return `<span class="chip cp" role="button" tabindex="0" data-cpi="${esc(x.id)}" aria-label="這家店的優惠券">${ic.ticket}${esc(txt)}</span>`;
 }
-function shopCpTopHTML() {
+function shopCpTopHTML(force) {
   const list = cpList(), mineItems = (S.shopping[S.me] || []).filter(x => !x.bought);
   // 退稅：依購買地點對到的店家，加總預算 × 數量
   const rfG = new Map();
@@ -4273,7 +4280,7 @@ function shopCpTopHTML() {
   if (!list.length && !rfG.size) return '';
   const used = new Map();
   for (const x of mineItems) for (const c of cpMatch(x.place)) used.set(c.id, c);
-  const open = localGet('open.cpMini') !== '0', rfUsed = new Set();
+  const open = force || localGet('open.cpMini') !== '0', rfUsed = new Set();
   const rfLine = (g, disc) => {
     const st = g.st, r = rfCalc(Math.max(0, g.sub - disc), 0, st, rfDefMethod(st));
     if (!g.sub) return '';
