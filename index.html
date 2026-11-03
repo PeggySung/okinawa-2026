@@ -333,6 +333,26 @@ details.exgrp>summary .sum{margin-left:auto;font-family:var(--f-body,inherit);fo
 .exf .sw::after{content:"";position:absolute;top:2px;left:2px;width:16px;height:16px;border-radius:50%;background:#fff;box-shadow:0 1px 2px rgba(0,0,0,.2);transition:left .15s}
 .exf .tog[aria-pressed=true] .sw{background:var(--sea)}
 .exf .tog[aria-pressed=true] .sw::after{left:16px}
+.saverset{display:flex;align-items:center;gap:10px;width:100%;text-align:left;background:var(--sea-wash);border-radius:var(--r-btn);padding:10px 12px;margin:0 0 10px}
+.saverset .t{flex:1;font-family:var(--f-title);font-size:15.5px}
+.saverset .t small{display:block;font-family:var(--f-body);font-size:12px;color:var(--ink-3);line-height:1.45;margin-top:2px}
+.saverset .sw{width:40px;height:24px;border-radius:999px;background:var(--sand-2);position:relative;transition:background .15s;flex:none}
+.saverset .sw::after{content:"";position:absolute;top:2px;left:2px;width:20px;height:20px;border-radius:50%;background:#fff;box-shadow:0 1px 2px rgba(0,0,0,.2);transition:left .15s}
+.saverset[aria-pressed=true] .sw{background:var(--sea)}
+.saverset[aria-pressed=true] .sw::after{left:18px}
+details.emore{margin:0 0 14px;border-radius:var(--r-btn);background:var(--sand);padding:0 12px}
+details.emore>summary{list-style:none;display:flex;align-items:center;gap:8px;cursor:pointer;min-height:46px;font-family:var(--f-title);font-size:15px}
+details.emore>summary::-webkit-details-marker{display:none}
+details.emore>summary .sum{margin-left:auto;font-family:var(--f-body);font-size:12.5px;color:var(--ink-3);text-align:right;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+details.emore>summary .chev{width:17px;height:17px;color:var(--ink-3);transition:transform .2s;flex:none}
+details.emore[open]>summary .chev{transform:rotate(90deg)}
+details.emore[open]{padding-bottom:4px}
+details.emore .in{background:var(--card)}
+details.shoptop>summary .sum{font-family:var(--f-body);font-size:12.5px;color:var(--ink-3);white-space:nowrap}
+details.shoptop>summary .dot{width:8px;height:8px;border-radius:50%;background:var(--hib);flex:none}
+details.shoptop .stin{margin-top:10px;display:flex;flex-direction:column;gap:10px}
+details.shoptop .stin>.card{box-shadow:inset 0 0 0 1.2px var(--line);margin:0}
+details.shoptop .stin>.remind{padding:10px 12px}
 .ex .sub .av.s.fade{opacity:.3}
 .ex .amt small.me{color:var(--sea-deep);font-weight:700}
 .ex{display:flex;gap:10px;align-items:center;width:100%;text-align:left;padding:11px 12px}
@@ -365,6 +385,13 @@ details.exgrp>summary .sum{margin-left:auto;font-family:var(--f-body,inherit);fo
 #eHow .pay{background:var(--sea-wash);border-radius:14px;padding:8px 12px;margin:-2px 0 12px}
 #eHow .h{display:flex;align-items:center;justify-content:space-between;gap:8px;font-family:var(--f-title);font-size:13.5px;color:var(--ink-2);margin-bottom:2px}
 #eHow .tr{display:flex;align-items:center;gap:8px;padding:6px 0}
+#eHow summary.h{list-style:none;cursor:pointer;min-height:30px;margin-bottom:0}
+#eHow summary.h::-webkit-details-marker{display:none}
+#eHow summary.h .r{display:flex;align-items:center;gap:4px;font-family:var(--f-body);font-size:12.5px;color:var(--ink-3)}
+#eHow summary.h .chev{width:15px;height:15px;transition:transform .2s}
+#eHow details[open] summary.h .chev{transform:rotate(90deg)}
+.evsum{display:flex;align-items:center;gap:8px;justify-content:space-between;background:var(--sand);border-radius:12px;padding:8px 10px 8px 12px;margin-top:8px;font-size:14px}
+.evsum b{font-family:var(--f-num)}
 #eHow .tr+.tr{border-top:1px dashed rgba(11,116,120,.25)}
 #eHow .tr .t{flex:1;display:flex;align-items:center;flex-wrap:wrap;gap:5px;font-size:14px}
 #eHow .tr .arr{color:var(--ink-3)}
@@ -393,6 +420,7 @@ details.exgrp>summary .sum{margin-left:auto;font-family:var(--f-body,inherit);fo
 #sheet h3{font-family:var(--f-title);font-weight:400;font-size:20px;margin:0 0 10px;display:flex;align-items:center;gap:8px}
 #sheet h3 .x{margin-left:auto}
 .f{display:block;margin-bottom:12px}
+.f[hidden]{display:none}
 .f>span{display:block;font-family:var(--f-title);font-size:13.5px;color:var(--ink-2);margin:0 0 5px 2px}
 .f>span em{font-style:normal;color:var(--hib)}
 .in{width:100%;min-height:46px;padding:10px 12px;border:0;border-radius:12px;background:var(--card);box-shadow:inset 0 0 0 1.5px var(--line-2);font-size:16px;outline:none}
@@ -1039,6 +1067,8 @@ if (S.tab === 'cards' || S.tab === 'coupons') S.tab = 'shop';
 if (S.tab === 'flight') { S.tab = 'guide'; localSet('guideSeg', 'flight'); }
 function localGet(k) { try { return localStorage.getItem('rlc.' + k); } catch { return null; } }
 function localSet(k, v) { try { localStorage.setItem('rlc.' + k, v); } catch {} }
+// 省錢小幫手（信用卡推薦、優惠券、退稅試算）：每人在自己的手機上決定要不要顯示，預設開。關掉只是不顯示，資料都保留
+const saverOn = () => localGet('saver') !== '0';
 
 /* ───────────── firebase ───────────── */
 const configured = firebaseConfig && firebaseConfig.apiKey && !String(firebaseConfig.apiKey).includes('貼上');
@@ -1383,9 +1413,16 @@ function openProfile(id) {
     <div class="nm">${esc(m.short)}</div><div class="full">${esc(m.full)}</div>
     <div class="ttl">${esc(m.title)}</div>
     <blockquote>「${esc(m.quote)}」</blockquote>
-    ${id === S.me ? `<button class="btn pri full" id="toCardsP" style="margin-bottom:10px">${ic.coin}信用卡設定</button><p class="tiny muted">${esc(S.user.email)}</p><button class="btn full" id="logout">登出</button>` : ''}
+    ${id === S.me ? `<button type="button" class="saverset" id="saverTog" aria-pressed="${saverOn()}"><span class="t">省錢小幫手<small>購物清單和記帳顯示信用卡推薦、優惠券、退稅試算。只影響你自己的手機，關掉也不會刪掉任何資料。</small></span><span class="sw"></span></button>
+    <button class="btn pri full" id="toCardsP" style="margin-bottom:10px">${ic.coin}信用卡設定</button><p class="tiny muted">${esc(S.user.email)}</p><button class="btn full" id="logout">登出</button>` : ''}
     <button class="btn ghost full" data-close>關閉</button></div>`, s => {
     s.querySelector('#toCardsP')?.addEventListener('click', goCards);
+    s.querySelector('#saverTog')?.addEventListener('click', ev => {
+      const b = ev.currentTarget, on = !saverOn();
+      localSet('saver', on ? '1' : '0'); b.setAttribute('aria-pressed', String(on));
+      toast(on ? '已開啟省錢小幫手' : '已關閉省錢小幫手，想用時再回來打開');
+      render(); // 背後的分頁跟著更新
+    });
     s.querySelector('#logout')?.addEventListener('click', async () => {
       if (await confirmDialog({title: '要登出嗎？', ok: '登出'})) { closeSheet(); signOut(auth); }
     });
@@ -1760,7 +1797,8 @@ function renderShop() {
   const bar = `<div class="whobar">${IDS.map(m => `<button aria-pressed="${m === who}" data-w="${m}" style="--c:${COLORS[m]}">${avatar(m).replace('data-profile', 'data-x')}${nm(m)}<span class="tiny muted">${(S.shopping[m] || []).length} 項</span></button>`).join('')}</div>`;
   const totAll = items.reduce((s, x) => s + (Number(x.budget) || 0) * (Number(x.qty) || 1), 0);
   const totLeft = items.filter(x => !x.bought).reduce((s, x) => s + (Number(x.budget) || 0) * (Number(x.qty) || 1), 0);
-  const recs = {}; if (mine) for (const x of items) if (!x.bought) recs[x.id] = shopRecHTML(x);
+  const saver = saverOn(); // 省錢小幫手關閉：不顯示推薦卡、通路、優惠券標籤和頂端摘要
+  const recs = {}; if (mine && saver) for (const x of items) if (!x.bought) recs[x.id] = shopRecHTML(x);
   const list = items.length ? `<div class="card">${items.map(x => `<div class="sh ${x.bought ? 'done' : ''} ${recs[x.id] ? 'has-rec' : ''}">
       <button class="box" role="checkbox" aria-checked="${!!x.bought}" aria-label="${esc(x.name)}" data-buy="${x.id}" ${mine ? '' : 'disabled'} style="--c:${COLORS[who]}">${ic.check}</button>
       <${mine ? 'button' : 'div'} class="body" ${mine ? `data-ed="${x.id}"` : ''}><div class="nm">${esc(x.name)}</div>
@@ -1768,12 +1806,13 @@ function renderShop() {
         ${x.day || x.qty || x.budget || x.note ? `<div class="sub">${x.day ? `<span class="chip sea">${dayLabel(x.day)}</span>` : ''}${x.qty ? `<span class="chip">× <span class="num">${esc(x.qty)}</span></span>` : ''}${x.budget ? `<span class="chip terra">預算 <span class="num">¥${Number(x.budget).toLocaleString()}</span></span>` : ''}${x.note ? `<span class="small muted">${esc(x.note)}</span>` : ''}</div>` : ''}
         ${x.fromWho && COLORS[x.fromWho] ? `<div class="sub"><span class="chip">${avatar(x.fromWho, 's').replace('data-profile', 'data-x')} 來自 ${nm(x.fromWho)}</span></div>` : ''}
         ${x.place ? `<div class="sub"><span class="small muted">${ic.map.replace('<svg', '<svg style="width:13px;height:13px;vertical-align:-2px"')} ${esc(x.place)}</span></div>` : ''}
-        ${S.catalog && (x.channel || mine) || cpMatch(x.place).length ? `<div class="sub">${S.catalog && (x.channel || mine) ? `<span class="chip">${esc(channelName(x.channel || autoChannel(x.place, x.name)))}</span>` : ''}${!x.bought ? shopCpChipHTML(x, mine) : ''}</div>` : ''}
+        ${saver && (S.catalog && (x.channel || mine) || cpMatch(x.place).length) ? `<div class="sub">${S.catalog && (x.channel || mine) ? `<span class="chip">${esc(channelName(x.channel || autoChannel(x.place, x.name)))}</span>` : ''}${!x.bought ? shopCpChipHTML(x, mine) : ''}</div>` : ''}
       </${mine ? 'button' : 'div'}>${x.place || !mine ? `<div class="acts">${x.place ? `<a class="btn sm" href="${mapsSearch(x.place)}" target="_blank" rel="noopener" aria-label="在 Google Maps 開啟 ${esc(x.place)}">${ic.map}地圖</a>` : ''}${mine ? '' : have(x) ? `<button class="btn sm" disabled>${ic.check}已有</button>` : `<button class="btn sm" data-copy-item="${x.id}" aria-label="複製 ${esc(x.name)} 到我的清單">${ic.copy}複製</button>`}</div>` : ''}${recs[x.id] || ''}</div>`).join('')}
       ${totAll ? `<div class="totals"><span>預算合計 <b class="num">¥${totAll.toLocaleString()}</b></span><span>還沒買 <b class="num">¥${totLeft.toLocaleString()}</b></span></div>` : ''}</div>`
     : `<div class="empty">${ic.bag}${mine ? '還沒有想買的東西，按右下角新增' : `${nm(who)} 還沒有列清單`}</div>`;
-  const cpTop = mine ? (shopCpTopHTML() || `<button class="card mini cta" id="toCoupons0">${ic.ticket}<span>優惠券：${S.me === 'qi' ? '匯入優惠券資料庫，或' : ''}掃描券圖新增</span>${ic.chev}</button>`) : '';
-  $('#main').innerHTML = `${bar}${mine ? recheckHTML() + shopCardTopHTML() + cpTop : ''}<h2 class="sec">${ic.shell.replace('<svg', '<svg class="deco"')}${mine ? '我的購物清單' : nm(who) + ' 的購物清單'}${mine ? '' : '<span class="chip" style="margin-left:auto">只能看</span>'}</h2>${!mine && copyable.length ? `<button class="btn full" id="copyAll" style="margin-bottom:12px">${ic.copy}把 ${copyable.length} 項全部複製到我的清單</button>` : ''}${list}`;
+  const top = mine && saver ? shopTopHTML(items) : '';
+  const cpBtn = !saver || !mine ? `<button type="button" class="btn sm ghost" id="toCoupons1" style="margin-left:auto">${ic.ticket}優惠券</button>` : '';
+  $('#main').innerHTML = `${bar}${top}<h2 class="sec">${ic.shell.replace('<svg', '<svg class="deco"')}${mine ? '我的購物清單' : nm(who) + ' 的購物清單'}${mine ? '' : '<span class="chip" style="margin-left:8px">只能看</span>'}${cpBtn}</h2>${!mine && copyable.length ? `<button class="btn full" id="copyAll" style="margin-bottom:12px">${ic.copy}把 ${copyable.length} 項全部複製到我的清單</button>` : ''}${list}`;
   $('#main').querySelector('.whobar').onclick = e => { const b = e.target.closest('[data-w]'); if (b) { S.shopWho = b.dataset.w; renderShop(); } };
   $('#main').querySelectorAll('[data-buy]').forEach(b => b.onclick = () => {
     const x = S.shopping[S.me].find(i => i.id === b.dataset.buy); if (!x) return;
@@ -1786,6 +1825,7 @@ function renderShop() {
   $('#main').querySelectorAll('details[data-keep]').forEach(d => d.ontoggle = () => localSet('open.' + d.dataset.keep, d.open ? '1' : '0'));
   ['#toCards', '#toCards2'].forEach(k => $(k)?.addEventListener('click', goCards));
   $('#toCalc')?.addEventListener('click', openCalc);
+  ['#toCoupons0', '#toCoupons1'].forEach(k => $(k)?.addEventListener('click', goCoupons));
   bindShopCoupons($('#main'));
   bindBan($('#main'));
   bindCapView($('#main'), render);
@@ -2125,7 +2165,7 @@ function renderMoney() {
     {
       if (myCardExp(e) && S.catalog) {
         const t = S.txns.find(x => x.id === e.id), res = t && txRes?.results[t.id];
-        payTag += t ? `<span class="chip sea">${cdot(cardById(t.card))}${esc(cardShort(cardById(t.card)))}${res ? `・估回饋 ${twdFmt(res.net)}` : ''}</span>` : (S.txSynced ? '<span class="chip hib">待填卡片</span>' : '');
+        payTag += t ? `<span class="chip sea">${cdot(cardById(t.card))}${esc(cardShort(cardById(t.card)))}${res ? `・估回饋 ${twdFmt(res.net)}` : ''}</span>` : (S.txSynced && saverOn() ? '<span class="chip hib">待填卡片</span>' : '');
       }
     }
     if (e.taxRefund && e.cur === 'JPY') {
@@ -2222,6 +2262,8 @@ function editExpense(e, pre = null) {
     for (const m of e.split) shareIn[m] = fmtAmt(ev[m] || 0);
   }
   let settled = e ? settledOf(e) : [];
+  // 分攤金額：平均分攤時只顯示一行「每人 ¥X」，要各自金額才展開每人一格；「這筆怎麼還」預設收起來（有已結清時展開）
+  let ownOpen = !!(e && customSplit(e)), howOpen = settled.length > 0;
   // 付款方式：一位付款人時用 payType；多位時每人各自（pts）
   let payType = isNew ? 'card' : (e.payType || null);
   const pts = {}; for (const m of IDS) pts[m] = e && multiPay(e) ? (e.payTypes?.[m] || null) : (m === e?.payer ? payType : null);
@@ -2232,21 +2274,25 @@ function editExpense(e, pre = null) {
   // 私人卡片欄位（只在自己有付錢時使用）
   const oldTx = e ? S.txns.find(t => t.id === e.id) : null;
   // 付款日期（大家都看得到）：有填就用；舊記帳沒填時，自己的刷卡用卡片明細的消費日，否則用建立時間
+  // 「更多」：付款方式、日期、通路、刷卡、退稅、備註收在這裡。上次自己展開過就維持展開；有備註或退稅的舊記帳也展開
+  const saver = saverOn(), moreOpen = localGet('exMore') === '1' || !!(e?.note || e?.taxRefund || pre?.refund);
   const sel = {card: oldTx?.card || pre?.card || null, method: oldTx?.method || pre?.method || null, date: e?.paidDate || oldTx?.date || (e ? localDateOf(e.createdAt) : pre?.date || localDateOf(Date.now())), manual: !!oldTx || !!pre?.card, result: null};
   openSheet(`<h3>${isNew ? '記一筆' : '編輯記帳'}<button class="iconbtn x" data-close aria-label="關閉">${ic.x}</button></h3>
     <div id="eLock"></div>
     <div class="seg" id="eCur" style="margin-bottom:12px">${['JPY', 'TWD'].map(c => `<button type="button" data-c="${c}">${CUR[c].sym} ${CUR[c].name}</button>`).join('')}</div>
     <label class="f"><span>總額 <em>*</em></span><input class="in big" id="eAmt" type="text" inputmode="decimal" autocomplete="off" placeholder="0" value="${e ? esc(e.amount) : pre?.amount ? esc(pre.amount) : ''}"></label>
     <div class="f"><span>誰先付錢 <span class="tiny muted">（可以選多位）</span></span><div class="pick" id="ePayer"></div><div id="ePaidBox"></div></div>
-    <div class="f" id="ePayF"><span>付款方式（大家都看得到）</span><div class="seg" id="ePay"><button type="button" data-p="cash">現金</button><button type="button" data-p="card">刷卡</button></div></div>
     <div class="f" id="eSplitF"><span>分攤的人 <span class="tiny muted">（勾選後帶入平均金額，可以改）</span></span><div class="pick" id="eSplit"></div><div id="eOwn"></div></div>
     <div id="eHow"></div>
     <label class="f"><span>品名 <em>*</em></span><input class="in" id="eName" required value="${esc(e?.name || pre?.name || '')}" maxlength="100" placeholder="例如 燒肉晚餐"></label>
+    <details class="emore" id="eMore" ${moreOpen ? 'open' : ''}><summary>更多<span class="sum" id="eMoreSum"></span>${ic.chev.replace('<svg', '<svg class="chev"')}</summary>
+    <div class="f" id="ePayF"><span>付款方式（大家都看得到）</span><div class="seg" id="ePay"><button type="button" data-p="cash">現金</button><button type="button" data-p="card">刷卡</button></div></div>
     <label class="f"><span>付款日期 <em>*</em> <span class="tiny muted">（大家都看得到，記帳明細依這個日期排）</span></span><input class="in" id="ePaid" type="date" value="${esc(sel.date)}"></label>
-    ${hasCat ? `<label class="f"><span>通路類型 <span class="tiny muted" id="eChAuto"></span></span><select class="in" id="eCh">${channelOptions(e?.channel || pre?.channel || autoChannel(e?.name))}</select></label>` : ''}
+    ${hasCat ? `<label class="f" ${saver ? '' : 'hidden'}><span>通路類型 <span class="tiny muted" id="eChAuto"></span></span><select class="in" id="eCh">${channelOptions(e?.channel || pre?.channel || autoChannel(e?.name))}</select></label>` : ''}
     <div id="eCardBox"></div>
     <div id="eRf"></div>
     <label class="f"><span>備註</span><input class="in" id="eNote" value="${esc(e?.note || pre?.note || '')}" maxlength="500"></label>
+    </details>
     ${e ? `<div class="audit">建立：${esc(nm(e.createdBy))}・${fmtTime(e.createdAt)}<br>最後修改：${esc(nm(e.updatedBy))}・${fmtTime(e.updatedAt)}</div>` : ''}
     <div class="sheet-acts">${isNew ? '' : `<button class="btn" id="eDel">${ic.trash}刪除</button>`}<button class="btn pri" id="eSave">儲存</button></div>`, s => {
     const amtEl = s.querySelector('#eAmt'), chSel = s.querySelector('#eCh'), box = s.querySelector('#eCardBox');
@@ -2321,7 +2367,8 @@ function editExpense(e, pre = null) {
     };
     const paintCard = () => {
       const others = payers.filter(m => m !== S.me && ptOf(m) === 'card');
-      const mode = payers.includes(S.me) && ptOf(S.me) === 'card' ? (!hasCat ? 'nocat' : !ownedCards().length ? 'nocards' : 'mine') : others.length ? 'other:' + others.join(',') : 'none';
+      let mode = payers.includes(S.me) && ptOf(S.me) === 'card' ? (!hasCat ? 'nocat' : !ownedCards().length ? 'nocards' : 'mine') : others.length ? 'other:' + others.join(',') : 'none';
+      if (!saver && !oldTx) mode = 'none'; // 省錢小幫手關閉：不選卡片（已經填過卡片的舊記帳照常顯示）
       if (mode !== boxMode) {
         boxMode = mode;
         if (mode === 'none') box.innerHTML = '';
@@ -2382,7 +2429,7 @@ function editExpense(e, pre = null) {
         : others && r.excl < rfMin() ? `<div class="tiny muted" style="margin:2px 2px 8px">這筆單獨未滿 ${yen(rfMin())}，和同日同店其他筆合計才達標；分開結帳時能不能合算以店家為準。</div>` : '';
     };
     const paintRf = () => {
-      const ok = rfOk(), shape = `${ok}|${rf.on}`;
+      const ok = rfOk() && (saver || rf.on), shape = `${ok}|${rf.on}`; // 省錢小幫手關閉：只有已登記退稅的記帳才顯示
       if (shape !== rfShape) {
         rfShape = shape;
         rfBox.innerHTML = !ok ? '' : `<div class="rfform"><button type="button" class="opt" role="checkbox" aria-checked="${rf.on}" id="eRfOn"><span class="box" style="--c:var(--sea)" aria-hidden="true">${ic.check}</span><span class="txt">🧾 已在店家登記退稅<span class="tiny muted" style="display:block">結帳時有登記退稅（掃店家給的 QR code 或填護照）才勾</span></span></button>
@@ -2436,13 +2483,24 @@ function editExpense(e, pre = null) {
       const ok = c.A > 0 && !c.err.pay && !c.err.split, tr = ok ? planTransfers(c.paid, c.share) : [];
       const owers = [...new Set(tr.map(t => t.from))];
       if (ok) settled = settled.filter(m => owers.includes(m)); // 金額還沒對上時先保留，避免打字途中把已結清清掉
-      how.innerHTML = !c.A ? '' : `<div class="pay"><div class="h"><span>這筆怎麼還</span><span class="tiny muted">按「已結清」＝旅途中已經先還了</span></div>
+      const nDone = tr.filter(t => settled.includes(t.from)).length;
+      const howSum = !ok ? '金額還沒對上' : !tr.length ? '這筆不用還錢' : `${tr.length} 人要還${nDone ? `・${nDone} 人已結清` : ''}`;
+      how.innerHTML = !c.A ? '' : `<details class="pay" ${howOpen ? 'open' : ''}><summary class="h"><span>這筆怎麼還</span><span class="r">${howSum}${ic.chev.replace('<svg', '<svg class="chev"')}</span></summary>
+        ${tr.length ? '<div class="tiny muted">按「已結清」＝旅途中已經先還了</div>' : ''}
         ${!ok ? '<div class="tr"><span class="t muted">金額還沒對上</span></div>' : !tr.length ? '<div class="tr"><span class="t muted">這筆不用還錢</span></div>'
           : tr.map(t => { const d = settled.includes(t.from); return `<div class="tr ${d ? 'done' : ''}"><span class="t">${avatar(t.from, 's').replace('data-profile', 'data-x')}${nm(t.from)} <span class="arr">→</span> ${avatar(t.to, 's').replace('data-profile', 'data-x')}${nm(t.to)}</span><b class="num">${money(t.amt, cur)}</b>
             <button type="button" class="setb" data-set="${t.from}" aria-pressed="${d}" ${locked ? 'disabled' : ''}>${d ? '✓ 已結清' : '已結清？'}</button></div>`; }).join('')}
-        ${owers.length > 1 && !locked ? `<div style="display:flex;justify-content:flex-end"><button type="button" class="btn sm ghost" id="eSetAll">${owers.every(m => settled.includes(m)) ? '全部取消結清' : '全部結清'}</button></div>` : ''}</div>`;
+        ${owers.length > 1 && !locked ? `<div style="display:flex;justify-content:flex-end"><button type="button" class="btn sm ghost" id="eSetAll">${owers.every(m => settled.includes(m)) ? '全部取消結清' : '全部結清'}</button></div>` : ''}</details>`;
       s.querySelector('#eSave').disabled = (isNew && locked) || (!!(c.err.pay || c.err.split) && !!c.A);
-      paintCard(); paintRf();
+      paintCard(); paintRf(); paintMore();
+    };
+    // 「更多」收起來時，摘要列出目前的設定，不用展開也知道
+    const paintMore = () => {
+      const d = s.querySelector('#ePaid').value, t = localDateOf(Date.now());
+      const pt = payers.length > 1 ? '各自付款' : {cash: '現金', card: '刷卡'}[payType] || '';
+      const card = boxMode === 'mine' && sel.card ? cardShort(cardById(sel.card)) : '';
+      const bits = [card ? `刷 ${card}` : pt, d ? (d === t ? '今天' : `${+d.slice(5, 7)}/${+d.slice(8, 10)}`) : '沒填日期', rfOk() && rf.on ? '退稅' : '', s.querySelector('#eNote').value.trim() ? '有備註' : ''];
+      s.querySelector('#eMoreSum').textContent = bits.filter(Boolean).join('・');
     };
     const paint = () => {
       const moneyLocked = !!(isLocked(cur) || (e && isLocked(e.cur)));
@@ -2460,9 +2518,13 @@ function editExpense(e, pre = null) {
       s.querySelector('#ePayF').style.display = multi ? 'none' : '';
       s.querySelectorAll('#ePay [data-p]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.p === payType)));
       s.querySelector('#eSplit').innerHTML = IDS.map(m => `<button type="button" data-m="${m}" aria-pressed="${split.includes(m)}" style="--c:${COLORS[m]}" ${dis}>${avatar(m)}${nm(m)}</button>`).join('');
-      s.querySelector('#eOwn').innerHTML = split.length ? `<div class="erows">${split.map(m => `<div class="erow"><span class="who">${avatar(m, 's').replace('data-profile', 'data-x')}${nm(m)}</span>
+      const A0 = cents(parseAmt(amtEl.value) || 0), vals = split.map(m => cents(Number(shareIn[m]) || 0));
+      const evTxt = !A0 ? '輸入總額後，自動平均分給勾選的人' : vals.every(v => v === vals[0]) ? `平均分攤・每人 <b>${money(vals[0], cur)}</b>` : `平均分攤・每人約 <b>${money(Math.floor(A0 / split.length), cur)}</b>（零頭自動分配）`;
+      s.querySelector('#eOwn').innerHTML = !split.length ? '<div class="erfoot"><span class="ng">至少要勾一位分攤的人</span></div>'
+        : !ownOpen ? `<div class="evsum"><span>${evTxt}</span>${split.length > 1 && !moneyLocked ? '<button type="button" class="btn sm ghost" id="eOwnEdit">各自金額</button>' : ''}</div>`
+        : `<div class="erows">${split.map(m => `<div class="erow"><span class="who">${avatar(m, 's').replace('data-profile', 'data-x')}${nm(m)}</span>
           <input class="amt" data-om="${m}" type="text" inputmode="decimal" autocomplete="off" placeholder="0" value="${esc(shareIn[m] || '')}" ${dis}></div>`).join('')}</div>
-        <div class="erfoot" id="eOwnFoot"></div>` : '<div class="erfoot"><span class="ng">至少要勾一位分攤的人</span></div>';
+        <div class="erfoot" id="eOwnFoot"></div>${moneyLocked ? '' : '<div style="display:flex;justify-content:flex-end"><button type="button" class="btn sm ghost" id="eOwnEven">改回平均分攤</button></div>'}`;
       const del = s.querySelector('#eDel'); if (del) del.disabled = moneyLocked;
       paintSums();
     };
@@ -2470,9 +2532,13 @@ function editExpense(e, pre = null) {
     syncCh(); paint();
     const shareSig0 = JSON.stringify(calc().share);
     if (isNew && !pre?.amount) setTimeout(() => amtEl.focus(), 250);
-    amtEl.oninput = () => { if (split.length && split.every(m => !shareIn[m])) { reAverage(); paint(); } else paintSums(); };
+    amtEl.oninput = () => { if (split.length && (!ownOpen || split.every(m => !shareIn[m]))) { reAverage(); paint(); } else paintSums(); };
     s.querySelector('#eName').oninput = () => { if (syncCh()) paint(); else { paintCard(); paintRf(); } };
-    s.querySelector('#ePaid').onchange = ev => { sel.date = ev.target.value || sel.date; paintCard(); paintRf(); };
+    s.querySelector('#ePaid').onchange = ev => { sel.date = ev.target.value || sel.date; paintCard(); paintRf(); paintMore(); };
+    s.querySelector('#eNote').addEventListener('input', paintMore);
+    s.querySelector('#eCardBox').addEventListener('change', () => setTimeout(paintMore));
+    s.querySelector('#eRf').addEventListener('click', () => setTimeout(paintMore));
+    s.querySelector('#eMore > summary').addEventListener('click', () => setTimeout(() => localSet('exMore', s.querySelector('#eMore').open ? '1' : '0')));
     chSel?.addEventListener('change', () => { chManual = true; if (syncCh()) paint(); else { paintCard(); paintRf(); } });
     s.querySelector('#eCur').onclick = ev => { const b = ev.target.closest('[data-c]'); if (b && !b.disabled) { cur = b.dataset.c; curManual = true; paint(); } };
     s.querySelector('#ePayer').onclick = ev => {
@@ -2491,8 +2557,13 @@ function editExpense(e, pre = null) {
     s.querySelector('#ePaidBox').oninput = ev => { const i = ev.target.closest('[data-pm]'); if (i) { paidIn[i.dataset.pm] = i.value; paintSums(); } };
     s.querySelector('#ePaidBox').onclick = ev => { const b = ev.target.closest('[data-p]'), g = ev.target.closest('[data-ptm]'); if (!b || !g) return; pts[g.dataset.ptm] = b.dataset.p; g.querySelectorAll('[data-p]').forEach(x => x.setAttribute('aria-pressed', String(x === b))); paintCard(); };
     s.querySelector('#ePay').onclick = ev => { const b = ev.target.closest('[data-p]'); if (b) { payType = b.dataset.p; paint(); } };
+    s.querySelector('#eOwn').onclick = ev => {
+      if (ev.target.closest('#eOwnEdit')) { ownOpen = true; paint(); s.querySelector('#eOwn [data-om]')?.focus(); }
+      else if (ev.target.closest('#eOwnEven')) { ownOpen = false; reAverage(); paint(); }
+    };
     s.querySelector('#eOwn').oninput = ev => { const i = ev.target.closest('[data-om]'); if (i) { shareIn[i.dataset.om] = i.value; paintSums(); } };
     s.querySelector('#eHow').onclick = ev => {
+      if (ev.target.closest('summary')) { setTimeout(() => { howOpen = !!s.querySelector('#eHow details')?.open; }); return; }
       const b = ev.target.closest('[data-set]');
       if (b && !b.disabled) { const m = b.dataset.set; settled = settled.includes(m) ? settled.filter(x => x !== m) : IDS.filter(x => x === m || settled.includes(x)); paintSums(); return; }
       if (ev.target.closest('#eSetAll')) { const c = calc(), owers = [...new Set(planTransfers(c.paid, c.share).map(t => t.from))]; settled = owers.every(m => settled.includes(m)) ? [] : owers; paintSums(); }
@@ -2503,7 +2574,7 @@ function editExpense(e, pre = null) {
       if (!amount || amount <= 0) { toast('總額要大於 0'); amtEl.focus(); return; }
       const nameEl = s.querySelector('#eName'), dateEl = s.querySelector('#ePaid');
       if (!nameEl.value.trim()) { toast('請填品名'); nameEl.focus(); return; }
-      if (!dateEl.value) { toast('請填付款日期'); dateEl.focus(); return; }
+      if (!dateEl.value) { toast('請填付款日期'); s.querySelector('#eMore').open = true; dateEl.focus(); return; }
       const c = calc();
       if (c.err.pay) { toast(c.err.pay); return; }
       if (c.err.split) { toast(c.err.split); return; }
@@ -3036,7 +3107,7 @@ function reconcileTxns() {
     if (p) { reconcileTxns.busy.add(t.id); p.catch(() => {}).finally(() => reconcileTxns.busy.delete(t.id)); }
   }
 }
-const pendingCardExps = () => S.txSynced ? S.expenses.filter(e => myCardExp(e) && !S.txns.some(t => t.id === e.id)) : [];
+const pendingCardExps = () => S.txSynced && saverOn() ? S.expenses.filter(e => myCardExp(e) && !S.txns.some(t => t.id === e.id)) : [];
 
 /* ── 推薦與明細的 HTML ── */
 function breakdownHTML(r, fx) {
@@ -3389,6 +3460,20 @@ function bindCatalogImport() {
 }
 
 /* ───────────── 購物清單：推薦卡 ───────────── */
+// 購物清單頂端：重新確認、優惠券・退稅、卡片額度、刷卡提醒合併成一張可收合的「省錢小幫手」（預設收起來，清單一打開就看得到）
+function shopTopHTML(items) {
+  const re = recheckHTML();
+  const cpTop = shopCpTopHTML() || `<button class="card mini cta" id="toCoupons0">${ic.ticket}<span>優惠券：${S.me === 'qi' ? '匯入優惠券資料庫，或' : ''}掃描券圖新增</span>${ic.chev}</button>`;
+  const inner = re + cpTop + shopCardTopHTML();
+  const left = items.filter(x => !x.bought), stores = new Set();
+  for (const x of left) { for (const c of cpMatch(x.place)) stores.add(c.chain); const st = rfData() ? rfStoreFor(x.place) : null; if (st) stores.add(st.name); }
+  const nCards = S.catalog ? ownedCards().length : 0;
+  const bits = [stores.size ? `🎫 ${stores.size} 家店` : '', nCards ? `💳 ${nCards} 張卡` : ''].filter(Boolean).join('・');
+  const open = localGet('open.shopTop') === '1';
+  return `<details class="card mini shoptop" data-keep="shopTop" ${open ? 'open' : ''}><summary>${ic.coin}<span>省錢小幫手</span>${re ? '<span class="dot" title="有資料要重新確認"></span>' : ''}<span class="sum">${bits || '優惠券・刷卡・退稅'}</span>${ic.chev.replace('<svg', '<svg class="chev"')}</summary>
+    <div class="stin">${inner}</div>
+    <p class="tiny muted" style="margin:8px 2px 0">不需要的話，可以在自己的頭像（個人資訊）裡關掉省錢小幫手。</p></details>`;
+}
 function shopCardTopHTML() {
   if (!S.catalog) return '';
   const own = ownedCards();
