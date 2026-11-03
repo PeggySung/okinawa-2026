@@ -625,6 +625,30 @@ ul.bd li.hint::before{content:"💡 "}
 .cpl .big{flex:none;text-align:right;font-family:var(--f-num);font-weight:800;font-size:19px;color:var(--terra);line-height:1.1}
 .cpl .big small{display:block;font-family:var(--f-body);font-weight:400;font-size:11px;color:var(--ink-3)}
 .cpl.off{opacity:.55}
+.rfmine{margin-bottom:12px}
+.rfmine>summary{display:flex;align-items:center;gap:8px;cursor:pointer;list-style:none}
+.rfmine>summary::-webkit-details-marker{display:none}
+.rfmine>summary .t{font-family:var(--f-title);font-size:15px;color:var(--sea-deep);flex:1}
+.rfmine>summary .chev{width:16px;height:16px;color:var(--ink-3);transition:transform .2s}
+.rfmine[open]>summary .chev{transform:rotate(90deg)}
+.rfsums{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:10px}
+.rfsum{border-radius:12px;padding:8px 10px;background:var(--card);box-shadow:inset 0 0 0 1.5px var(--line)}
+.rfsum.cash{background:var(--sea-wash);box-shadow:inset 0 0 0 1.5px rgba(27,165,168,.45)}
+.rfsum b{display:block;font-size:21px;line-height:1.2;color:var(--ink)}
+.rfsum.cash b{color:var(--sea-deep)}
+.rfsteps{margin-top:10px;padding-top:8px;border-top:1px dashed var(--line);font-size:13px}
+.rfsteps ol{margin:4px 0 0;padding-left:20px;color:var(--ink-2);font-size:12.5px;line-height:1.65}
+.rflist{margin-top:8px}
+.rflist>summary{cursor:pointer;font-size:12.5px;color:var(--sea-deep);font-family:var(--f-title)}
+.rfg{padding:7px 0;border-bottom:1px dashed var(--line)}
+.rfg:last-child{border-bottom:0}
+.rfform{background:var(--card);border-radius:14px;box-shadow:inset 0 0 0 1.5px var(--line-2);padding:4px 12px 2px;margin:-2px 0 12px}
+.rfbox{margin:4px 0 10px;padding:11px 12px 10px;border-radius:14px;background:var(--sea-wash);box-shadow:inset 0 0 0 1.5px rgba(27,165,168,.45)}
+.rfh{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:6px;font-family:var(--f-title);font-size:15px;color:var(--sea-deep)}
+.rfl{display:flex;justify-content:space-between;align-items:baseline;gap:10px;font-size:13px;color:var(--ink-2);margin:2px 0}
+.rfl>span:first-child{min-width:0}
+.rfl.big{margin-top:6px;font-size:14px;color:var(--ink);font-family:var(--f-title)}
+.rfl.big b{font-size:22px;color:var(--sea-deep)}
 .cprow{display:flex;align-items:center;gap:10px;width:100%;text-align:left;padding:8px 0}
 .cprow+.cprow{border-top:1px dashed var(--line)}
 .cprow .body{flex:1;min-width:0;font-size:14px}
@@ -1973,10 +1997,13 @@ async function saveExpense(old, data) {
     }
     const ref = old ? doc(db, 'expenses', old.id) : doc(collection(db, 'expenses'));
     const stamp = {updatedBy: S.me, updatedAt: serverTimestamp()};
+    // 退稅（taxRefund）：null＝取消勾選，刪掉欄位；新記帳不存 null
+    const tr = 'taxRefund' in data ? (data.taxRefund ? data.taxRefund : old ? deleteField() : undefined) : undefined;
+    const {taxRefund: _tr, ...rest} = data; data = tr === undefined ? rest : {...rest, taxRefund: tr};
     if (!old) tx.set(ref, {...data, ...stamp, createdBy: S.me, createdAt: serverTimestamp()});
     // 改成一位付款人／平均分攤時，把舊的多人付款、各自金額欄位刪掉
     else if (moneyChanged) tx.update(ref, {...data, ...stamp, ...Object.fromEntries(['paid', 'payTypes', 'shares'].filter(k => !(k in data) && old[k] !== undefined).map(k => [k, deleteField()]))});
-    else tx.update(ref, {name: data.name, note: data.note, ...('payType' in data ? {payType: data.payType} : {}), ...('payTypes' in data ? {payTypes: data.payTypes} : {}), ...('channel' in data ? {channel: data.channel} : {}), ...(data.paidDate && data.paidDate !== old.paidDate ? {paidDate: data.paidDate} : {}), ...stamp});
+    else tx.update(ref, {name: data.name, note: data.note, ...('taxRefund' in data ? {taxRefund: data.taxRefund} : {}), ...('payType' in data ? {payType: data.payType} : {}), ...('payTypes' in data ? {payTypes: data.payTypes} : {}), ...('channel' in data ? {channel: data.channel} : {}), ...(data.paidDate && data.paidDate !== old.paidDate ? {paidDate: data.paidDate} : {}), ...stamp});
     if (moneyChanged) for (const c of curs) bump(tx, c, reads[c]);
     id = ref.id;
   });
@@ -2011,6 +2038,44 @@ async function syncMyTxn(id, data, sel, old) {
     rewards: Object.fromEntries((res?.items || []).map(i => [i.rule.id, r2(i.reward)])), net: r2(res?.net || 0), updatedAt: serverTimestamp()});
 }
 
+// 記帳頁：我的待退稅（登記人是自己的退稅記帳；機場現金和退到卡分開加總）
+function rfMineHTML() {
+  const mine = S.expenses.filter(e => e.cur === 'JPY' && e.taxRefund?.who === S.me);
+  if (!mine.length) return '';
+  const tot = {cash: {n: 0, v: 0, range: false}, card: {n: 0, v: 0, range: false}}, under = [], groups = new Map();
+  for (const e of mine) {
+    const r = rfOfExp(e), k = `${e.paidDate}|${rfKey(e.taxRefund)}`;
+    const g = groups.get(k) || {date: e.paidDate, store: e.taxRefund.store || r.store?.name || '（沒填店家）', excl: 0, list: []};
+    g.excl += r.excl; g.list.push({e, r}); groups.set(k, g);
+  }
+  for (const g of groups.values()) {
+    if (g.excl < rfMin()) { under.push(g); continue; }
+    for (const {r} of g.list) { const t = tot[r.method === 'card' ? 'card' : 'cash']; t.n++; t.v += r.val; if (!r.actual && r.lo !== r.hi) t.range = true; }
+  }
+  const stores = new Set([...groups.values()].map(g => g.store)).size, C = rfData()?.cash || {};
+  const open = localGet('open.rfMine') === '1';
+  const md2 = d => d ? `${+d.slice(5, 7)}/${+d.slice(8, 10)}` : '';
+  const list = [...groups.values()].sort((a, b) => String(a.date).localeCompare(String(b.date))).map(g => `<div class="rfg ${g.excl < rfMin() ? 'under' : ''}"><div class="rfl"><span><b>${md2(g.date)} ${esc(g.store)}</b>${g.list.length > 1 ? `・${g.list.length} 筆合計` : ''}</span><span class="num">未稅 ${yen(g.excl)}</span></div>
+      ${g.excl < rfMin() ? `<div class="tiny warnline">未達 ${yen(rfMin())} 門檻，可能不能退稅</div>` : g.list.map(({e, r}) => `<div class="tiny muted">${esc(e.name || '（未命名）')}：${r.method === 'cash' ? '機場現金' : '退到卡'} ${r.valText}</div>`).join('')}</div>`).join('');
+  const box = (k, label, extra) => `<div class="rfsum ${k}"><div class="tiny muted">${label}</div><b class="num">${tot[k].range ? '至少 ' : ''}${yen(tot[k].v)}</b><div class="tiny muted">${tot[k].n} 筆${extra || ''}</div></div>`;
+  return `<details class="card rfmine" id="rfMine" ${open ? 'open' : ''}><summary><span class="t">🧾 我的待退稅</span><span class="tiny muted">${tot.cash.n ? `現金 <b class="num">${tot.cash.range ? '≥' : ''}${yen(tot.cash.v)}</b>` : ''}${tot.cash.n && tot.card.n ? '・' : ''}${tot.card.n ? `卡 <b class="num">${tot.card.range ? '≥' : ''}${yen(tot.card.v)}</b>` : ''}${under.length ? `${tot.cash.n || tot.card.n ? '・' : ''}<span class="warnline">${under.length} 組未達門檻</span>` : ''}</span>${ic.chev.replace('<svg', '<svg class="chev"')}</summary>
+    <div class="tiny muted" style="margin-top:4px">${mine.length} 筆・${stores} 家店</div><div class="rfsums">${box('cash', '那霸機場領現金', C.maxYen ? `・上限 ${yen(C.maxYen)}` : '')}${box('card', '退到信用卡')}</div>
+    ${tot.cash.v > (C.maxYen || Infinity) ? `<div class="tiny warnline">現金合計超過機台上限 ${yen(C.maxYen)}</div>` : ''}
+    ${under.length ? `<div class="tiny warnline" style="margin-top:6px">${under.length} 組未達門檻：${under.map(g => `${md2(g.date)} ${esc(g.store)} 未稅 ${yen(g.excl)}`).join('、')}</div>` : ''}
+    <div class="rfsteps"><b>回程那天</b>
+      <ol><li>託運行李<b>前</b>，帶著全部退稅品到國際線出發大廳（安檢前）的海關機台掃護照。不用連 Wi-Fi。</li>
+      ${tot.cash.n ? `<li>出境後到 ${esc(C.name || 'Self Tax Refund')} 機台領現金。${C.where ? `<br><span class="tiny">${esc(C.where)}${C.hours ? `・${esc(C.hours)}` : ''}</span>` : ''}</li>` : ''}
+      <li>購買日起 90 天內出境；同一張收據有一件不在身邊，整張都不退。</li></ol></div>
+    <details class="rflist"><summary>看明細（依日期和店家）</summary>${list}</details>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px">${prepBtn('rf', RF_PREP_TEXT)}</div>
+    <p class="tiny muted" style="margin:6px 0 0">估算・只算你是登記人的記帳・退稅不進分帳，結算金額不會變</p></details>`;
+}
+const RF_PREP_TEXT = '回程託運前，帶退稅品到海關機台掃護照';
+function bindRfMine() {
+  const d = $('#rfMine'); if (!d) return;
+  d.addEventListener('toggle', () => localSet('open.rfMine', d.open ? '1' : '0'));
+  d.querySelector('[data-prep="rf"]')?.addEventListener('click', ev => { ev.preventDefault(); hbAddPrep(RF_PREP_TEXT, '退稅新制：託運後就不能辦。帶著全部退稅品和護照，在國際線出發大廳（安檢前）的海關免稅機台刷護照；綠燈完成，紅燈帶東西給海關人員看。選機場領現金的，出境後再到 Self Tax Refund 機台領。', true); renderMoney(); });
+}
 function renderMoney() {
   const cards = ['JPY', 'TWD'].map(cur => {
     const exps = S.expenses.filter(e => e.cur === cur), st = S.settlements[cur], locked = anyPaid(st);
@@ -2063,6 +2128,11 @@ function renderMoney() {
         payTag += t ? `<span class="chip sea">${cdot(cardById(t.card))}${esc(cardShort(cardById(t.card)))}${res ? `・估回饋 ${twdFmt(res.net)}` : ''}</span>` : (S.txSynced ? '<span class="chip hib">待填卡片</span>' : '');
       }
     }
+    if (e.taxRefund && e.cur === 'JPY') {
+      const r = rfOfExp(e), grp = rfGroupExcl(e.taxRefund.who, e.paidDate, rfKey(e.taxRefund), null);
+      payTag += grp < rfMin() ? '<span class="chip hib">🧾 未達退稅門檻</span>'
+        : `<span class="chip ${r.method === 'cash' ? 'sea' : 'terra'}">🧾 ${multi || e.taxRefund.who !== e.payer ? `${esc(nm(e.taxRefund.who))} ` : ''}待退 ${r.valText}・${r.method === 'cash' ? '現金' : '卡'}</span>`;
+    }
     const who = multi ? `<span class="exstack">${pm.slice(0, 2).map(m => avatar(m).replace('data-profile', 'data-x')).join('')}</span>` : avatar(e.payer, 'l').replace('data-profile', 'data-x');
     rows += `<button class="card ex" data-ex="${e.id}">${who}
       <div class="body"><div class="nm">${esc(e.name || '（未命名）')}</div>
@@ -2109,7 +2179,7 @@ function renderMoney() {
   const tabs = `<div class="mtabs" id="mTabs">${[['list', '明細'], ['settle', `結算${lockedAny ? ' 🔒' : ''}`], ['mine', '我的']].map(([k, t]) => `<button type="button" aria-pressed="${tab === k}" data-t="${k}">${t}</button>`).join('')}</div>`;
   const body = tab === 'settle' ? (cards || `<div class="card empty">${ic.shell}還沒有任何記帳，按右下角「記一筆」開始</div>`)
     : tab === 'mine' ? (myCard.html || `<div class="card empty">${ic.shell}還沒有分給你的記帳</div>`)
-    : `${pend.length ? `<div class="card pend">${ic.coin}<div class="body">有 <b class="num">${pend.length}</b> 筆你付的刷卡還沒填是哪張卡<div class="tiny muted">只有你看得到，用來計算回饋和剩餘額度</div></div><button class="btn sm pri" id="pendGo">補填</button></div>` : ''}
+    : `${rfMineHTML()}${pend.length ? `<div class="card pend">${ic.coin}<div class="body">有 <b class="num">${pend.length}</b> 筆你付的刷卡還沒填是哪張卡<div class="tiny muted">只有你看得到，用來計算回饋和剩餘額度</div></div><button class="btn sm pri" id="pendGo">補填</button></div>` : ''}
     <div class="exf" id="exF"><span class="lbl">幣別</span>${[['all', '全部'], ['JPY', '日圓'], ['TWD', '台幣']].map(([k, t]) => `<button type="button" aria-pressed="${f === k}" data-f="${k}">${t}</button>`).join('')}<button type="button" class="tog" data-m aria-pressed="${mineOnly}">只看分給我的<span class="sw"></span></button></div>
     ${rows || (S.expenses.length ? '<p class="empty">沒有符合的記帳</p>' : `<div class="card empty">${ic.shell}還沒有任何記帳，按右下角「記一筆」開始</div>`)}`;
   $('#main').innerHTML = summary + tabs + body;
@@ -2117,6 +2187,7 @@ function renderMoney() {
   $('#exF')?.addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; if (b.dataset.f) S.exFilter = b.dataset.f; else if (b.hasAttribute('data-m')) S.exMine = !S.exMine; else return; renderMoney(); });
   $('#main').querySelectorAll('details.exgrp').forEach(d => d.addEventListener('toggle', () => { if (d.open) S.exClosed.delete(d.dataset.day); else S.exClosed.add(d.dataset.day); }));
   $('#main').querySelectorAll('[data-ex]').forEach(b => b.onclick = () => editExpense(S.expenses.find(e => e.id === b.dataset.ex)));
+  bindRfMine();
   $('#pendGo')?.addEventListener('click', () => editExpense(pend.sort((a, b) => (tsDate(a.createdAt)?.getTime() || 0) - (tsDate(b.createdAt)?.getTime() || 0))[0]));
   $('#main').querySelectorAll('[data-settle]').forEach(b => b.onclick = async () => {
     b.disabled = true;
@@ -2174,6 +2245,7 @@ function editExpense(e, pre = null) {
     <label class="f"><span>付款日期 <em>*</em> <span class="tiny muted">（大家都看得到，記帳明細依這個日期排）</span></span><input class="in" id="ePaid" type="date" value="${esc(sel.date)}"></label>
     ${hasCat ? `<label class="f"><span>通路類型 <span class="tiny muted" id="eChAuto"></span></span><select class="in" id="eCh">${channelOptions(e?.channel || pre?.channel || autoChannel(e?.name))}</select></label>` : ''}
     <div id="eCardBox"></div>
+    <div id="eRf"></div>
     <label class="f"><span>備註</span><input class="in" id="eNote" value="${esc(e?.note || pre?.note || '')}" maxlength="500"></label>
     ${e ? `<div class="audit">建立：${esc(nm(e.createdBy))}・${fmtTime(e.createdAt)}<br>最後修改：${esc(nm(e.updatedBy))}・${fmtTime(e.updatedAt)}</div>` : ''}
     <div class="sheet-acts">${isNew ? '' : `<button class="btn" id="eDel">${ic.trash}刪除</button>`}<button class="btn pri" id="eSave">儲存</button></div>`, s => {
@@ -2269,6 +2341,89 @@ function editExpense(e, pre = null) {
       }
       if (mode === 'mine') est();
     };
+    // 退稅：只有日圓＋日本實體購物才出現；勾「已在店家登記退稅」才展開。存成非金額欄位，不影響分帳和結算
+    const rf0 = e?.taxRefund || pre?.refund || null, rfBox = s.querySelector('#eRf');
+    const rf = {on: !!rf0, store: rf0?.store || '', method: rf0?.method || null, food: rf0?.food ? String(rf0.food) : '', actual: rf0?.actual ? String(rf0.actual) : '', who: rf0?.who || null};
+    let rfShape = null;
+    const rfOk = () => cur === 'JPY' && rfEligibleCh(channel());
+    const rfWho = () => payers.length === 1 ? payers[0] : payers.includes(rf.who) ? rf.who : payers.includes(S.me) ? S.me : payers[0];
+    const rfNum = v => Math.round(Number(String(v || '').replace(/[,，\s¥]/g, '')) || 0);
+    const rfStoreNow = () => rfStoreFor(rf.store);
+    const paintRfDyn = () => {
+      if (!rfBox.querySelector('#eRfIn')) return;
+      const st = rfStoreNow(), A = parseAmt(amtEl.value) || 0, who = rfWho();
+      if (st?.cash === 'no') rf.method = 'card'; else if (!rf.method) rf.method = rfDefMethod(st);
+      // 登記人：多位付款人時讓人選（退稅跟著護照走）
+      const ps = payers.length > 1 ? payers : null;
+      rfBox.querySelector('#eRfWho').innerHTML = ps ? `<div class="f"><span>誰的護照登記</span><div class="chips">${ps.map(m => `<button type="button" class="chpick" data-rfw="${m}" aria-pressed="${m === who}">${esc(nm(m))}</button>`).join('')}</div></div>`
+        : `<div class="tiny muted" style="margin:0 2px 8px">登記人：${esc(nm(who))}（付款人）</div>`;
+      // 店家建議：打字時比對；沒打字時列出這個通路的店
+      const q = rf.store.trim(), sug = (q ? rfStores().filter(x => x.name.toLowerCase().includes(q.toLowerCase()) || (x.keywords || []).some(k => kwHit(q, k) || k.toLowerCase().startsWith(q.toLowerCase()))) : rfStores().filter(x => (x.channels || []).includes(channel()))).filter(x => x !== st).slice(0, 5);
+      rfBox.querySelector('#eRfSug').innerHTML = sug.map(x => `<button type="button" class="chpick" data-rfs="${esc(x.id)}">${esc(x.name)}</button>`).join('');
+      rfBox.querySelector('#eRfInfo').innerHTML = st ? `${esc(st.operator)}・${esc(rfFeeText(st))}・${esc(RF_CASH_TEXT[st.cash] || '')}${st.note ? `<br>${esc(st.note)}` : ''}` : q ? '資料裡還沒有這家店，手續費以範圍估算' : '打店名可以對到店家的手續費';
+      rfBox.querySelector('#eRfM').innerHTML = `<button type="button" data-rfm="cash" aria-pressed="${rf.method === 'cash'}" ${st?.cash === 'no' ? 'disabled' : ''}>那霸機場領現金</button><button type="button" data-rfm="card" aria-pressed="${rf.method === 'card'}">信用卡</button>`;
+      rfBox.querySelector('#eRfMHint').innerHTML = st?.cash === 'no' ? '<div class="tiny hintbox">這家只能退到信用卡（要輸入卡號和安全碼）。用額度最低、有開刷卡通知的卡；金額小也可以考慮不退。</div>'
+        : !st || st.cash === 'unknown' ? (rf.method === 'cash' ? '<div class="tiny hintbox">還不確定能不能領現金：結帳時問店員「能在那霸機場領現金嗎？」</div>' : '')
+        : rf.method === 'card' ? '<div class="tiny muted" style="margin-top:6px">退到卡要輸入卡號和安全碼，建議用額度最低、有開刷卡通知的卡。</div>' : '';
+      const food = rfNum(rf.food), r = rfCalc(A, food, st, rf.method), act = rfNum(rf.actual);
+      rfBox.querySelector('#eRfGen').innerHTML = A ? `一般商品（10%）自動算：<b class="num">${yen(Math.max(0, A - Math.min(food, A)))}</b>${food > A ? '<span class="warnline">（食品金額超過總額，先以總額計算）</span>' : ''}` : '';
+      rfBox.querySelector('#eRfEst').innerHTML = !A ? '<span class="tiny muted">輸入總額後顯示預估退稅</span>' : `
+        <div class="rfl"><span>未稅金額</span><span class="num">${yen(r.excl)}</span></div>
+        <div class="rfl"><span>稅額${r.food ? '（8%＋10%）' : '（10%）'}</span><span class="num">${yen(r.tax)}</span></div>
+        <div class="rfl"><span>${esc(rfFeeText(st))}</span><span class="num">${r.feeLo === r.feeHi ? `−${yen(r.feeHi)}` : `0～−${yen(r.feeHi)}`}</span></div>
+        ${rf.method === 'cash' ? `<div class="rfl"><span>機場領現金（未稅 ${rfData()?.cash?.pct ?? 1.1}%）</span><span class="num">−${yen(r.cashFee)}</span></div>` : ''}
+        <div class="rfl big"><span>預估退稅</span><b class="num">約 ${rfAmt(r)}</b></div>
+        <div class="tiny muted">估算${act ? `・已填實際金額 ${yen(act)}，列表和加總會用實際金額` : ''}・不影響分帳</div>`;
+      // 門檻：同一人、同店、同日合計
+      const key = st?.id || q.toLowerCase(), date = s.querySelector('#ePaid').value;
+      const others = q && date ? rfGroupExcl(who, date, key, e?.id) : 0, tot = others + r.excl;
+      rfBox.querySelector('#eRfWarn').innerHTML = !A ? '' : tot < rfMin()
+        ? `<div class="tiny warnline" style="margin:2px 2px 8px">未稅${others ? `（含同日同店其他筆）合計` : ''}只有 ${yen(tot)}，還差 ${yen(Math.ceil((rfMin() - tot) * 1.1))} 才到 ${yen(rfMin())} 門檻，可能不能退稅。</div>`
+        : others && r.excl < rfMin() ? `<div class="tiny muted" style="margin:2px 2px 8px">這筆單獨未滿 ${yen(rfMin())}，和同日同店其他筆合計才達標；分開結帳時能不能合算以店家為準。</div>` : '';
+    };
+    const paintRf = () => {
+      const ok = rfOk(), shape = `${ok}|${rf.on}`;
+      if (shape !== rfShape) {
+        rfShape = shape;
+        rfBox.innerHTML = !ok ? '' : `<div class="rfform"><button type="button" class="opt" role="checkbox" aria-checked="${rf.on}" id="eRfOn"><span class="box" style="--c:var(--sea)" aria-hidden="true">${ic.check}</span><span class="txt">🧾 已在店家登記退稅<span class="tiny muted" style="display:block">結帳時有登記退稅（掃店家給的 QR code 或填護照）才勾</span></span></button>
+          ${rf.on ? `<div id="eRfIn" style="padding-top:4px"><div id="eRfWho"></div>
+            <label class="f" style="margin-bottom:6px"><span>店家</span><input class="in" id="eRfStore" autocomplete="off" maxlength="60" placeholder="例如 唐吉訶德 國際通店" value="${esc(rf.store)}"></label>
+            <div class="chips" id="eRfSug" style="margin-bottom:6px"></div><div class="tiny muted" id="eRfInfo" style="margin:0 2px 12px"></div>
+            <div class="f"><span>退到</span><div class="seg" id="eRfM"></div><div id="eRfMHint"></div></div>
+            <label class="f" style="margin-bottom:4px"><span>其中食品（8%）<span class="tiny muted">沒填＝全部按 10% 算</span></span><input class="in" id="eRfFood" type="text" inputmode="numeric" autocomplete="off" placeholder="照收據「8%対象」的含稅金額" value="${esc(rf.food)}"></label>
+            <div class="tiny muted" id="eRfGen" style="margin:0 2px 10px"></div>
+            <div class="rfbox" id="eRfEst"></div><div id="eRfWarn"></div>
+            <label class="f"><span>實際退稅金額 <span class="tiny muted">（選填，收據或退稅頁面有寫就填）</span></span><input class="in" id="eRfAct" type="text" inputmode="numeric" autocomplete="off" placeholder="沒填就用估算" value="${esc(rf.actual)}"></label></div>` : ''}</div>`;
+      }
+      if (ok && rf.on) paintRfDyn();
+    };
+    rfBox.onclick = ev => {
+      if (ev.target.closest('#eRfOn')) {
+        rf.on = !rf.on;
+        if (rf.on && !rf.store) rf.store = rfStoreFor(s.querySelector('#eName').value)?.name || '';
+        paintRf(); return;
+      }
+      const sb = ev.target.closest('[data-rfs]'); if (sb) { const x = rfById(sb.dataset.rfs); rf.store = x.name; rfBox.querySelector('#eRfStore').value = x.name; if (x.cash === 'no') rf.method = 'card'; else if (rf.method === 'card' && !rf0) rf.method = rfDefMethod(x); paintRfDyn(); return; }
+      const mb = ev.target.closest('[data-rfm]'); if (mb && !mb.disabled) { rf.method = mb.dataset.rfm; paintRfDyn(); return; }
+      const wb = ev.target.closest('[data-rfw]'); if (wb) { rf.who = wb.dataset.rfw; paintRfDyn(); }
+    };
+    rfBox.oninput = ev => {
+      const t = ev.target;
+      if (t.id === 'eRfStore') { const before = rfStoreNow(); rf.store = t.value; const now = rfStoreNow(); if (now !== before) rf.method = rfDefMethod(now); }
+      else if (t.id === 'eRfFood') rf.food = t.value;
+      else if (t.id === 'eRfAct') rf.actual = t.value;
+      else return;
+      paintRfDyn();
+    };
+    const rfData4Save = () => {
+      if (!rfOk() || !rf.on) return null;
+      const st = rfStoreNow(), out = {who: rfWho(), store: rf.store.trim().slice(0, 60), method: st?.cash === 'no' ? 'card' : (rf.method || rfDefMethod(st))};
+      if (st) out.storeId = st.id;
+      const food = rfNum(rf.food), act = rfNum(rf.actual);
+      if (food > 0) out.food = food;
+      if (act > 0) out.actual = act;
+      return out;
+    };
     // 金額列：只更新合計提示、這筆怎麼還，不重畫輸入框（打字時游標不會跳掉）
     const paintSums = () => {
       const c = calc(), locked = !!(isLocked(cur) || (e && isLocked(e.cur)));
@@ -2287,7 +2442,7 @@ function editExpense(e, pre = null) {
             <button type="button" class="setb" data-set="${t.from}" aria-pressed="${d}" ${locked ? 'disabled' : ''}>${d ? '✓ 已結清' : '已結清？'}</button></div>`; }).join('')}
         ${owers.length > 1 && !locked ? `<div style="display:flex;justify-content:flex-end"><button type="button" class="btn sm ghost" id="eSetAll">${owers.every(m => settled.includes(m)) ? '全部取消結清' : '全部結清'}</button></div>` : ''}</div>`;
       s.querySelector('#eSave').disabled = (isNew && locked) || (!!(c.err.pay || c.err.split) && !!c.A);
-      paintCard();
+      paintCard(); paintRf();
     };
     const paint = () => {
       const moneyLocked = !!(isLocked(cur) || (e && isLocked(e.cur)));
@@ -2316,9 +2471,9 @@ function editExpense(e, pre = null) {
     const shareSig0 = JSON.stringify(calc().share);
     if (isNew && !pre?.amount) setTimeout(() => amtEl.focus(), 250);
     amtEl.oninput = () => { if (split.length && split.every(m => !shareIn[m])) { reAverage(); paint(); } else paintSums(); };
-    s.querySelector('#eName').oninput = () => { if (syncCh()) paint(); else paintCard(); };
-    s.querySelector('#ePaid').onchange = ev => { sel.date = ev.target.value || sel.date; paintCard(); };
-    chSel?.addEventListener('change', () => { chManual = true; if (syncCh()) paint(); else paintCard(); });
+    s.querySelector('#eName').oninput = () => { if (syncCh()) paint(); else { paintCard(); paintRf(); } };
+    s.querySelector('#ePaid').onchange = ev => { sel.date = ev.target.value || sel.date; paintCard(); paintRf(); };
+    chSel?.addEventListener('change', () => { chManual = true; if (syncCh()) paint(); else { paintCard(); paintRf(); } });
     s.querySelector('#eCur').onclick = ev => { const b = ev.target.closest('[data-c]'); if (b && !b.disabled) { cur = b.dataset.c; curManual = true; paint(); } };
     s.querySelector('#ePayer').onclick = ev => {
       const b = ev.target.closest('[data-m]'); if (!b || b.disabled) return; const m = b.dataset.m;
@@ -2370,6 +2525,8 @@ function editExpense(e, pre = null) {
       const owers = [...new Set(planTransfers(c.paid, c.share).map(t => t.from))];
       data.settled = settled.filter(m => owers.includes(m));
       if (chSel) data.channel = chSel.value;
+      const tr = rfData4Save();
+      if (tr) data.taxRefund = tr; else if (e?.taxRefund) data.taxRefund = null; // null＝取消勾選，存檔時刪掉欄位
       const btn = s.querySelector('#eSave'); btn.disabled = true;
       let id;
       try { id = await saveExpense(e, data); localSet('lastCur', cur); pre?.onSaved?.(id); }
@@ -3307,6 +3464,7 @@ function openCalc() {
     </div>
     <div id="kPhys" class="kopt"></div>
     <div id="kCp"></div>
+    <div id="kRf"></div>
     <div id="kRes" class="kres"></div>`, s => {
     const amtEl = s.querySelector('#kAmt'), qEl = s.querySelector('#kQ');
     const paintCur = () => s.querySelectorAll('#kCur [data-c]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.c === CALC.cur)));
@@ -3396,6 +3554,7 @@ function calcAmt(n, R) {
   return CALC.cur === 'JPY' ? `${sg}¥${Math.round(v / R.fx).toLocaleString()}` : `${sg}${twdFmt(v)}`;
 }
 function paintCalcRes(s) {
+  paintCalcRf(s);
   const R = calcCompute(), el = s.querySelector('#kRes');
   if (!R.rows.length) { el.innerHTML = `<p class="tiny muted">沒有可以用的卡。</p>`; return; }
   const top = R.rows[0][0], bad = top.net <= 0, yenFx = CALC.cur === 'JPY' ? R.fx : null;
@@ -3430,6 +3589,11 @@ function calcRecord(cardId, method) {
   const c = chById(CALC.ch), cp = calcCpState();
   const a = cp.disc > 0 ? (CALC.cur === 'JPY' ? Math.round(cp.paidYen) : r2(a0 - cp.disc * cp.fx)) : a0;
   const pre = {cur: CALC.cur, amount: a, note: cp.disc > 0 ? `已用優惠券：${cp.c.chain} ${tierText(cp.ev.tier)}` : '', channel: CALC.ch || 'jp_other', card: cardId, method, date: CALC.date, name: c && c.id !== 'jp_other' ? chShort(c) : ''};
+  // 達退稅門檻的日本購物：帶入店家，預先勾「已登記退稅」讓使用者確認
+  if (rfData() && cp.paidYen && rfEligibleCh(CALC.ch)) {
+    const store = rfStoreFor(CALC.store, CALC.ch), r = rfCalc(cp.paidYen, 0, store, 'card');
+    if (r.ok) pre.refund = {on: true, store: CALC.store || store?.name || '', method: rfDefMethod(store)};
+  }
   closeSheet(); setTimeout(() => editExpense(null, pre), 280);
 }
 
@@ -3565,6 +3729,62 @@ function cpForItem(x) {
     if (!best || share > best.share || (share === best.share && (ev.next && !best.ev.next))) best = {c, ev, sub, share, itemYen};
   }
   return {...best, all: ms};
+}
+
+/* ── 退稅（2026/11/1 起先付後退）──
+   資料：優惠券資料庫的 refund（店家手續費、那霸機場領現金機台）。金額一律日圓、含稅；結果都是估算。
+   門檻：同一人、同一家店、同一天，未稅合計 ¥5,000。食品（8%）和一般商品（10%）合起來算。 */
+const RF_CASH_TEXT = {yes: '可以在那霸機場領現金', no: '不能領現金，只能退到信用卡', unknown: '能不能領現金待確認'};
+const rfData = () => S.cpCat?.refund || null;
+const rfMin = () => rfData()?.threshold || 5000;
+const rfStores = () => rfData()?.stores || [];
+const rfById = id => rfStores().find(x => x.id === id) || null;
+// 依店名比對；沒打店名時，用通路找（只對到一家才算）
+function rfStoreFor(text, ch) {
+  const t = String(text || '').trim();
+  if (t) {
+    const hit = rfStores().find(x => (x.keywords || []).some(k => kwHit(t, k)) && !(x.excludeKeywords || []).some(k => kwHit(t, k)));
+    if (hit) return hit;
+  }
+  if (!t && ch) { const xs = rfStores().filter(x => (x.channels || []).includes(ch)); if (xs.length === 1) return xs[0]; }
+  return null;
+}
+// 只有日本實體購物才會退稅（餐飲、交通、住宿、門票、線上、台灣都不算）
+function rfEligibleCh(ch) {
+  if (!ch) return true;
+  if (ch === 'jp_other') return true;
+  const c = chById(ch); if (!c) return true;
+  return c.group === '購物';
+}
+// yen：含稅總額；food：其中食品（8%）的含稅金額；store：refund.stores 的一家（null＝資料裡沒有）；method：cash | card
+function rfCalc(yen, food, store, method) {
+  const R = rfData() || {}, A = Math.max(0, Math.round(Number(yen) || 0)), F = Math.min(A, Math.max(0, Math.round(Number(food) || 0)));
+  const excl = Math.round(F / 1.08 + (A - F) / 1.1), tax = A - excl;
+  let feeLo = 0, feeHi = 0;
+  if (store && (store.feePct != null || store.feeYen != null)) {
+    const base = store.feeBasis === 'taxExcl' ? excl : A; // 基準不明時用含稅價算，寧可估低
+    feeLo = feeHi = Math.round(base * (store.feePct || 0) / 100) + (store.feeYen || 0);
+  } else feeHi = Math.round(A * (R.unknownFeeMax ?? 2.3) / 100);
+  const cash = method === 'cash', cashFee = cash ? Math.round(excl * (R.cash?.pct ?? 1.1) / 100) : 0;
+  const lo = Math.max(0, tax - feeHi - cashFee), hi = Math.max(0, tax - feeLo - cashFee);
+  return {A, food: F, excl, tax, feeLo, feeHi, cashFee, lo, hi, ok: excl >= rfMin(), need: excl >= rfMin() ? 0 : Math.ceil((rfMin() - excl) * 1.1)};
+}
+const rfAmt = r => r.lo === r.hi ? yen(r.hi) : `${yen(r.lo)}～${Math.round(r.hi).toLocaleString()}`;
+const rfFeeText = s => !s ? `手續費未知（0～${rfData()?.unknownFeeMax ?? 2.3}%）` : s.feePct == null && s.feeYen == null ? '手續費未公布' : `手續費 ${s.feeYen ? `每筆 ${yen(s.feeYen)}` : `${s.feePct}%`}${s.feeBasis === 'taxIncl' ? '（含稅價）' : s.feeBasis === 'taxExcl' ? '（未稅）' : ''}`;
+const rfDefMethod = s => s?.cash === 'no' ? 'card' : 'cash';
+// 記帳上的退稅資料 → 計算結果（有填實際金額時用實際金額）
+function rfOfExp(e) {
+  const t = e?.taxRefund; if (!t || e.cur !== 'JPY') return null;
+  const store = t.storeId ? rfById(t.storeId) : rfStoreFor(t.store);
+  const r = rfCalc(e.amount, t.food, store, store?.cash === 'no' ? 'card' : t.method);
+  const actual = t.actual > 0 ? Math.round(t.actual) : null;
+  return {...r, store, method: store?.cash === 'no' ? 'card' : t.method, actual, val: actual ?? r.lo, valText: actual ? yen(actual) : `約 ${rfAmt(r)}`};
+}
+const rfKey = t => t.storeId || String(t.store || '').trim().toLowerCase();
+// 同一人、同店、同日的退稅記帳合計未稅金額（門檻用）
+function rfGroupExcl(who, date, key, skipId) {
+  return S.expenses.filter(x => x.id !== skipId && x.cur === 'JPY' && x.taxRefund && x.taxRefund.who === who && x.paidDate === date && rfKey(x.taxRefund) === key)
+    .reduce((n, x) => n + rfCalc(x.amount, x.taxRefund.food, null, 'card').excl, 0);
 }
 
 /* ── 出發前重新確認（日本 11/1 起免稅新制） ── */
@@ -3961,17 +4181,35 @@ function shopCpChipHTML(x, mine) {
   return `<span class="chip cp" role="button" tabindex="0" data-cpi="${esc(x.id)}" aria-label="這家店的優惠券">${ic.ticket}${esc(txt)}</span>`;
 }
 function shopCpTopHTML() {
-  const list = cpList(); if (!list.length) return '';
+  const list = cpList(), mineItems = (S.shopping[S.me] || []).filter(x => !x.bought);
+  // 退稅：依購買地點對到的店家，加總預算 × 數量
+  const rfG = new Map();
+  if (rfData()) for (const x of mineItems) { const st = rfStoreFor(x.place); if (!st) continue; const g = rfG.get(st.id) || {st, sub: 0}; g.sub += (Number(x.budget) || 0) * (Number(x.qty) || 1); rfG.set(st.id, g); }
+  if (!list.length && !rfG.size) return '';
   const used = new Map();
-  for (const x of S.shopping[S.me] || []) if (!x.bought) for (const c of cpMatch(x.place)) used.set(c.id, c);
-  const open = localGet('open.cpMini') !== '0';
+  for (const x of mineItems) for (const c of cpMatch(x.place)) used.set(c.id, c);
+  const open = localGet('open.cpMini') !== '0', rfUsed = new Set();
+  const rfLine = (g, disc) => {
+    const st = g.st, r = rfCalc(Math.max(0, g.sub - disc), 0, st, rfDefMethod(st));
+    if (!g.sub) return '';
+    const txt = !r.ok ? `再買 ${yen(r.need)} 可退稅（同店同日未稅滿 ${yen(rfMin())}）` : `可退稅・約 ${rfAmt(r)}（${st.cash === 'no' ? '只能退到信用卡' : st.cash === 'yes' ? '機場現金' : '機場現金，能不能領待確認'}）`;
+    return `<span class="tiny ${!r.ok || st.cash === 'no' ? 'warnline' : 'muted'}" style="display:block">🧾 ${txt}</span>`;
+  };
   const rows = [...used.values()].map(c => {
     const sub = cpSubtotal(c), ev = c.display === 'pickup' ? {} : cpEval(c, sub);
+    // 同一家店才接上退稅（店家關鍵字要對得到券的店名，避免 Outlet 之類的通稱接錯）
+    const it = mineItems.find(x => cpMatch(x.place).some(m => m.id === c.id) && (rfStoreFor(x.place)?.keywords || []).some(k => kwHit(c.chain, k)));
+    const g = it ? rfG.get(rfStoreFor(it.place).id) : null;
+    const rf = g && !rfUsed.has(g.st.id) ? (rfUsed.add(g.st.id), rfLine(g, ev.disc || 0)) : '';
     return `<button class="cprow" data-cp="${esc(c.id)}">${cpLogo(c, 's')}<span class="body"><b>${esc(c.chain)}</b>${c.status === 'check' ? ' <span class="chip cpw">待確認</span>' : ''}
-      <span class="tiny muted" style="display:block">清單 ${yen(sub)}・${ev.tier ? `適用 ${esc(tierText(ev.tier))}${ev.disc ? `，約折 ${yen(ev.disc)}` : ''}` : c.display === 'pickup' ? '現場領取' : '還沒達到門檻'}${ev.next ? `・再 ${yen(ev.need)} 可${ev.tier ? '升到' : '用'} ${esc(tierText(ev.next))}` : ''}</span></span>${ic.chev}</button>`;
+      <span class="tiny muted" style="display:block">清單 ${yen(sub)}・${ev.tier ? `適用 ${esc(tierText(ev.tier))}${ev.disc ? `，約折 ${yen(ev.disc)}` : ''}` : c.display === 'pickup' ? '現場領取' : '還沒達到門檻'}${ev.next ? `・再 ${yen(ev.need)} 可${ev.tier ? '升到' : '用'} ${esc(tierText(ev.next))}` : ''}</span>${rf}</span>${ic.chev}</button>`;
   }).join('');
-  return `<details class="card mini" data-keep="cpMini" ${open ? 'open' : ''}><summary>${ic.ticket}<span>本次可用優惠券</span><span class="chip">${used.size}</span>${ic.chev.replace('<svg', '<svg class="chev"')}</summary>
-    <div style="margin-top:6px">${rows || '<p class="tiny muted" style="margin:4px 0">清單的購買地點還沒對到任何優惠券。購買地點寫店名（例如 大國藥妝 新都心店）就會自動比對。</p>'}</div>
+  const rfRest = [...rfG.values()].filter(g => !rfUsed.has(g.st.id) && g.sub), rfRows = rfRest.map(g => `<div class="cprow">${cpLogo({chain: g.st.name, color: g.st.color, badge: g.st.badge}, 's')}<span class="body"><b>${esc(g.st.name)}</b>
+      <span class="tiny muted" style="display:block">清單 ${yen(g.sub)}・沒有優惠券</span>${rfLine(g, 0)}</span></div>`).join('');
+  const n = used.size + rfRest.length;
+  return `<details class="card mini" data-keep="cpMini" ${open ? 'open' : ''}><summary>${ic.ticket}<span>${rfG.size ? '本次優惠・退稅' : '本次可用優惠券'}</span><span class="chip">${n}</span>${ic.chev.replace('<svg', '<svg class="chev"')}</summary>
+    <div style="margin-top:6px">${rows + rfRows || '<p class="tiny muted" style="margin:4px 0">清單的購買地點還沒對到任何優惠券。購買地點寫店名（例如 大國藥妝 新都心店）就會自動比對。</p>'}</div>
+    ${rfG.size ? '<p class="tiny muted" style="margin:6px 0 0">退稅以清單預算估算（食品按 10%）；同一家店盡量一次結帳。</p>' : ''}
     <button class="btn sm" id="toCoupons" style="margin-top:8px">${ic.ticket}全部優惠券 ›</button></details>`;
 }
 function bindShopCoupons(root) {
@@ -4009,6 +4247,26 @@ function calcCpState() {
   }
   const ev = c ? cpEval(c, yenAmt) : null, disc = ev?.disc || 0;
   return {cands, c, ev, yenAmt, disc, paidYen: Math.max(0, yenAmt - disc), fx};
+}
+// 試算：退稅預估（用扣完優惠券的實付金額；食品先按 10% 估）
+function paintCalcRf(s) {
+  const el = s.querySelector('#kRf'); if (!el) return;
+  const st = calcCpState(), paid = st.paidYen;
+  if (!rfData() || !paid || (CALC.ch && !rfEligibleCh(CALC.ch))) { el.innerHTML = ''; return; }
+  const store = rfStoreFor(CALC.store, CALC.ch), rc = rfCalc(paid, 0, store, 'cash'), rk = rfCalc(paid, 0, store, 'card');
+  const cashOk = store?.cash !== 'no', best = cashOk ? rc : rk;
+  const noTf = st.c && st.c.stacking?.taxFree === false, tfQ = st.c && st.c.stacking?.taxFree === 'unknown';
+  el.innerHTML = `<div class="rfbox"><div class="rfh"><span>🧾 退稅預估</span><span class="chip ${rc.ok ? 'sea' : 'hib'}">未稅 ${yen(rc.excl)}${rc.ok ? ' ✓ 達門檻' : ''}</span></div>
+    ${!rc.ok ? `<div class="small">再買 <b class="num">${yen(rc.need)}</b> 可退稅（同一家店、同一天未稅滿 ${yen(rfMin())}）</div>` : `
+    <div class="rfl"><span>稅額（按 10% 估）</span><span class="num">${yen(rc.tax)}</span></div>
+    <div class="rfl"><span>${esc(store?.operator || '退稅業者未知')}・${esc(rfFeeText(store))}</span><span class="num">${rc.feeLo === rc.feeHi ? `−${yen(rc.feeHi)}` : `0～−${yen(rc.feeHi)}`}</span></div>
+    ${cashOk ? `<div class="rfl"><span>那霸機場領現金（未稅 ${rfData().cash?.pct ?? 1.1}%）</span><span class="num">−${yen(rc.cashFee)}</span></div>` : ''}
+    <div class="rfl big"><span>預估拿回${cashOk ? '（機場現金）' : '（退到信用卡）'}</span><b class="num">約 ${rfAmt(best)}</b></div>
+    ${cashOk ? `<div class="tiny muted">改退到信用卡約 ${rfAmt(rk)}・不想給卡號就選現金</div>` : ''}
+    <div class="tiny muted" style="margin-top:4px">${store ? `${esc(store.name)}：${esc(RF_CASH_TEXT[store.cash] || '')}` : CALC.store ? `資料裡還沒有「${esc(CALC.store)}」，手續費以範圍估算；能不能領現金結帳時問店員` : '打店名可以對到店家的手續費'}</div>
+    ${noTf ? `<div class="tiny warnline">⚠️ ${esc(st.c.chain)} 這張券可能不能和退稅一起用，和店員確認；不能併用時通常退稅比較划算</div>` : tfQ ? `<div class="tiny muted">${esc(st.c.chain)} 這張券能不能和退稅一起用：待確認</div>` : ''}
+    <div class="rfl" style="margin-top:6px;padding-top:6px;border-top:1px dashed var(--line)"><span>實際花費（刷卡回饋另計）</span><b class="num">約 ${yen(paid - best.lo)}</b></div>
+    <div class="tiny muted">實付 ${yen(paid)} − 退稅・含食品時退稅會少一點・估算</div>`}</div>`;
 }
 function paintCalcCp(s) {
   const el = s.querySelector('#kCp'); if (!el) return;
