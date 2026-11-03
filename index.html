@@ -2526,25 +2526,35 @@ const CardEngine = (() => {
       if (r.minAmountTwd && tx.twd < r.minAmountTwd) { hints.push({type: 'min', rule: r, amount: r.minAmountTwd}); continue; }
       const noreg = r.registration && !isReg(cp, r, tx.date);
       if (noreg && isSkip(cp, r, tx.date)) continue;
-      if (r.threshold) {
+      let txR = tx; // 這條規則實際計算回饋的金額（excessOnly 時只算超過門檻的部分）
+      if (r.threshold && r.threshold.excessOnly) {
+        // 只有超過門檻的金額享回饋：已記帳用「這筆之前」的累積（依消費日順序），推薦用目前累積再加這筆
+        const key = thKeyOf(card, r, tx.date, cp), q = thQualifies(r, tx, P.chSet);
+        const before = (opts.mode === 'actual' && ctx.thRun ? (ctx.thRun.get(key) || 0) + (Number(adjOf(cp, key).spend) || 0) : thSpent(ctx, cp, key));
+        const after = before + (q ? tx.twd : 0);
+        const elig = q ? Math.max(0, Math.min(tx.twd, after - r.threshold.amount)) : 0;
+        if (elig <= EPS) { hints.push({type: 'threshold', rule: r, need: Math.max(0, r.threshold.amount - after), amount: r.threshold.amount, noreg: !!noreg, excess: true}); continue; }
+        if (elig < tx.twd - EPS) hints.push({type: 'excess', rule: r, elig, amount: r.threshold.amount});
+        txR = {...tx, twd: elig};
+      } else if (r.threshold) {
         const key = thKeyOf(card, r, tx.date, cp), q = thQualifies(r, tx, P.chSet);
         const spent = thSpent(ctx, cp, key) + (opts.mode === 'project' && q ? tx.twd : 0);
         if (spent < r.threshold.amount - EPS) { hints.push({type: 'threshold', rule: r, need: r.threshold.amount - spent, amount: r.threshold.amount, noreg: !!noreg}); continue; }
       }
       if (noreg) {
-        const c = capReward(ctx, card, cp, r, tx, local);
+        const c = capReward(ctx, card, cp, r, txR, local);
         const o = r.registration.opens;
         if (c.reward > EPS) hints.push({type: 'noreg', rule: r, reward: c.reward, opens: o && regKey(r, o.slice(0, 10)) === regKey(r, tx.date) ? o : null});
         continue;
       }
-      const c = capReward(ctx, card, cp, r, tx, local);
+      const c = capReward(ctx, card, cp, r, txR, local);
       if (r.cap) {
-        const add = (k, rw) => { const l = local.get(k) || {reward: 0, spend: 0}; local.set(k, {reward: l.reward + rw, spend: l.spend + tx.twd}); };
+        const add = (k, rw) => { const l = local.get(k) || {reward: 0, spend: 0}; local.set(k, {reward: l.reward + rw, spend: l.spend + txR.twd}); };
         add(c.key, c.reward); if (c.cKey) add(c.cKey, c.reward);
       }
       if (r.kind === 'base') baseRate += r.rate;
       if (r.feeWaived) waived = true;
-      items.push({rule: r, rate: r.rate, ...c});
+      items.push({rule: r, rate: r.rate, ...c, base: txR.twd});
     }
     const gross = items.reduce((s, i) => s + i.reward, 0);
     const domestic = !!P.channel[tx.channel]?.domestic; // 台灣國內消費（出發前的網卡、保險、車費）沒有國外交易手續費
@@ -2565,11 +2575,17 @@ const CardEngine = (() => {
         const k = thKeyOf(card, r, t.date, cp); ctx.th.set(k, (ctx.th.get(k) || 0) + t.twd);
       }
     }
+    ctx.thRun = new Map(); // 依消費日順序累積到「這筆之前」的門檻消費（excessOnly 規則用）
     for (const t of list) {
       const res = calc(ctx, t.card, t.method, t, {mode: 'actual'}); if (!res) continue;
       for (const [k, v] of res._local) { const u = ctx.usage.get(k) || {reward: 0, spend: 0}; ctx.usage.set(k, {reward: u.reward + v.reward, spend: u.spend + v.spend}); }
+      const card = P.card[t.card], cp = profile.cards[t.card];
+      for (const r of card.rules) if (r.threshold && thQualifies(r, t, P.chSet)) {
+        const k = thKeyOf(card, r, t.date, cp); ctx.thRun.set(k, (ctx.thRun.get(k) || 0) + t.twd);
+      }
       results[t.id] = res;
     }
+    delete ctx.thRun;
     return {ctx, results};
   }
 
@@ -2869,14 +2885,19 @@ const pendingCardExps = () => S.txSynced ? S.expenses.filter(e => myCardExp(e) &
 function breakdownHTML(r, fx) {
   const yen = n => fx ? ` ≈ ¥${Math.round(n / fx).toLocaleString()}` : '';
   const lines = r.items.map(i => {
-    let s = `<li><span>${esc(i.rule.name)} <span class="num">${pctFmt(i.rate)}</span></span><b class="num">+${twdFmt(i.reward)}</b>`;
+    let s = `<li><span>${esc(i.rule.name)} <span class="num">${pctFmt(i.rate)}</span>${i.base != null && i.base < r.twd - 0.005 ? ` <span class="tiny muted">（以 ${twdFmt(i.base)} 計）</span>` : ''}</span><b class="num">+${twdFmt(i.reward)}</b>`;
     if (i.capped) s += `<div class="tiny warnline">${i.remBefore > 0.005 ? `加碼只剩 ${twdFmt(i.remBefore)}，超過部分只算基本 ${pctFmt(r.baseRate)}` : '已達上限・只剩基本回饋'}</div>`;
     return s + '</li>';
   });
   lines.push(r.feeRate ? `<li><span>國外交易手續費 <span class="num">${pctFmt(r.feeRate)}</span></span><b class="num neg">−${twdFmt(r.fee)}</b></li>` : `<li><span>${r.domestic ? '台灣國內消費，沒有國外交易手續費' : '免國外交易手續費'}</span><b class="num">NT$0</b></li>`);
   const hints = r.hints.map(h => {
     if (h.type === 'noreg') return `<li class="hint">登錄「${esc(h.rule.name)}」後可多拿 ${twdFmt(h.reward)}${yen(h.reward)}${h.opens && h.opens > new Date().toISOString() ? `（${opensFmt(h.opens)} 開放登錄）` : ''}</li>`;
-    if (h.type === 'threshold') return `<li class="hint">本季日本實體再刷 ${twdFmt(h.need)} 可解鎖 ${pctFmt(h.rule.rate)}（${esc(h.rule.name)}${h.noreg ? '，也要先登錄' : ''}）</li>`;
+    if (h.type === 'threshold') {
+      const w = CYC_WORD[h.rule.threshold.cycle] || '本季', reg = h.noreg ? '，也要先登錄' : '';
+      if (h.excess) return `<li class="hint">${h.need > 0.5 ? `${w}日本實體再刷 ${twdFmt(h.need)} 達到 ${twdFmt(h.amount)} 後，超過的部分加碼 ${pctFmt(h.rule.rate)}` : `${w}已累積滿 ${twdFmt(h.amount)}，之後的消費加碼 ${pctFmt(h.rule.rate)}`}（${esc(h.rule.name)}${reg}）</li>`;
+      return `<li class="hint">${w}日本實體再刷 ${twdFmt(h.need)} 可解鎖 ${pctFmt(h.rule.rate)}（${esc(h.rule.name)}${reg}）</li>`;
+    }
+    if (h.type === 'excess') return `<li class="hint">「${esc(h.rule.name)}」只算超過 ${twdFmt(h.amount)} 的 ${twdFmt(h.elig)}</li>`;
     if (h.type === 'min') return `<li class="hint">單筆滿 ${twdFmt(h.amount)} 才有「${esc(h.rule.name)}」</li>`;
     return '';
   }).join('');
@@ -2989,6 +3010,7 @@ function cycleText(c, row) {
   if (c.label === 'statement') return c.est ? `${+c.start.slice(5, 7)} 月（沒填結帳日，以自然月估算）` : `本期帳單 ${md(c.start)}–${md(c.end)}`;
   return `${+c.start.slice(5, 7)} 月（自然月）`;
 }
+const CYC_WORD = {month: '本月', quarter: '本季', statement: '本期帳單', campaign: '活動期間'};
 const FLAG_TEXT = {period: '不在活動期間', requires: '前提條件沒勾，不算', plan: '不是目前方案', noreg: '還沒登錄，不算', skip: '不參加'};
 // 額度區塊要列哪些：前提條件沒勾的（例如新戶加碼）不列；只差登錄的照常列出，提醒還能拿
 const capRowsShown = (card, ctx, date) => CardEngine.capStatus(ctx, card.id, date).filter(r => !r.flags.includes('requires'));
@@ -3008,7 +3030,7 @@ function capRowsHTML(card, ctx, date, compact = false) {
       const t = row.threshold, pct = Math.min(100, t.spent / t.amount * 100);
       th = `${row.kind === 'threshold' ? `<div class="top"><span>${esc(names)}</span></div>` : ''}<div class="top tiny" style="margin-top:4px"><span>滿額門檻（${cycleText(t.cycle)}）</span><span class="num">${twdFmt(t.spent)} / ${twdFmt(t.amount)}</span></div>
         <div class="prog s th"><i style="width:${pct}%"></i></div>
-        <div class="tiny ${t.reached ? '' : 'muted'}">${t.reached ? '<b style="color:var(--sea-deep)">已達標</b>' : `再刷 ${twdFmt(t.amount - t.spent)} 達標`}</div>`;
+        <div class="tiny ${t.reached ? '' : 'muted'}">${t.reached ? `<b style="color:var(--sea-deep)">已達標</b>${row.rules[0]?.threshold?.excessOnly ? `・超過的 ${twdFmt(t.spent - t.amount)} 享加碼` : ''}` : `再刷 ${twdFmt(t.amount - t.spent)} 達標${row.rules[0]?.threshold?.excessOnly ? '，超過的部分才有加碼' : ''}`}</div>`;
     }
     return `<div class="caprow ${row.full ? 'full' : ''} ${off ? 'off' : ''}">${main}${th}${flags ? `<div class="sub">${flags}</div>` : ''}
       ${compact ? '' : `<button class="btn sm ghost adjbtn" data-adj="${esc(card.id)}|${esc(row.key)}">${ic.edit}手動調整</button>`}</div>`;
@@ -3021,7 +3043,7 @@ function ruleSummary(card, r, cp) {
   if (r.physicalOnly) bits.push('限實體店面');
   if (r.minAmountTwd) bits.push(`單筆滿 ${twdFmt(r.minAmountTwd)}`);
   if (r.cap) bits.push(`${{statement: '每期帳單', month: '每月', quarter: '每季', campaign: '活動期間'}[r.cap.cycle]}${r.cap.type === 'spend' ? '消費' : '回饋'}上限 ${twdFmt(r.cap.amount)}${r.cap.campaignMax ? `（合計最高 ${twdFmt(r.cap.campaignMax)}）` : ''}`);
-  if (r.threshold) bits.push(`季累積滿 ${twdFmt(r.threshold.amount)} 才給`);
+  if (r.threshold) bits.push(`${(CYC_WORD[r.threshold.cycle] || '本季').replace('本', '每')}累積滿 ${twdFmt(r.threshold.amount)} ${r.threshold.excessOnly ? '後，超過的部分才給' : '才給'}`);
   if (r.plan) bits.push(`限「${card.plans?.find(p => p.id === r.plan)?.name || r.plan}」方案`);
   if (r.feeWaived) bits.push('免手續費');
   if (r.period) bits.push(`${md(r.period.start)}–${md(r.period.end)}`);
