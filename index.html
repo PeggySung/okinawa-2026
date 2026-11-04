@@ -280,15 +280,21 @@ details.cat>summary .cnt{margin-left:auto;font-size:13px}
 .sh .sub{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px}
 .sh .acts{display:flex;flex-direction:column;align-items:stretch;gap:6px;flex:none}
 .sh .acts .btn{white-space:nowrap}
-.shth{flex:none;width:46px;height:46px;margin-top:-2px;padding:0;border-radius:10px;overflow:hidden;box-shadow:inset 0 0 0 1.5px var(--line);background:var(--sand);cursor:zoom-in}
+.shth{display:block;align-self:center;width:72px;height:72px;padding:0;border-radius:12px;overflow:hidden;background:var(--sand);box-shadow:inset 0 0 0 1.5px var(--line);cursor:zoom-in}
 .shth img{display:block;width:100%;height:100%;object-fit:cover}
 .sh.done .shth{opacity:.45}
+.shoff[hidden]{display:none}
 .shoff{display:block;width:100%;margin-top:10px;padding:8px 4px 0;border-top:1px dashed var(--line);font-size:13px;color:var(--sea-deep);text-align:left}
-.phf{display:flex;align-items:center;gap:12px}
-.phf .pv{flex:none;width:76px;height:76px;padding:0;border-radius:12px;overflow:hidden;background:var(--sand);box-shadow:inset 0 0 0 1.5px var(--line-2);display:grid;place-items:center;color:var(--ink-3)}
+.phf{position:relative;width:104px;height:104px}
+.phf .pv{position:absolute;inset:0;border-radius:14px;overflow:hidden;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;
+  background:var(--card);box-shadow:inset 0 0 0 1.5px var(--line-2);color:var(--ink-3);font-family:var(--f-title);font-size:13px}
+.phf .pv.add{background:var(--sand);box-shadow:none;border:2px dashed var(--line-2);color:var(--ink-2)}
 .phf .pv img{display:block;width:100%;height:100%;object-fit:cover}
-.phf .pv svg{width:26px;height:26px}
-.phf .bs{flex:1;display:flex;flex-direction:column;gap:6px;min-width:0}
+.phf .pv.add svg{width:28px;height:28px}
+.phf .cam{position:absolute;right:6px;bottom:6px;width:28px;height:28px;border-radius:50%;background:rgba(30,40,55,.72);color:#fff;display:grid;place-items:center}
+.phf .cam svg{width:16px;height:16px}
+.phf .pvx{position:absolute;top:-8px;right:-8px;width:30px;height:30px;border-radius:50%;padding:0;background:var(--card);color:var(--ink-2);box-shadow:inset 0 0 0 1.5px var(--line-2),0 1px 3px rgba(43,58,78,.15);display:grid;place-items:center}
+.phf .pvx svg{width:14px;height:14px}
 #shopCrop,#shopImgV{background:#1E2837;color:#fff}
 .crw{position:relative;margin:0 calc(-1 * max(16px,env(safe-area-inset-left,0px)));height:min(118vw,560px);overflow:hidden;touch-action:none;user-select:none;-webkit-user-select:none;cursor:grab}
 .crw canvas{position:absolute;left:50%;top:50%;transform-origin:center;pointer-events:none}
@@ -1837,14 +1843,13 @@ function renderShop() {
   const recs = {}; if (mine && saver) for (const x of items) if (!x.bought) recs[x.id] = shopRecHTML(x);
   const list = items.length ? `<div class="card">${items.map(x => `<div class="sh ${x.bought ? 'done' : ''} ${recs[x.id] ? 'has-rec' : ''}">
       <button class="box" role="checkbox" aria-checked="${!!x.bought}" aria-label="${esc(x.name)}" data-buy="${x.id}" ${mine ? '' : 'disabled'} style="--c:${COLORS[who]}">${ic.check}</button>
-      ${x.thumb && x.imgId ? `<button type="button" class="shth" data-img="${x.id}" aria-label="看「${esc(x.name)}」的照片"><img src="${esc(x.thumb)}" alt=""></button>` : ''}
       <${mine ? 'button' : 'div'} class="body" ${mine ? `data-ed="${x.id}"` : ''}><div class="nm">${esc(x.name)}</div>
         ${banChipHTML(x.name) ? `<div class="sub">${banChipHTML(x.name)}</div>` : ''}
         ${x.day || x.qty || x.budget || x.note ? `<div class="sub">${x.day ? `<span class="chip sea">${dayLabel(x.day)}</span>` : ''}${x.qty ? `<span class="chip">× <span class="num">${esc(x.qty)}</span></span>` : ''}${x.budget ? `<span class="chip terra">預算 <span class="num">¥${Number(x.budget).toLocaleString()}</span></span>` : ''}${x.note ? `<span class="small muted">${esc(x.note)}</span>` : ''}</div>` : ''}
         ${x.fromWho && COLORS[x.fromWho] ? `<div class="sub"><span class="chip">${avatar(x.fromWho, 's').replace('data-profile', 'data-x')} 來自 ${nm(x.fromWho)}</span></div>` : ''}
         ${x.place ? `<div class="sub"><span class="small muted">${ic.map.replace('<svg', '<svg style="width:13px;height:13px;vertical-align:-2px"')} ${esc(x.place)}</span></div>` : ''}
         ${saver && !x.bought && cpMatch(x.place).length ? `<div class="sub">${shopCpChipHTML(x, mine)}</div>` : ''}
-      </${mine ? 'button' : 'div'}>${x.place || !mine ? `<div class="acts">${x.place ? `<a class="btn sm" href="${mapsSearch(x.place)}" target="_blank" rel="noopener" aria-label="在 Google Maps 開啟 ${esc(x.place)}">${ic.map}地圖</a>` : ''}${mine ? '' : have(x) ? `<button class="btn sm" disabled>${ic.check}已有</button>` : `<button class="btn sm" data-copy-item="${x.id}" aria-label="複製 ${esc(x.name)} 到我的清單">${ic.copy}複製</button>`}</div>` : ''}${recs[x.id] || ''}</div>`).join('')}
+      </${mine ? 'button' : 'div'}>${x.place || !mine || (x.thumb && x.imgId) ? `<div class="acts">${x.thumb && x.imgId ? `<button type="button" class="shth" data-img="${x.id}" aria-label="看「${esc(x.name)}」的照片"><img src="${esc(x.thumb)}" alt=""></button>` : ''}${x.place ? `<a class="btn sm" href="${mapsSearch(x.place)}" target="_blank" rel="noopener" aria-label="在 Google Maps 開啟 ${esc(x.place)}">${ic.map}地圖</a>` : ''}${mine ? '' : have(x) ? `<button class="btn sm" disabled>${ic.check}已有</button>` : `<button class="btn sm" data-copy-item="${x.id}" aria-label="複製 ${esc(x.name)} 到我的清單">${ic.copy}複製</button>`}</div>` : ''}${recs[x.id] || ''}</div>`).join('')}
       <button type="button" class="shoff" id="shOff" hidden></button>
       ${totAll ? `<div class="totals"><span>預算合計 <b class="num">¥${totAll.toLocaleString()}</b></span><span>還沒買 <b class="num">¥${totLeft.toLocaleString()}</b></span></div>` : ''}</div>`
     : `<div class="empty">${ic.bag}${mine ? '還沒有想買的東西，按右下角新增' : `${nm(who)} 還沒有列清單`}</div>`;
@@ -2065,7 +2070,7 @@ function editShop(x) {
   const curThumb = () => pend ? pend.thumb : (!drop && x.thumb && x.imgId ? x.thumb : null);
   openSheet(`<h3>${isNew ? '新增想買的東西' : '編輯'}<button class="iconbtn x" data-close aria-label="關閉">${ic.x}</button></h3>
     <label class="f"><span>品名 <em>*</em></span><input class="in" id="sName" value="${esc(x.name)}" maxlength="200"></label>
-    <div class="f"><span>照片 <span class="tiny muted">（1 張，裁成正方形，到店裡方便找）</span></span><div class="phf" id="sPh"></div>
+    <div class="f"><span>照片 <span class="tiny muted">（點方框拍照或選圖，會裁成正方形）</span></span><div class="phf" id="sPh"></div>
       <input id="sImg" type="file" accept="image/*" class="sr" tabindex="-1" aria-hidden="true"></div>
     <div class="row2"><label class="f"><span>數量</span><input class="in" id="sQty" type="number" inputmode="numeric" min="1" value="${esc(x.qty)}"></label>
       <label class="f"><span>預算（日圓，單價）</span><input class="in" id="sBud" type="number" inputmode="decimal" min="0" value="${esc(x.budget)}"></label></div>
@@ -2078,12 +2083,9 @@ function editShop(x) {
     if (isNew) setTimeout(() => s.querySelector('#sName').focus(), 250);
     const paintPh = () => {
       const t = curThumb();
-      s.querySelector('#sPh').innerHTML = `<button type="button" class="pv" id="sPv" aria-label="${t ? '看大圖' : '新增照片'}">${t ? `<img src="${esc(t)}" alt="">` : ic.camera}</button>
-        <div class="bs"><label class="btn sm" for="sImg">${ic.camera}${t ? '換一張' : '拍照或選圖'}</label>${t ? `<button type="button" class="btn sm" id="sPhDel">${ic.trash}移除照片</button>` : ''}</div>`;
-      s.querySelector('#sPv').onclick = () => {
-        if (!curThumb()) { s.querySelector('#sImg').click(); return; }
-        openShopImg({...x, name: s.querySelector('#sName').value.trim() || x.name}, pend);
-      };
+      s.querySelector('#sPh').innerHTML = t
+        ? `<label class="pv" for="sImg" aria-label="換一張照片"><img src="${esc(t)}" alt=""><span class="cam">${ic.camera}</span></label><button type="button" class="pvx" id="sPhDel" aria-label="移除照片">${ic.x}</button>`
+        : `<label class="pv add" for="sImg">${ic.camera}<span>加照片</span></label>`;
       s.querySelector('#sPhDel')?.addEventListener('click', () => { pend = null; drop = true; paintPh(); });
     };
     paintPh();
