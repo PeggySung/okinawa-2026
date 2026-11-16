@@ -436,6 +436,11 @@ details.shoptop .stin>.remind{padding:10px 12px}
 #eHow .tr.done .t,#eHow .tr.done b{opacity:.45;text-decoration:line-through}
 #eHow .setb{flex:none;min-height:30px;padding:0 10px;border-radius:999px;font-size:12.5px;background:var(--card);box-shadow:inset 0 0 0 1.5px var(--line-2);color:var(--ink-2)}
 #eHow .setb[aria-pressed=true]{background:var(--sea);color:#fff;box-shadow:none}
+#eHow .tr .sub{flex-basis:100%;font-size:11.5px;color:var(--ink-3);padding-left:2px}
+#eHow .rfnote{margin:4px 0 6px;font-size:12.5px;line-height:1.55;color:var(--sea-deep)}
+.rfgot{margin-top:10px;padding:10px 12px;border-radius:12px;background:var(--sand)}
+.rfgot .row{display:flex;gap:8px;align-items:center;margin-top:6px}
+.rfgot .in{flex:1;min-width:0}
 .chip.terra{background:var(--terra-light);color:var(--terra)}
 .pick button.ghostm{visibility:hidden}
 .fab{position:fixed;right:max(16px,calc(50% - 264px));bottom:calc(var(--safe-b) + 18px);z-index:20;min-height:54px;padding:0 20px 0 16px;border-radius:999px;
@@ -1093,7 +1098,7 @@ if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
 /* ───────────── state ───────────── */
 const S = {
   user: null, me: null, members: {}, itinerary: [], flights: {}, booking: null, checklist: [],
-  shopping: {qi: [], xuan: [], yun: [], yue: []}, expenses: [], settlements: {}, ledger: {},
+  shopping: {qi: [], xuan: [], yun: [], yue: []}, expenses: [], settlements: {}, ledger: {}, rfCash: {},
   tab: localGet('tab') || 'trip', shopSeg: localGet('shopSeg') || 'list', day: null, prepView: 'mine', shopWho: null, exFilter: 'all',
   openCats: new Set(JSON.parse(localGet('openCats') || '[]')), loaded: {},
   // 信用卡
@@ -1331,6 +1336,8 @@ function startApp() {
   fetchFx();
   L(collection(db, 'settlements'), s => { S.settlements = {}; s.docs.forEach(d => S.settlements[d.id] = d.data({serverTimestamps: 'estimate'})); if (S.tab === 'money') render(); });
   L(collection(db, 'ledger'), s => { S.ledger = {}; s.docs.forEach(d => S.ledger[d.id] = d.data()); });
+  // 機場實際領到的退稅現金（每位登記人一份）
+  L(collection(db, 'refundCash'), s => { S.rfCash = {}; s.docs.forEach(d => S.rfCash[d.id] = d.data({serverTimestamps: 'estimate'})); if (S.tab === 'money') render(); });
   renderHeader(); render();
   setTimeout(() => maybeCalcFromUrl(true), 5000);
   clearInterval(startApp.tick); startApp.tick = setInterval(() => { renderHeader(); if ((S.tab === 'trip' || (S.tab === 'guide' && ['rental', 'entry'].includes(S.guideSeg))) && !$('#sheet.on') && !inputFocused()) render(); }, 60e3);
@@ -2181,24 +2188,82 @@ const payTypeOf = (e, m) => multiPay(e) ? (e.payTypes?.[m] || null) : (m === e.p
 const myCardExp = e => paidOf(e, S.me) > 0 && payTypeOf(e, S.me) === 'card';
 // 已結清：旅途中已經照「這筆怎麼還」先還掉的人。舊記帳沒有這個欄位當作沒人結清
 const settledOf = e => { const ow = owersOf(e); return (Array.isArray(e.settled) ? e.settled : []).filter(m => ow.includes(m)); };
-// 已結清的人這筆已經兩清，不再列入結算；總支出照算
-function addBal(bal, e) {
+/* 退稅折抵（只有填了「實際退稅金額」的日圓記帳才算；沒填只是估算，不影響分帳）
+   1. 這筆實際退多少 N：登記人有填「機場實際領到」T 時，T 照他每筆機場現金的實際退稅金額比例分；否則 N＝這筆的實際退稅金額
+   2. N 照分攤金額比例分給分攤的人（以 1 日圓為單位，零頭給小數最大的，一樣大照 IDS 順序）
+   3. 現金在登記人手上：等於登記人收了 N，再把每人那份還給他。和原本的付款／分攤分開記，原本的「已結清」意思不變 */
+const rfActual = e => { const t = e?.taxRefund; if (!t || e.cur !== 'JPY') return 0; const a = Math.round(Number(t.actual) || 0); return a > 0 ? a : 0; };
+const rfCashMap = o => Object.fromEntries(Object.entries(o || {}).map(([k, v]) => [k, Math.max(0, Math.round(Number(v?.amount) || 0))]));
+// 最大餘數法：total（整數）照權重 w[k] 分給 keys，零頭給小數最大的，一樣大照 keys 順序
+function lrAlloc(total, keys, w) {
+  const W = keys.reduce((n, k) => n + (w[k] || 0), 0), out = {};
+  keys.forEach(k => out[k] = 0);
+  if (!W || !(total > 0)) return out;
+  let left = total;
+  const fr = keys.map((k, i) => { const v = total * (w[k] || 0) / W, f = Math.floor(v + 1e-9); out[k] = f; left -= f; return [k, v - f, i]; });
+  fr.sort((a, b) => b[1] - a[1] || a[2] - b[2]);
+  for (let i = 0; i < left && i < fr.length; i++) out[fr[i][0]]++;
+  return out;
+}
+// exps 裡每筆有實際退稅的記帳 → {who 登記人, N 這筆退多少, rec 收據金額, parts {成員: 折抵}}（單位：分）
+function rfNetCalc(exps, cash) {
+  const net = new Map(), pool = {};
+  for (const e of exps) {
+    const a = rfActual(e); if (!a) continue;
+    net.set(e, a);
+    const w = e.taxRefund.who;
+    if (e.taxRefund.method === 'cash' && cash[w] > 0) (pool[w] ||= []).push(e);
+  }
+  for (const [w, list] of Object.entries(pool)) {
+    list.sort((a, b) => String(a.paidDate || '').localeCompare(String(b.paidDate || '')) || String(a.id || '').localeCompare(String(b.id || '')));
+    const keys = list.map((_, i) => i), al = lrAlloc(cash[w], keys, list.map(rfActual));
+    list.forEach((e, i) => net.set(e, al[i]));
+  }
+  const res = new Map();
+  for (const [e, N] of net) {
+    const {share} = exParts(e), ms = IDS.filter(m => share[m] > 0), y = lrAlloc(N, ms, share), parts = {};
+    for (const m of ms) if (y[m]) parts[m] = y[m] * 100;
+    res.set(e, {who: e.taxRefund.who, N: N * 100, rec: rfActual(e) * 100, parts});
+  }
+  return res;
+}
+let rfMemo = null;
+function rfNet(e) {
+  if (!rfMemo || rfMemo.ex !== S.expenses || rfMemo.cash !== S.rfCash) rfMemo = {ex: S.expenses, cash: S.rfCash, m: rfNetCalc(S.expenses, rfCashMap(S.rfCash))};
+  return rfMemo.m.get(e) || null;
+}
+// 退稅那份已經在旅途中處理掉的人（taxRefund.settled）
+const rfSetOf = (e, x) => (Array.isArray(e.taxRefund?.settled) ? e.taxRefund.settled : []).filter(m => m !== x.who && x.parts[m] > 0);
+// 會影響金額的退稅欄位（改到就要清空結算）
+const rfSig = d => { const t = d?.taxRefund; return t && d.cur === 'JPY' && Math.round(Number(t.actual) || 0) > 0 ? JSON.stringify([t.who, t.method, Math.round(Number(t.actual)), IDS.filter(m => (t.settled || []).includes(m))]) : ''; };
+// 已結清的人這筆已經兩清，不再列入結算；總支出照算。x：這筆的退稅折抵
+function addBal(bal, e, x) {
   const {paid, share} = exParts(e);
   for (const m of IDS) bal[m] += (paid[m] || 0) - (share[m] || 0);
   const done = settledOf(e);
   if (done.length) for (const t of exTransfers(e)) if (done.includes(t.from)) { bal[t.from] += t.amt; bal[t.to] -= t.amt; }
+  if (x) {
+    bal[x.who] -= x.N;
+    for (const m of IDS) if (x.parts[m]) bal[m] += x.parts[m];
+    for (const m of rfSetOf(e, x)) { bal[m] -= x.parts[m]; bal[x.who] += x.parts[m]; }
+  }
 }
 function balances(cur) {
   const bal = {qi: 0, xuan: 0, yun: 0, yue: 0};
-  for (const e of S.expenses) if (e.cur === cur) addBal(bal, e);
+  for (const e of S.expenses) if (e.cur === cur) addBal(bal, e, rfNet(e));
   return bal;
 }
-function balancesOf(exps) {
-  const bal = {qi: 0, xuan: 0, yun: 0, yue: 0};
-  for (const e of exps) addBal(bal, e);
+function balancesOf(exps, cash = {}) {
+  const bal = {qi: 0, xuan: 0, yun: 0, yue: 0}, rm = rfNetCalc(exps, cash);
+  for (const e of exps) addBal(bal, e, rm.get(e));
   return bal;
 }
-const settledAmt = e => { const d = settledOf(e); return d.length ? exTransfers(e).filter(t => d.includes(t.from)).reduce((s, t) => s + t.amt, 0) : 0; };
+const settledAmt = e => {
+  const d = settledOf(e);
+  let n = d.length ? exTransfers(e).filter(t => d.includes(t.from)).reduce((s, t) => s + t.amt, 0) : 0;
+  const x = rfNet(e); if (x) for (const m of rfSetOf(e, x)) n += d.includes(m) ? -x.parts[m] : x.parts[m];
+  return n;
+};
 // 最少轉帳次數：找出最多個「總和為 0」的子群組，每個群組內 k 人需要 k-1 筆轉帳
 function minTransfers(bal) {
   const ids = Object.keys(bal).filter(k => bal[k] !== 0), n = ids.length;
@@ -2231,7 +2296,9 @@ async function doSettle(cur) {
   for (let attempt = 0; attempt < 3; attempt++) {
     const v0 = (await getDocFromServer(lref)).data()?.v ?? 0;
     const qs = await getDocsFromServer(query(collection(db, 'expenses'), where('cur', '==', cur)));
-    const tr = minTransfers(balancesOf(qs.docs.map(d => d.data())));
+    const rc = cur === 'JPY' ? await getDocsFromServer(collection(db, 'refundCash')) : null, cash = {};
+    rc?.docs.forEach(d => cash[d.id] = Math.max(0, Math.round(Number(d.data().amount) || 0)));
+    const tr = minTransfers(balancesOf(qs.docs.map(d => ({id: d.id, ...d.data()})), cash));
     const ok = await runTransaction(db, async tx => {
       const l = await tx.get(lref); if ((l.data()?.v ?? 0) !== v0) return false;
       const s = await tx.get(sref); if (s.exists() && anyPaid(s.data())) throw new AppError('locked');
@@ -2256,7 +2323,7 @@ async function saveExpense(old, data) {
   requireOnline();
   let id = null;
   const sig = x => JSON.stringify([exParts(x).paid, exParts(x).share]);
-  const moneyChanged = !old || old.cur !== data.cur || cents(old.amount) !== cents(data.amount) || old.payer !== data.payer || !sameSet(old.split, data.split) || !sameSet(settledOf(old), data.settled || []) || sig(old) !== sig(data);
+  const moneyChanged = !old || old.cur !== data.cur || cents(old.amount) !== cents(data.amount) || old.payer !== data.payer || !sameSet(old.split, data.split) || !sameSet(settledOf(old), data.settled || []) || sig(old) !== sig(data) || rfSig(old) !== rfSig(data);
   const curs = [...new Set([data.cur, old?.cur].filter(Boolean))];
   await runTransaction(db, async tx => {
     const reads = {};
@@ -2282,6 +2349,17 @@ async function saveExpense(old, data) {
 function bump(tx, c, {l, s}) {
   if (l.exists()) tx.update(l.ref, {v: (l.data().v || 0) + 1}); else tx.set(l.ref, {v: 1});
   if (s.exists()) tx.delete(s.ref);
+}
+// 機場實際領到的退稅現金：影響日圓分帳，存檔時清空日圓結算（鎖定中不能改）；0＝清除
+async function saveRfCash(amount) {
+  requireOnline();
+  await runTransaction(db, async tx => {
+    const l = await tx.get(doc(db, 'ledger', 'JPY')), s = await tx.get(doc(db, 'settlements', 'JPY'));
+    if (s.exists() && anyPaid(s.data())) throw new AppError('locked');
+    const ref = doc(db, 'refundCash', S.me);
+    if (amount > 0) tx.set(ref, {amount, updatedBy: S.me, updatedAt: serverTimestamp()}); else tx.delete(ref);
+    bump(tx, 'JPY', {l, s});
+  });
 }
 async function deleteExpense(e) {
   requireOnline();
@@ -2319,18 +2397,27 @@ function rfMineHTML() {
     g.excl += r.excl; g.list.push({e, r}); groups.set(k, g);
   }
   for (const g of groups.values()) {
-    if (g.excl < rfMin()) { under.push(g); continue; }
-    for (const {r} of g.list) { const t = tot[r.method === 'card' ? 'card' : 'cash']; t.n++; t.v += r.val; if (!r.actual && r.lo !== r.hi) t.range = true; }
+    g.under = g.excl < rfMin() && !g.list.some(({e}) => rfNet(e)); // 有填實際金額＝已經退到了，不算未達門檻
+    if (g.under) { under.push(g); continue; }
+    for (const {e, r} of g.list) { const t = tot[r.method === 'card' ? 'card' : 'cash'], x = rfNet(e); t.n++; t.v += x ? x.N / 100 : r.val; if (!x && !r.actual && r.lo !== r.hi) t.range = true; }
   }
+  // 機場實際領到：有填實際退稅金額的機場現金記帳，照收據金額比例分攤實際領到的總額
+  const pool = mine.filter(e => e.taxRefund.method === 'cash' && rfActual(e) > 0), got = rfCashMap(S.rfCash)[S.me] || 0, recSum = pool.reduce((n, e) => n + rfActual(e), 0), lockedJ = isLocked('JPY');
+  const gotBox = pool.length || got ? `<div class="rfgot"><b style="font-size:13.5px">機場實際領到</b>
+      <div class="tiny muted" style="margin-top:2px">${pool.length} 筆收據合計 ${yen(recSum)}${got ? `・實際領到 ${yen(got)}${got !== recSum ? `，差 ${got > recSum ? '+' : '−'}${yen(Math.abs(got - recSum))} 照各筆收據金額比例分攤` : ''}` : '。機場不找零錢、實際拿到比較少時，填實際拿到的總額'}</div>
+      <div class="row"><input class="in" id="rfGot" type="text" inputmode="numeric" autocomplete="off" placeholder="例如 3000" value="${got || ''}" ${lockedJ ? 'disabled' : ''}><button type="button" class="btn sm pri" id="rfGotSave" ${lockedJ ? 'disabled' : ''}>儲存</button></div>
+      ${lockedJ ? '<div class="tiny warnline" style="margin-top:4px">日圓帳目已鎖定，要先取消「已轉帳」才能改</div>' : '<div class="tiny muted" style="margin-top:4px">沒填＝用各筆收據金額。儲存後日圓結算會清空，要重新按結算</div>'}</div>` : '';
+  const rfTxt = (e, r) => { const x = rfNet(e); return !x ? r.valText : `${x.N !== x.rec ? `收據 ${yen(x.rec / 100)} → 分到 ${yen(x.N / 100)}` : yen(x.N / 100)}・已折抵分帳`; };
   const stores = new Set([...groups.values()].map(g => g.store)).size, C = rfData()?.cash || {};
   const open = localGet('open.rfMine') === '1';
   const md2 = d => d ? `${+d.slice(5, 7)}/${+d.slice(8, 10)}` : '';
-  const list = [...groups.values()].sort((a, b) => String(a.date).localeCompare(String(b.date))).map(g => `<div class="rfg ${g.excl < rfMin() ? 'under' : ''}"><div class="rfl"><span><b>${md2(g.date)} ${esc(g.store)}</b>${g.list.length > 1 ? `・${g.list.length} 筆合計` : ''}</span><span class="num">未稅 ${yen(g.excl)}</span></div>
-      ${g.excl < rfMin() ? `<div class="tiny warnline">未達 ${yen(rfMin())} 門檻，可能不能退稅</div>` : g.list.map(({e, r}) => `<div class="tiny muted">${esc(e.name || '（未命名）')}：${r.method === 'cash' ? '機場現金' : '退到卡'} ${r.valText}</div>`).join('')}</div>`).join('');
+  const list = [...groups.values()].sort((a, b) => String(a.date).localeCompare(String(b.date))).map(g => `<div class="rfg ${g.under ? 'under' : ''}"><div class="rfl"><span><b>${md2(g.date)} ${esc(g.store)}</b>${g.list.length > 1 ? `・${g.list.length} 筆合計` : ''}</span><span class="num">未稅 ${yen(g.excl)}</span></div>
+      ${g.under ? `<div class="tiny warnline">未達 ${yen(rfMin())} 門檻，可能不能退稅</div>` : g.list.map(({e, r}) => `<div class="tiny muted">${esc(e.name || '（未命名）')}：${r.method === 'cash' ? '機場現金' : '退到卡'} ${rfTxt(e, r)}</div>`).join('')}</div>`).join('');
   const box = (k, label, extra) => `<div class="rfsum ${k}"><div class="tiny muted">${label}</div><b class="num">${tot[k].range ? '至少 ' : ''}${yen(tot[k].v)}</b><div class="tiny muted">${tot[k].n} 筆${extra || ''}</div></div>`;
   return `<details class="card rfmine" id="rfMine" ${open ? 'open' : ''}><summary><span class="t">🧾 我的待退稅</span><span class="tiny muted">${tot.cash.n ? `現金 <b class="num">${tot.cash.range ? '≥' : ''}${yen(tot.cash.v)}</b>` : ''}${tot.cash.n && tot.card.n ? '・' : ''}${tot.card.n ? `卡 <b class="num">${tot.card.range ? '≥' : ''}${yen(tot.card.v)}</b>` : ''}${under.length ? `${tot.cash.n || tot.card.n ? '・' : ''}<span class="warnline">${under.length} 組未達門檻</span>` : ''}</span>${ic.chev.replace('<svg', '<svg class="chev"')}</summary>
     <div class="tiny muted" style="margin-top:4px">${mine.length} 筆・${stores} 家店</div><div class="rfsums">${box('cash', '那霸機場領現金', C.maxYen ? `・上限 ${yen(C.maxYen)}` : '')}${box('card', '退到信用卡')}</div>
     ${tot.cash.v > (C.maxYen || Infinity) ? `<div class="tiny warnline">現金合計超過機台上限 ${yen(C.maxYen)}</div>` : ''}
+    ${gotBox}
     ${under.length ? `<div class="tiny warnline" style="margin-top:6px">${under.length} 組未達門檻：${under.map(g => `${md2(g.date)} ${esc(g.store)} 未稅 ${yen(g.excl)}`).join('、')}</div>` : ''}
     <div class="rfsteps"><b>回程那天</b>
       <ol><li>託運行李<b>前</b>，帶著全部退稅品到國際線出發大廳（安檢前）的海關機台掃護照。不用連 Wi-Fi。</li>
@@ -2338,12 +2425,20 @@ function rfMineHTML() {
       <li>購買日起 90 天內出境；同一張收據有一件不在身邊，整張都不退。</li></ol></div>
     <details class="rflist"><summary>看明細（依日期和店家）</summary>${list}</details>
     <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px">${prepBtn('rf', RF_PREP_TEXT)}</div>
-    <p class="tiny muted" style="margin:6px 0 0">估算・只算你是登記人的記帳・退稅不進分帳，結算金額不會變</p></details>`;
+    <p class="tiny muted" style="margin:6px 0 0">只算你是登記人的記帳・有填實際退稅金額的記帳，會照分攤比例折抵大家要還的錢；沒填的是估算，不影響分帳</p></details>`;
 }
 const RF_PREP_TEXT = '回程託運前，帶退稅品到海關機台掃護照';
 function bindRfMine() {
   const d = $('#rfMine'); if (!d) return;
   d.addEventListener('toggle', () => localSet('open.rfMine', d.open ? '1' : '0'));
+  d.querySelector('#rfGotSave')?.addEventListener('click', async ev => {
+    ev.preventDefault();
+    const b = ev.currentTarget, raw = String(d.querySelector('#rfGot').value).replace(/[,，\s¥]/g, ''), v = Math.round(Number(raw) || 0);
+    if (raw && !(v > 0)) { toast('請填實際領到的日圓金額'); return; }
+    b.disabled = true;
+    try { await saveRfCash(v); toast(v ? `已儲存實際領到 ${yen(v)}，日圓結算請重新按` : '已清除，改用各筆收據金額'); }
+    catch (err) { toast(errMsg(err)); b.disabled = false; }
+  });
   d.querySelector('[data-prep="rf"]')?.addEventListener('click', ev => { ev.preventDefault(); hbAddPrep(RF_PREP_TEXT, '退稅新制：託運後就不能辦。帶著全部退稅品和護照，在國際線出發大廳（安檢前）的海關免稅機台刷護照；綠燈完成，紅燈帶東西給海關人員看。選機場領現金的，出境後再到 Self Tax Refund 機台領。', true); renderMoney(); });
 }
 function renderMoney() {
@@ -2372,7 +2467,7 @@ function renderMoney() {
   }).join('');
   // 依付款日期排；沒填付款日期的舊記帳用建立時間（台灣時間）
   const exDay = e => e.paidDate || (e.createdAt ? localDateOf(e.createdAt) : '9999-12-31');
-  const f = S.exFilter, mineOnly = !!S.exMine, myPart = e => shareOf(e, S.me);
+  const f = S.exFilter, mineOnly = !!S.exMine, myPart = e => shareOf(e, S.me) - (rfNet(e)?.parts[S.me] || 0); // 我的份：扣掉退稅折抵
   const exps = S.expenses.filter(e => (f === 'all' || e.cur === f) && (!mineOnly || e.split.includes(S.me) || paidOf(e, S.me) > 0))
     .sort((a, b) => exDay(b).localeCompare(exDay(a)) || (tsDate(b.createdAt)?.getTime() || 0) - (tsDate(a.createdAt)?.getTime() || 0));
   // 依天分組，每天可以收合（預設全部展開，收起來的天數只記在這次開啟的畫面）
@@ -2399,8 +2494,9 @@ function renderMoney() {
       }
     }
     if (e.taxRefund && e.cur === 'JPY') {
-      const r = rfOfExp(e), grp = rfGroupExcl(e.taxRefund.who, e.paidDate, rfKey(e.taxRefund), null);
-      payTag += grp < rfMin() ? '<span class="chip hib">🧾 未達退稅門檻</span>'
+      const r = rfOfExp(e), grp = rfGroupExcl(e.taxRefund.who, e.paidDate, rfKey(e.taxRefund), null), x = rfNet(e);
+      if (x) payTag += `<span class="chip ok">🧾 ${multi || x.who !== e.payer ? `${esc(nm(x.who))} ` : ''}已退 ${yen(x.N / 100)}・已折抵分帳</span>`;
+      else payTag += grp < rfMin() ? '<span class="chip hib">🧾 未達退稅門檻</span>'
         : `<span class="chip ${r.method === 'cash' ? 'sea' : 'terra'}">🧾 ${multi || e.taxRefund.who !== e.payer ? `${esc(nm(e.taxRefund.who))} ` : ''}待退 ${r.valText}・${r.method === 'cash' ? '現金' : '卡'}</span>`;
     }
     const who = multi ? `<span class="exstack">${pm.slice(0, 2).map(m => avatar(m).replace('data-profile', 'data-x')).join('')}</span>` : avatar(e.payer, 'l').replace('data-profile', 'data-x');
@@ -2422,7 +2518,7 @@ function renderMoney() {
       if (!sum[e.cur]) continue;
       paid[e.cur] += paidOf(e, me);
       if (!e.split.includes(me)) continue;
-      sum[e.cur][exDay(e) < TRIP_START ? 'pre' : 'trip'] += shareOf(e, me);
+      sum[e.cur][exDay(e) < TRIP_START ? 'pre' : 'trip'] += shareOf(e, me) - (rfNet(e)?.parts[me] || 0); // 扣掉退稅折抵
       n++;
     }
     if (!n) return {html: '', twd: 0};
@@ -2493,8 +2589,10 @@ function editExpense(e, pre = null) {
     for (const m of e.split) shareIn[m] = fmtAmt(ev[m] || 0);
   }
   let settled = e ? settledOf(e) : [];
+  // 退稅那份已經在旅途中處理掉的人（taxRefund.settled）
+  let rfSettled = Array.isArray(e?.taxRefund?.settled) ? [...e.taxRefund.settled] : [];
   // 分攤金額：平均分攤時只顯示一行「每人 ¥X」，要各自金額才展開每人一格；「這筆怎麼還」預設收起來（有已結清時展開）
-  let ownOpen = !!(e && customSplit(e)), howOpen = settled.length > 0;
+  let ownOpen = !!(e && customSplit(e)), howOpen = settled.length > 0 || rfSettled.length > 0;
   // 付款方式：一位付款人時用 payType；多位時每人各自（pts）
   let payType = isNew ? 'card' : (e.payType || null);
   const pts = {}; for (const m of IDS) pts[m] = e && multiPay(e) ? (e.payTypes?.[m] || null) : (m === e?.payer ? payType : null);
@@ -2651,7 +2749,7 @@ function editExpense(e, pre = null) {
         <div class="rfl"><span>${esc(rfFeeText(st))}</span><span class="num">${r.feeLo === r.feeHi ? `−${yen(r.feeHi)}` : `0～−${yen(r.feeHi)}`}</span></div>
         ${rf.method === 'cash' ? `<div class="rfl"><span>機場領現金（未稅 ${rfData()?.cash?.pct ?? 1.1}%）</span><span class="num">−${yen(r.cashFee)}</span></div>` : ''}
         <div class="rfl big"><span>預估退稅</span><b class="num">約 ${rfAmt(r)}</b></div>
-        <div class="tiny muted">估算${act ? `・已填實際金額 ${yen(act)}，列表和加總會用實際金額` : ''}・不影響分帳</div>`;
+        <div class="tiny muted">${act ? `估算・已填實際金額 ${yen(act)}，會照分攤比例折抵大家要還的錢（看上面「這筆怎麼還」）` : '估算・還沒填實際金額，不影響分帳'}</div>`;
       // 門檻：同一人、同店、同日合計
       const key = st?.id || q.toLowerCase(), date = s.querySelector('#ePaid').value;
       const others = q && date ? rfGroupExcl(who, date, key, e?.id) : 0, tot = others + r.excl;
@@ -2671,7 +2769,7 @@ function editExpense(e, pre = null) {
             <label class="f" style="margin-bottom:4px"><span>其中食品（8%）<span class="tiny muted">沒填＝全部按 10% 算</span></span><input class="in" id="eRfFood" type="text" inputmode="numeric" autocomplete="off" placeholder="照收據「8%対象」的含稅金額" value="${esc(rf.food)}"></label>
             <div class="tiny muted" id="eRfGen" style="margin:0 2px 10px"></div>
             <div class="rfbox" id="eRfEst"></div><div id="eRfWarn"></div>
-            <label class="f"><span>實際退稅金額 <span class="tiny muted">（選填，收據或退稅頁面有寫就填）</span></span><input class="in" id="eRfAct" type="text" inputmode="numeric" autocomplete="off" placeholder="沒填就用估算" value="${esc(rf.actual)}"></label></div>` : ''}</div>`;
+            <label class="f"><span>實際退稅金額 <span class="tiny muted">（領到後照收據填這筆退多少，會折抵分帳）</span></span><input class="in" id="eRfAct" type="text" inputmode="numeric" autocomplete="off" placeholder="還沒領到先不用填" value="${esc(rf.actual)}" ${isLocked('JPY') ? 'disabled' : ''}></label></div>` : ''}</div>`;
       }
       if (ok && rf.on) paintRfDyn();
     };
@@ -2679,11 +2777,11 @@ function editExpense(e, pre = null) {
       if (ev.target.closest('#eRfOn')) {
         rf.on = !rf.on;
         if (rf.on && !rf.store) rf.store = rfStoreFor(s.querySelector('#eName').value)?.name || '';
-        paintRf(); return;
+        paintSums(); return;
       }
-      const sb = ev.target.closest('[data-rfs]'); if (sb) { const x = rfById(sb.dataset.rfs); rf.store = x.name; rfBox.querySelector('#eRfStore').value = x.name; if (x.cash === 'no') rf.method = 'card'; else if (rf.method === 'card' && !rf0) rf.method = rfDefMethod(x); paintRfDyn(); return; }
-      const mb = ev.target.closest('[data-rfm]'); if (mb && !mb.disabled) { rf.method = mb.dataset.rfm; paintRfDyn(); return; }
-      const wb = ev.target.closest('[data-rfw]'); if (wb) { rf.who = wb.dataset.rfw; paintRfDyn(); }
+      const sb = ev.target.closest('[data-rfs]'); if (sb) { const x = rfById(sb.dataset.rfs); rf.store = x.name; rfBox.querySelector('#eRfStore').value = x.name; if (x.cash === 'no') rf.method = 'card'; else if (rf.method === 'card' && !rf0) rf.method = rfDefMethod(x); paintSums(); return; }
+      const mb = ev.target.closest('[data-rfm]'); if (mb && !mb.disabled) { rf.method = mb.dataset.rfm; paintSums(); return; }
+      const wb = ev.target.closest('[data-rfw]'); if (wb) { rf.who = wb.dataset.rfw; paintSums(); }
     };
     rfBox.oninput = ev => {
       const t = ev.target;
@@ -2691,7 +2789,7 @@ function editExpense(e, pre = null) {
       else if (t.id === 'eRfFood') rf.food = t.value;
       else if (t.id === 'eRfAct') rf.actual = t.value;
       else return;
-      paintRfDyn();
+      paintSums(); // 退稅會影響「這筆怎麼還」
     };
     const rfData4Save = () => {
       if (!rfOk() || !rf.on) return null;
@@ -2701,6 +2799,16 @@ function editExpense(e, pre = null) {
       if (food > 0) out.food = food;
       if (act > 0) out.actual = act;
       return out;
+    };
+    // 目前輸入的退稅折抵（沒填實際退稅金額時是 null）；登記人填了「機場實際領到」時，照比例調整後的金額
+    const rfLive = c => {
+      if (!rfOk() || !rf.on) return null;
+      const act = rfNum(rf.actual); if (!(act > 0)) return null;
+      const st = rfStoreNow(), sp = IDS.filter(m => c.share[m] > 0), pm = Object.keys(c.paid);
+      const tmp = {id: e?.id || '~new', cur, amount: c.A / 100, payer: c.main, split: sp, shares: Object.fromEntries(sp.map(m => [m, c.share[m] / 100])), paidDate: s.querySelector('#ePaid').value,
+        taxRefund: {who: rfWho(), method: st?.cash === 'no' ? 'card' : (rf.method || rfDefMethod(st)), actual: act}};
+      if (pm.length > 1) tmp.paid = Object.fromEntries(pm.map(m => [m, c.paid[m] / 100]));
+      return rfNetCalc(S.expenses.filter(z => z.id !== e?.id).concat(tmp), rfCashMap(S.rfCash)).get(tmp) || null;
     };
     // 金額列：只更新合計提示、這筆怎麼還，不重畫輸入框（打字時游標不會跳掉）
     const paintSums = () => {
@@ -2714,14 +2822,26 @@ function editExpense(e, pre = null) {
       const ok = c.A > 0 && !c.err.pay && !c.err.split, tr = ok ? planTransfers(c.paid, c.share) : [];
       const owers = [...new Set(tr.map(t => t.from))];
       if (ok) settled = settled.filter(m => owers.includes(m)); // 金額還沒對上時先保留，避免打字途中把已結清清掉
-      const nDone = tr.filter(t => settled.includes(t.from)).length;
-      const howSum = !ok ? '金額還沒對上' : !tr.length ? '這筆不用還錢' : `${tr.length} 人要還${nDone ? `・${nDone} 人已結清` : ''}`;
+      // 退稅折抵：登記人收到的退稅照分攤比例分回每個人。和原本要還的錢同一對人時合併成一列（扣掉後的金額）
+      const x = ok ? rfLive(c) : null, rtr = x ? IDS.filter(m => m !== x.who && x.parts[m] > 0).map(m => ({from: x.who, to: m, amt: x.parts[m]})) : [];
+      if (x) rfSettled = rfSettled.filter(m => rtr.some(t => t.to === m));
+      const rows = [];
+      for (const t of tr) {
+        const r = rtr.find(q => q.to === t.from && q.from === t.to), gd = settled.includes(t.from), rd = !!r && rfSettled.includes(t.from);
+        if (r && gd === rd && t.amt > r.amt) rows.push({k: 'net', m: t.from, from: t.from, to: t.to, amt: t.amt - r.amt, gross: t.amt, rf: r.amt, done: gd});
+        else { rows.push({k: 'gross', m: t.from, from: t.from, to: t.to, amt: t.amt, done: gd}); if (r) rows.push({k: 'rf', m: t.from, from: r.from, to: r.to, amt: r.amt, done: rd}); }
+      }
+      for (const r of rtr) if (!tr.some(t => t.from === r.to && t.to === r.from)) rows.push({k: 'rf', m: r.to, from: r.from, to: r.to, amt: r.amt, done: rfSettled.includes(r.to)});
+      const nDone = rows.filter(r => r.done).length, u = x ? '筆' : '人';
+      const howSum = !ok ? '金額還沒對上' : !rows.length ? '這筆不用還錢' : `${rows.length} ${u}要還${nDone ? `・${nDone} ${u}已結清` : ''}`;
+      const av = m => avatar(m, 's').replace('data-profile', 'data-x');
+      const rfLine = x ? `<div class="rfnote">🧾 ${esc(nm(x.who))} 收到退稅 <b class="num">${money(x.N, cur)}</b>${x.N !== x.rec ? `（收據 ${money(x.rec, cur)}，照機場實際領到的比例調整）` : ''}，照分攤比例折抵：${IDS.filter(m => x.parts[m]).map(m => `${esc(nm(m))} −${money(x.parts[m], cur)}`).join('、')}</div>` : '';
       how.innerHTML = !c.A ? '' : `<details class="pay" ${howOpen ? 'open' : ''}><summary class="h"><span>這筆怎麼還</span><span class="r">${howSum}${ic.chev.replace('<svg', '<svg class="chev"')}</span></summary>
-        ${tr.length ? '<div class="tiny muted">按「已結清」＝旅途中已經先還了</div>' : ''}
-        ${!ok ? '<div class="tr"><span class="t muted">金額還沒對上</span></div>' : !tr.length ? '<div class="tr"><span class="t muted">這筆不用還錢</span></div>'
-          : tr.map(t => { const d = settled.includes(t.from); return `<div class="tr ${d ? 'done' : ''}"><span class="t">${avatar(t.from, 's').replace('data-profile', 'data-x')}${nm(t.from)} <span class="arr">→</span> ${avatar(t.to, 's').replace('data-profile', 'data-x')}${nm(t.to)}</span><b class="num">${money(t.amt, cur)}</b>
-            <button type="button" class="setb" data-set="${t.from}" aria-pressed="${d}" ${locked ? 'disabled' : ''}>${d ? '✓ 已結清' : '已結清？'}</button></div>`; }).join('')}
-        ${owers.length > 1 && !locked ? `<div style="display:flex;justify-content:flex-end"><button type="button" class="btn sm ghost" id="eSetAll">${owers.every(m => settled.includes(m)) ? '全部取消結清' : '全部結清'}</button></div>` : ''}</details>`;
+        ${rfLine}${rows.length ? '<div class="tiny muted">按「已結清」＝旅途中已經先還了</div>' : ''}
+        ${!ok ? '<div class="tr"><span class="t muted">金額還沒對上</span></div>' : !rows.length ? '<div class="tr"><span class="t muted">這筆不用還錢</span></div>'
+          : rows.map(r => `<div class="tr ${r.done ? 'done' : ''}"><span class="t">${av(r.from)}${nm(r.from)} <span class="arr">→</span> ${av(r.to)}${nm(r.to)}${r.k === 'net' ? `<span class="sub">原本 ${money(r.gross, cur)}・退稅折抵 −${money(r.rf, cur)}</span>` : r.k === 'rf' ? `<span class="sub">退稅分回${r.done ? '' : '・沒按已結清的話，併到最後結算'}</span>` : ''}</span><b class="num">${money(r.amt, cur)}</b>
+            <button type="button" class="setb" data-set="${r.m}" data-k="${r.k}" aria-pressed="${r.done}" ${locked ? 'disabled' : ''}>${r.done ? '✓ 已結清' : '已結清？'}</button></div>`).join('')}
+        ${rows.length > 1 && !locked ? `<div style="display:flex;justify-content:flex-end"><button type="button" class="btn sm ghost" id="eSetAll">${rows.every(r => r.done) ? '全部取消結清' : '全部結清'}</button></div>` : ''}</details>`;
       s.querySelector('#eSave').disabled = (isNew && locked) || (!!(c.err.pay || c.err.split) && !!c.A);
       paintCard(); paintRf(); paintMore();
     };
@@ -2796,8 +2916,18 @@ function editExpense(e, pre = null) {
     s.querySelector('#eHow').onclick = ev => {
       if (ev.target.closest('summary')) { setTimeout(() => { howOpen = !!s.querySelector('#eHow details')?.open; }); return; }
       const b = ev.target.closest('[data-set]');
-      if (b && !b.disabled) { const m = b.dataset.set; settled = settled.includes(m) ? settled.filter(x => x !== m) : IDS.filter(x => x === m || settled.includes(x)); paintSums(); return; }
-      if (ev.target.closest('#eSetAll')) { const c = calc(), owers = [...new Set(planTransfers(c.paid, c.share).map(t => t.from))]; settled = owers.every(m => settled.includes(m)) ? [] : owers; paintSums(); }
+      if (b && !b.disabled) {
+        const m = b.dataset.set, k = b.dataset.k, tg = list => list.includes(m) ? list.filter(z => z !== m) : IDS.filter(z => z === m || list.includes(z));
+        if (k === 'net') { const on = !settled.includes(m); settled = on ? IDS.filter(z => z === m || settled.includes(z)) : settled.filter(z => z !== m); rfSettled = on ? IDS.filter(z => z === m || rfSettled.includes(z)) : rfSettled.filter(z => z !== m); }
+        else if (k === 'rf') rfSettled = tg(rfSettled);
+        else settled = tg(settled);
+        paintSums(); return;
+      }
+      if (ev.target.closest('#eSetAll')) {
+        const c = calc(), owers = [...new Set(planTransfers(c.paid, c.share).map(t => t.from))], x = rfLive(c), rfm = x ? IDS.filter(m => m !== x.who && x.parts[m] > 0) : [];
+        const all = owers.every(m => settled.includes(m)) && rfm.every(m => rfSettled.includes(m));
+        settled = all ? [] : owers; rfSettled = all ? [] : rfm; paintSums();
+      }
     };
     s.querySelector('#eSplit').onclick = ev => { const b = ev.target.closest('[data-m]'); if (!b || b.disabled) return; const m = b.dataset.m; split = split.includes(m) ? split.filter(x => x !== m) : IDS.filter(x => x === m || split.includes(x)); reAverage(); paint(); };
     s.querySelector('#eSave').onclick = async () => {
@@ -2828,6 +2958,7 @@ function editExpense(e, pre = null) {
       data.settled = settled.filter(m => owers.includes(m));
       if (chSel) data.channel = chSel.value;
       const tr = rfData4Save();
+      if (tr?.actual) { const x = rfLive(c), ms = x ? rfSettled.filter(m => m !== x.who && x.parts[m] > 0) : []; if (ms.length) tr.settled = ms; }
       if (tr) data.taxRefund = tr; else if (e?.taxRefund) data.taxRefund = null; // null＝取消勾選，存檔時刪掉欄位
       const btn = s.querySelector('#eSave'); btn.disabled = true;
       let id;
