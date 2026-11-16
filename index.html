@@ -937,6 +937,61 @@ h2.jpsec{font-size:17px;margin-top:18px}
 .sos-dots i.past{background:var(--sea)}
 .sos-dots i.on{background:var(--hib);transform:scale(1.3)}
 .cps-ask{align-self:flex-start}
+/* 代購 */
+.chip.pxc{background:#FFF1DC;color:#9A5B12}
+.ex .amt small+small{display:block}
+.pxform .opt[aria-checked=true] .txt{font-weight:600}
+.pxrow{display:flex;gap:10px;align-items:center;width:100%;text-align:left;padding:9px 10px;margin-top:6px;border-radius:12px;background:var(--paper);box-shadow:inset 0 0 0 1.5px var(--line)}
+.pxrow.on{box-shadow:inset 0 0 0 2px var(--sea)}
+.pxrow.bad{box-shadow:inset 0 0 0 1.5px var(--hib)}
+.pxrow .body{flex:1;min-width:0;display:block}
+.pxrow .nm{display:block;font-size:14.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pxrow .sub{display:flex;flex-wrap:wrap;gap:4px;margin-top:3px}
+.pxrow .sub .chip{font-size:11.5px;padding:1px 7px}
+.pxrow .amt{text-align:right;flex:none}
+.pxrow .amt b{display:block;font-size:15px}
+.pxrow .amt small{display:block;font-size:11px;color:var(--ink-3)}
+.odot{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--c);margin-right:2px}
+.pxth{display:block;flex:none;width:42px;height:42px;border-radius:9px;overflow:hidden;background:var(--sand);padding:0}
+.pxth img{display:block;width:100%;height:100%;object-fit:cover}
+.opt .pxth{width:38px;height:38px}
+.pxacts{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
+.pxed{margin-top:10px;padding:12px 12px 10px;border-radius:14px;background:var(--sea-wash);box-shadow:inset 0 0 0 1.5px rgba(27,165,168,.45)}
+.pxed .in{background:var(--card)}
+.pxgrp{display:flex;gap:8px;align-items:flex-start;margin:4px 0}
+.pxgrp .who{display:flex;align-items:center;gap:5px;width:70px;flex:none;font-family:var(--f-title);font-size:13px;padding-top:6px}
+.pxcc[aria-pressed=true]{background:var(--c);box-shadow:none}
+.pxadv{margin:2px 0 8px}
+.pxadv summary{cursor:pointer;font-size:13.5px;color:var(--sea-deep);list-style:none}
+.pxadv summary::-webkit-details-marker{display:none}
+.pxtb{width:100%;border-collapse:collapse;margin-top:12px;font-size:13px}
+.pxtb th{font-weight:400;color:var(--ink-3);font-size:12px;text-align:right;padding:2px 4px}
+.pxtb td{padding:5px 4px;border-top:1px dashed var(--line);text-align:right}
+.pxtb td:first-child{text-align:left;color:var(--ink-2)}
+.pxtb tr.own td{font-weight:700;color:var(--ink)}
+.pxrate .row,.pxblock .row{display:flex;gap:8px;align-items:center;justify-content:space-between}
+.pxrate .in,.pxblock .in{flex:1;min-width:0}
+.pxsum{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}
+.pxsum>div{background:var(--card);border-radius:14px;box-shadow:inset 0 0 0 1.5px var(--line-2);padding:10px 12px}
+.pxsum b{display:block;font-size:21px;margin:2px 0}
+.pxcl{display:flex;gap:10px;align-items:center;width:100%;text-align:left;padding:11px 12px}
+.pxcl+.pxcl{margin-top:8px}
+.pxcl .body{flex:1;min-width:0}
+.pxcl .nm{font-size:15.5px}
+.pxcl .amt{text-align:right;display:flex;flex-direction:column;align-items:flex-end;gap:3px}
+.pxcl .amt b{font-size:17px}
+.pxcl .amt small{font-size:11.5px;color:var(--ink-3)}
+.pxblock{background:var(--card);border-radius:14px;box-shadow:inset 0 0 0 1.5px var(--line-2);padding:10px 12px;margin-bottom:12px}
+.pxblock summary{display:flex;justify-content:space-between;align-items:center;cursor:pointer;list-style:none}
+.pxblock summary::-webkit-details-marker{display:none}
+.pxit{display:flex;gap:10px;align-items:center;padding:8px 0;border-top:1px dashed var(--line)}
+.pxit:first-of-type{margin-top:6px}
+.pxit .body{flex:1;min-width:0;font-size:14px}
+.pxtot{margin-top:8px;padding:10px 12px;border-radius:12px;background:var(--sea-wash)}
+.pxtot .rfl b.big{font-size:22px;color:var(--sea-deep)}
+.pxpay{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:7px 0;border-top:1px dashed var(--line);font-size:14px}
+.pxpay>span{flex:1;min-width:0}
+.pxpay .btn{flex:none;white-space:nowrap}
 </style>
 </head>
 <body class="bare">
@@ -1081,9 +1136,9 @@ function closeSheet() {
   $('#sheet').classList.remove('on'); $('#veil').classList.remove('on'); sheetClose?.(); sheetClose = null;
 }
 $('#veil').onclick = () => { if (!$('#dlg').classList.contains('on')) closeSheet(); };
-async function copyText(t) {
-  try { await navigator.clipboard.writeText(t); toast('已複製：' + t); }
-  catch { const a = document.createElement('textarea'); a.value = t; document.body.append(a); a.select(); document.execCommand('copy'); a.remove(); toast('已複製：' + t); }
+async function copyText(t, label) {
+  try { await navigator.clipboard.writeText(t); toast(label || '已複製：' + t); }
+  catch { const a = document.createElement('textarea'); a.value = t; document.body.append(a); a.select(); document.execCommand('copy'); a.remove(); toast(label || '已複製：' + t); }
 }
 function errMsg(e) {
   if (e?.code === 'locked') return '這個幣別已有人標記「已轉帳」，帳目已鎖定。';
@@ -1099,6 +1154,7 @@ if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
 const S = {
   user: null, me: null, members: {}, itinerary: [], flights: {}, booking: null, checklist: [],
   shopping: {qi: [], xuan: [], yun: [], yue: []}, expenses: [], settlements: {}, ledger: {}, rfCash: {},
+  pxClients: [], pxCfg: {}, // 代購：委託人、每位負責人自己的代購匯率
   tab: localGet('tab') || 'trip', shopSeg: localGet('shopSeg') || 'list', day: null, prepView: 'mine', shopWho: null, exFilter: 'all',
   openCats: new Set(JSON.parse(localGet('openCats') || '[]')), loaded: {},
   // 信用卡
@@ -1338,6 +1394,10 @@ function startApp() {
   L(collection(db, 'ledger'), s => { S.ledger = {}; s.docs.forEach(d => S.ledger[d.id] = d.data()); });
   // 機場實際領到的退稅現金（每位登記人一份）
   L(collection(db, 'refundCash'), s => { S.rfCash = {}; s.docs.forEach(d => S.rfCash[d.id] = d.data({serverTimestamps: 'estimate'})); if (S.tab === 'money') render(); });
+  // 代購：委託人（含收款紀錄）、每位負責人的代購匯率。和四人結算無關
+  const pxRedraw = () => { if (S.tab === 'money' && !$('#sheet.on') && !inputFocused()) render(); if ($('#pxSt')) paintPxStatement(); };
+  L(collection(db, 'proxyClients'), s => { S.pxClients = s.docs.map(d => ({id: d.id, ...d.data({serverTimestamps: 'estimate'})})); pxRedraw(); });
+  L(collection(db, 'proxyCfg'), s => { S.pxCfg = {}; s.docs.forEach(d => S.pxCfg[d.id] = d.data()); pxRedraw(); });
   renderHeader(); render();
   setTimeout(() => maybeCalcFromUrl(true), 5000);
   clearInterval(startApp.tick); startApp.tick = setInterval(() => { renderHeader(); if ((S.tab === 'trip' || (S.tab === 'guide' && ['rental', 'entry'].includes(S.guideSeg))) && !$('#sheet.on') && !inputFocused()) render(); }, 60e3);
@@ -1853,6 +1913,7 @@ function renderShop() {
       <${mine ? 'button' : 'div'} class="body" ${mine ? `data-ed="${x.id}"` : ''}><div class="nm">${esc(x.name)}</div>
         ${banChipHTML(x.name) ? `<div class="sub">${banChipHTML(x.name)}</div>` : ''}
         ${x.day || x.qty || x.budget || x.note ? `<div class="sub">${x.day ? `<span class="chip sea">${dayLabel(x.day)}</span>` : ''}${x.qty ? `<span class="chip">× <span class="num">${esc(x.qty)}</span></span>` : ''}${x.budget ? `<span class="chip terra">預算 <span class="num">¥${Number(x.budget).toLocaleString()}</span></span>` : ''}${x.note ? `<span class="small muted">${esc(x.note)}</span>` : ''}</div>` : ''}
+        ${x.proxyFor || x.food ? `<div class="sub">${x.proxyFor ? `<span class="chip pxc">🛍️ 代購：${esc(pxClientName(x.proxyFor))}</span>` : ''}${x.food ? '<span class="chip sea">食品 8%</span>' : ''}</div>` : ''}
         ${x.fromWho && COLORS[x.fromWho] ? `<div class="sub"><span class="chip">${avatar(x.fromWho, 's').replace('data-profile', 'data-x')} 來自 ${nm(x.fromWho)}</span></div>` : ''}
         ${x.place ? `<div class="sub"><span class="small muted">${ic.map.replace('<svg', '<svg style="width:13px;height:13px;vertical-align:-2px"')} ${esc(x.place)}</span></div>` : ''}
         ${saver && !x.bought && cpMatch(x.place).length ? `<div class="sub">${shopCpChipHTML(x, mine)}</div>` : ''}
@@ -1901,8 +1962,10 @@ async function askShopExpense(x) {
   const ok = await confirmDialog({title: '要記一筆帳嗎？', ok: '記一筆', no: '先不用',
     body: `「${x.name}」已買好。\n會帶入品名${amt ? `、金額 ¥${Math.round(amt).toLocaleString()}（預算${qty > 1 ? ` × ${qty}` : ''}${cp?.share ? `，已扣${cp.c.chain}優惠券` : ''}）` : ''}和推薦的刷卡方式，分攤預設只有自己，存檔前都可以改。`});
   if (!ok) return;
+  // 代購的項目：直接帶成這張收據的代購商品（價格先用預算，存檔前照收據改）
+  const pc = x.proxyFor && pxClientById(x.proxyFor), proxy = pc ? {items: [{k: pxNewK(), name: x.name, qty: qty > 1 ? qty : '', yen: Number(x.budget) > 0 ? Math.round(Number(x.budget) * qty) : '', tax: x.food ? 8 : 10, client: pc.id, owner: pc.owner, shop: {o: S.me, id: x.id}}]} : null;
   editExpense(null, {cur: 'JPY', amount: amt ? Math.round(amt) : amt, note: cp?.share ? `已用優惠券：${cp.c.chain} ${tierText(cp.ev.tier)}` : '', name: x.name, channel: S.catalog ? (x.channel || autoChannel(x.place, x.name)) : null,
-    date: localDateOf(Date.now()), split: [S.me],
+    date: localDateOf(Date.now()), split: [S.me], proxy, proxyFood: pc && x.food && amt ? Math.round(amt) : null,
     onSaved: id => updateDoc(doc(db, 'shopping', S.me, 'items', x.id), {expenseId: id}).catch(() => {})});
 }
 const normName = v => String(v || '').trim().toLowerCase();
@@ -2086,6 +2149,8 @@ function editShop(x) {
     <p class="tiny" style="margin:-6px 2px 10px"><a id="sPlaceTest" href="#" target="_blank" rel="noopener">在 Google Maps 檢查這個地點 ›</a></p>
     ${S.catalog ? `<label class="f"><span>通路類型 <span class="tiny muted" id="sChAuto"></span></span><select class="in" id="sCh">${channelOptions(x.channel || autoChannel(x.place, x.name))}</select></label>` : ''}
     <label class="f"><span>備註</span><input class="in" id="sNote" value="${esc(x.note)}" placeholder="口味、幫誰買…"></label>
+    <label class="f"><span>代購給 <span class="tiny muted">（幫委託人買的才選，記帳拆代購時可以直接帶入）</span></span><select class="in" id="sPx"></select></label>
+    <button type="button" class="opt" role="checkbox" aria-checked="${!!x.food}" id="sFood" style="margin:-4px 0 8px"><span class="box" style="--c:var(--sea)" aria-hidden="true">${ic.check}</span><span class="txt">食品（8%）<span class="tiny muted" style="display:block">吃的、喝的（酒類除外）。拆代購時帶入稅率</span></span></button>
     <div class="sheet-acts">${isNew ? '' : `<button class="btn" id="sDel">${ic.trash}刪除</button>`}<button class="btn pri" id="sSave">儲存</button></div>`, s => {
     if (isNew) setTimeout(() => s.querySelector('#sName').focus(), 250);
     const paintPh = () => {
@@ -2112,12 +2177,28 @@ function editShop(x) {
     };
     chSel?.addEventListener('change', () => { chManual = true; syncCh(); });
     s.querySelector('#sPlace').oninput = () => { pt(); syncCh(); }; s.querySelector('#sName').oninput = syncCh; pt(); syncCh();
+    // 代購給：只列自己負責的委託人；最後一項可以新增
+    let food = !!x.food, pxFor = x.proxyFor && pxClientById(x.proxyFor) ? x.proxyFor : '';
+    const paintPxSel = () => {
+      const mine = S.pxClients.filter(c => c.owner === S.me || c.id === pxFor).sort((a, b) => String(a.name).localeCompare(String(b.name)));
+      s.querySelector('#sPx').innerHTML = `<option value="">不是代購</option>${mine.map(c => `<option value="${esc(c.id)}" ${c.id === pxFor ? 'selected' : ''}>${esc(c.name)}${c.owner !== S.me ? `（${esc(nm(c.owner))}）` : ''}</option>`).join('')}<option value="__new">＋ 新增委託人…</option>`;
+    };
+    paintPxSel();
+    s.querySelector('#sPx').onchange = async ev => {
+      if (ev.target.value !== '__new') { pxFor = ev.target.value; return; }
+      const id = await pxClientDialog(null, S.me);
+      if (id) pxFor = id;
+      paintPxSel();
+    };
+    s.querySelector('#sFood').onclick = ev => { food = !food; ev.currentTarget.setAttribute('aria-checked', String(food)); };
     s.querySelector('#sDay').onclick = e => { const b = e.target.closest('[data-d]'); if (!b) return; day = +b.dataset.d; s.querySelectorAll('#sDay [data-d]').forEach(x => x.setAttribute('aria-pressed', String(+x.dataset.d === day))); };
     s.querySelector('#sSave').onclick = () => {
       const name = s.querySelector('#sName').value.trim(); if (!name) { toast('請填寫品名'); return; }
       const num = id => { const v = s.querySelector(id).value; return v === '' ? null : Number(v); };
       const data = {name, qty: num('#sQty'), budget: num('#sBud'), place: s.querySelector('#sPlace').value.trim(), day, note: s.querySelector('#sNote').value.trim(), updatedAt: serverTimestamp()};
       if (chSel) data.channel = chSel.value;
+      if (pxFor) data.proxyFor = pxFor; else if (!isNew && x.proxyFor) data.proxyFor = deleteField();
+      if (food) data.food = true; else if (!isNew && x.food) data.food = deleteField();
       // 小縮圖跟著清單（大家都會同步），大圖另外存在 shopImg，點開才下載
       const b = writeBatch(db), ref = isNew ? doc(collection(db, 'shopping', S.me, 'items')) : doc(db, 'shopping', S.me, 'items', x.id);
       const oldImg = x.imgId || null;
@@ -2155,18 +2236,70 @@ function evenShares(A, members) {
   ms.forEach((m, i) => out[m] = base + (i < rem ? 1 : 0));
   return out;
 }
+/* ───────────── 代購 ─────────────
+   日圓記帳的 proxy：{gross 折扣前合計, food 收據 8% 對象, items [{k, name, qty, yen 含稅標價（這件合計）, tax 8|10, client 委託人 id, owner 負責人, off 單品折價, noRf 不可退稅, shop {o, id} 從購物清單帶入}], owners 負責人}
+   1. 單品折價先扣在那件；剩下的全單折扣（折扣前合計 − 實付 − 單品折價）照「標價 − 單品折價」比例分給每件代購和自己人的部分（最大餘數法）
+   2. 代購折完的成本算進負責人的份額；實付扣掉代購成本後，剩下的才照 split／shares 分
+   3. 退稅照預估稅額比例分：代購那件歸負責人（不可退稅的算 0）；自己人的部分照原本份額比例
+   4. 向委託人收款照含稅標價（日圓）或 × 負責人的代購匯率（台幣，總額無條件進位一次），和四人結算無關 */
+const PX_MAX = 80;
+const pxItemsOf = e => e?.cur === 'JPY' && Array.isArray(e?.proxy?.items) ? e.proxy.items : [];
+const yenInt = v => Math.max(0, Math.round(Number(String(v ?? '').replace(/[,，\s¥]/g, '')) || 0));
+const taxIn = (v, r) => v * r / (100 + r); // 含稅金額裡的稅額
+// A：實付（分），p：proxy → 每件成本、自己人的部分、各負責人的成本（單位：分）
+function pxCalc(A, p) {
+  const items = (p?.items || []).map(x => { const yen = yenInt(x.yen); return {...x, yen, off: Math.min(yenInt(x.off), yen), tax: x.tax === 8 ? 8 : 10}; });
+  const tag = items.reduce((n, x) => n + x.yen, 0) * 100, off = items.reduce((n, x) => n + x.off, 0) * 100;
+  const gross = yenInt(p?.gross) > 0 ? yenInt(p.gross) * 100 : A + off;
+  const ownTag = gross - tag, D = gross - off - A, err = [], warn = [];
+  if (D < 0) err.push(`折扣前合計比實付＋單品折價還少 ${money(-D, 'JPY')}`);
+  else if (ownTag < 0) err.push(yenInt(p?.gross) > 0 ? `代購標價合計超過折扣前合計 ${money(-ownTag, 'JPY')}` : `代購標價合計超過實付 ${money(-ownTag, 'JPY')}（有折扣的話填折扣前合計）`);
+  const keys = [...items.map((_, i) => i), 'own'], w = {own: Math.max(0, ownTag)};
+  items.forEach((x, i) => w[i] = (x.yen - x.off) * 100);
+  // 金額都是整數日圓時，折扣以 ¥1 為單位分（不會出現幾角幾分）
+  const U = D % 100 === 0 ? 100 : 1, d0 = D > 0 ? lrAlloc(D / U, keys, w) : {}, d = Object.fromEntries(Object.entries(d0).map(([k, v]) => [k, v * U]));
+  items.forEach((x, i) => { x.disc = d[i] || 0; x.cost = (x.yen - x.off) * 100 - x.disc; });
+  const total = items.reduce((n, x) => n + x.cost, 0), own = A - total, byOwner = {};
+  if (!err.length && own < 0) err.push(`代購成本合計超過實付 ${money(-own, 'JPY')}`);
+  for (const x of items) if (x.owner in COLORS) byOwner[x.owner] = (byOwner[x.owner] || 0) + x.cost;
+  // 8%／10%：收據印的 8% 對象 − 代購 8% 商品 ＝ 自己人的 8%
+  const food = Math.min(A, yenInt(p?.food) * 100), pxFood = items.filter(x => x.tax === 8).reduce((n, x) => n + x.cost, 0);
+  const own8 = food - pxFood, own10 = own - own8;
+  if (own8 < 0) warn.push(food ? `代購的食品（8%）比收據的 8% 對象多 ${money(-own8, 'JPY')}` : '有食品（8%）的代購，請填收據上的 8% 對象');
+  if (own10 < 0) warn.push(`代購的一般商品（10%）比收據的 10% 對象多 ${money(-own10, 'JPY')}`);
+  return {items, tag, off, gross, D, total, own, byOwner, food, pxFood, own8, own10, err, warn};
+}
 const exPartsCache = new WeakMap();
 function exParts(e) {
   let r = exPartsCache.get(e); if (r) return r;
   const A = cents(e.amount), paid = {}, share = {};
   if (multiPay(e)) { for (const m of IDS) if (cents(e.paid[m] || 0) > 0) paid[m] = cents(e.paid[m]); }
   else paid[e.payer] = A;
+  // 代購：實付扣掉代購成本，剩下的（自己人的部分）才照 split／shares 分
+  const px = pxItemsOf(e).length ? pxCalc(A, e.proxy) : null, own = px ? Math.max(0, px.own) : A;
   if (customSplit(e)) { for (const m of IDS) if (cents(e.shares[m] || 0) > 0) share[m] = cents(e.shares[m]); }
-  else Object.assign(share, evenShares(A, e.split));
+  else Object.assign(share, evenShares(own, e.split));
   // 保險：各自金額合計和總額對不上的舊資料，差額算主要付款人的（存檔時已經檢查合計，正常不會發生）
-  const diff = A - Object.values(share).reduce((a, b) => a + b, 0);
+  const diff = own - Object.values(share).reduce((a, b) => a + b, 0);
   if (diff) { const k = e.payer || mainPayer(paid); share[k] = (share[k] || 0) + diff; }
-  r = {A, paid, share}; exPartsCache.set(e, r); return r;
+  if (px) {
+    for (const [m, v] of Object.entries(px.byOwner)) share[m] = (share[m] || 0) + v;
+    // 代購成本超過實付（不該發生，存檔時會擋）：多出來的算主要付款人
+    const over = A - Object.values(share).reduce((a, b) => a + b, 0);
+    if (over) { const k = e.payer || mainPayer(paid); share[k] = (share[k] || 0) + over; }
+  }
+  r = {A, paid, share, own, px}; exPartsCache.set(e, r); return r;
+}
+// 這筆裡某人的代購墊款（向委託人收回，不算自己的花費）
+const pxCostOf = (e, m) => exParts(e).px?.byOwner[m] || 0;
+// 退稅分配的權重：沒有代購＝份額；有代購＝預估稅額（代購歸負責人，不可退稅的算 0；自己人的部分照份額比例）
+function rfWeights(e) {
+  const {share, own, px} = exParts(e);
+  if (!px) return share;
+  const w = {}, o8 = Math.min(Math.max(0, px.own8), own), ownTax = own > 0 ? taxIn(o8, 8) + taxIn(own - o8, 10) : 0;
+  for (const m of IDS) { const s = (share[m] || 0) - (px.byOwner[m] || 0); if (s > 0 && own > 0) w[m] = ownTax * s / own; }
+  for (const x of px.items) if (!x.noRf && x.owner in COLORS && x.cost > 0) w[x.owner] = (w[x.owner] || 0) + taxIn(x.cost, x.tax);
+  return w;
 }
 // 這筆單獨看的還法：欠最多的人先還給多付最多的人（同額照 IDS 順序），一位付款人時就是每人還自己那份給付款人
 function planTransfers(paid, share) {
@@ -2190,7 +2323,7 @@ const myCardExp = e => paidOf(e, S.me) > 0 && payTypeOf(e, S.me) === 'card';
 const settledOf = e => { const ow = owersOf(e); return (Array.isArray(e.settled) ? e.settled : []).filter(m => ow.includes(m)); };
 /* 退稅折抵（只有填了「實際退稅金額」的日圓記帳才算；沒填只是估算，不影響分帳）
    1. 這筆實際退多少 N：登記人有填「機場實際領到」T 時，T 照他每筆機場現金的實際退稅金額比例分；否則 N＝這筆的實際退稅金額
-   2. N 照分攤金額比例分給分攤的人（以 1 日圓為單位，零頭給小數最大的，一樣大照 IDS 順序）
+   2. N 照分攤金額比例分給分攤的人（以 1 日圓為單位，零頭給小數最大的，一樣大照 IDS 順序）；有代購的記帳照預估稅額比例（rfWeights）
    3. 現金在登記人手上：等於登記人收了 N，再把每人那份還給他。和原本的付款／分攤分開記，原本的「已結清」意思不變 */
 const rfActual = e => { const t = e?.taxRefund; if (!t || e.cur !== 'JPY') return 0; const a = Math.round(Number(t.actual) || 0); return a > 0 ? a : 0; };
 const rfCashMap = o => Object.fromEntries(Object.entries(o || {}).map(([k, v]) => [k, Math.max(0, Math.round(Number(v?.amount) || 0))]));
@@ -2221,7 +2354,7 @@ function rfNetCalc(exps, cash) {
   }
   const res = new Map();
   for (const [e, N] of net) {
-    const {share} = exParts(e), ms = IDS.filter(m => share[m] > 0), y = lrAlloc(N, ms, share), parts = {};
+    const w = rfWeights(e), ms = IDS.filter(m => w[m] > 0), y = lrAlloc(N, ms, w), parts = {};
     for (const m of ms) if (y[m]) parts[m] = y[m] * 100;
     res.set(e, {who: e.taxRefund.who, N: N * 100, rec: rfActual(e) * 100, parts});
   }
@@ -2323,7 +2456,7 @@ async function saveExpense(old, data) {
   requireOnline();
   let id = null;
   const sig = x => JSON.stringify([exParts(x).paid, exParts(x).share]);
-  const moneyChanged = !old || old.cur !== data.cur || cents(old.amount) !== cents(data.amount) || old.payer !== data.payer || !sameSet(old.split, data.split) || !sameSet(settledOf(old), data.settled || []) || sig(old) !== sig(data) || rfSig(old) !== rfSig(data);
+  const moneyChanged = !old || old.cur !== data.cur || cents(old.amount) !== cents(data.amount) || old.payer !== data.payer || !sameSet(old.split, data.split) || !sameSet(settledOf(old), data.settled || []) || sig(old) !== sig(data) || rfSig(old) !== rfSig(data) || pxSig(old) !== pxSig(data);
   const curs = [...new Set([data.cur, old?.cur].filter(Boolean))];
   await runTransaction(db, async tx => {
     const reads = {};
@@ -2337,6 +2470,8 @@ async function saveExpense(old, data) {
     // 退稅（taxRefund）：null＝取消勾選，刪掉欄位；新記帳不存 null
     const tr = 'taxRefund' in data ? (data.taxRefund ? data.taxRefund : old ? deleteField() : undefined) : undefined;
     const {taxRefund: _tr, ...rest} = data; data = tr === undefined ? rest : {...rest, taxRefund: tr};
+    // 代購（proxy）：null＝沒有代購了，刪掉欄位；新記帳不存 null
+    if ('proxy' in data && !data.proxy) { if (old?.proxy) data.proxy = deleteField(); else delete data.proxy; }
     if (!old) tx.set(ref, {...data, ...stamp, createdBy: S.me, createdAt: serverTimestamp()});
     // 改成一位付款人／平均分攤時，把舊的多人付款、各自金額欄位刪掉
     else if (moneyChanged) tx.update(ref, {...data, ...stamp, ...Object.fromEntries(['paid', 'payTypes', 'shares'].filter(k => !(k in data) && old[k] !== undefined).map(k => [k, deleteField()]))});
@@ -2346,6 +2481,8 @@ async function saveExpense(old, data) {
   });
   return id;
 }
+// 代購的內容（會影響份額和退稅分配，改到就要清空結算）
+const pxSig = d => d?.proxy?.items?.length ? JSON.stringify([d.proxy.gross || 0, d.proxy.food || 0, d.proxy.items.map(x => [x.k, x.name, x.qty || 0, x.yen, x.tax, x.client, x.owner, x.off || 0, !!x.noRf, x.shop?.id || ''])]) : '';
 function bump(tx, c, {l, s}) {
   if (l.exists()) tx.update(l.ref, {v: (l.data().v || 0) + 1}); else tx.set(l.ref, {v: 1});
   if (s.exists()) tx.delete(s.ref);
@@ -2467,8 +2604,8 @@ function renderMoney() {
   }).join('');
   // 依付款日期排；沒填付款日期的舊記帳用建立時間（台灣時間）
   const exDay = e => e.paidDate || (e.createdAt ? localDateOf(e.createdAt) : '9999-12-31');
-  const f = S.exFilter, mineOnly = !!S.exMine, myPart = e => shareOf(e, S.me) - (rfNet(e)?.parts[S.me] || 0); // 我的份：扣掉退稅折抵
-  const exps = S.expenses.filter(e => (f === 'all' || e.cur === f) && (!mineOnly || e.split.includes(S.me) || paidOf(e, S.me) > 0))
+  const f = S.exFilter, mineOnly = !!S.exMine, myPart = e => shareOf(e, S.me) - pxCostOf(e, S.me) - (rfNet(e)?.parts[S.me] || 0); // 我的份：扣掉代購墊款、退稅折抵
+  const exps = S.expenses.filter(e => (f === 'all' || e.cur === f) && (!mineOnly || e.split.includes(S.me) || shareOf(e, S.me) > 0 || paidOf(e, S.me) > 0))
     .sort((a, b) => exDay(b).localeCompare(exDay(a)) || (tsDate(b.createdAt)?.getTime() || 0) - (tsDate(a.createdAt)?.getTime() || 0));
   // 依天分組，每天可以收合（預設全部展開，收起來的天數只記在這次開啟的畫面）
   const groups = [], txRes = S.catalog ? cardCtx() : null;
@@ -2479,7 +2616,7 @@ function renderMoney() {
     if (!g || g.key !== key) groups.push(g = {key, ds, n: 0, tot: {JPY: 0, TWD: 0}, rows: ''});
     g.n++; if (g.tot[e.cur] !== undefined) g.tot[e.cur] += mineOnly ? myPart(e) : cents(e.amount);
     let rows = '';
-    const {base, rem} = shareInfo(e.amount, e.split.length), multi = multiPay(e), custom = customSplit(e);
+    const {base, rem} = shareInfo(e.amount, e.split.length), multi = multiPay(e), pxs = pxItemsOf(e), custom = customSplit(e) || pxs.length > 0;
     const pm = multi ? IDS.filter(m => paidOf(e, m) > 0).sort((a, b) => paidOf(e, b) - paidOf(e, a) || IDS.indexOf(a) - IDS.indexOf(b)) : [e.payer];
     let payTag = '';
     const done = settledOf(e), owers = owersOf(e);
@@ -2499,26 +2636,28 @@ function renderMoney() {
       else payTag += grp < rfMin() ? '<span class="chip hib">🧾 未達退稅門檻</span>'
         : `<span class="chip ${r.method === 'cash' ? 'sea' : 'terra'}">🧾 ${multi || e.taxRefund.who !== e.payer ? `${esc(nm(e.taxRefund.who))} ` : ''}待退 ${r.valText}・${r.method === 'cash' ? '現金' : '卡'}</span>`;
     }
+    if (pxs.length) { const os = IDS.filter(m => pxs.some(x => x.owner === m)); payTag += `<span class="chip pxc">🛍️ 代購 ${pxs.length} 件・${os.map(nm).join('、')}</span>`; }
     const who = multi ? `<span class="exstack">${pm.slice(0, 2).map(m => avatar(m).replace('data-profile', 'data-x')).join('')}</span>` : avatar(e.payer, 'l').replace('data-profile', 'data-x');
     rows += `<button class="card ex" data-ex="${e.id}">${who}
       <div class="body"><div class="nm">${esc(e.name || '（未命名）')}</div>
-        <div class="sub"><span class="pw">${multi ? pm.map(m => `${nm(m)} <span class="num">${money(paidOf(e, m), e.cur)}</span>`).join('＋') : nm(e.payer)} 先付・${custom ? '' : '分給'}</span>${custom ? '<span class="chip terra">各自金額</span>' : ''}<span class="avs">${e.split.map(m => avatar(m, (done.includes(m) ? 's ok' : 's') + (mineOnly && m !== S.me ? ' fade' : '')).replace('data-profile', 'data-x')).join('')}</span>${isLocked(e.cur) ? ic.lock.replace('<svg', '<svg style="width:14px;height:14px;color:#B32F3B"') : ''}</div>
+        <div class="sub"><span class="pw">${multi ? pm.map(m => `${nm(m)} <span class="num">${money(paidOf(e, m), e.cur)}</span>`).join('＋') : nm(e.payer)} 先付・${customSplit(e) ? '' : '分給'}</span>${customSplit(e) ? '<span class="chip terra">各自金額</span>' : ''}<span class="avs">${e.split.map(m => avatar(m, (done.includes(m) ? 's ok' : 's') + (mineOnly && m !== S.me ? ' fade' : '')).replace('data-profile', 'data-x')).join('')}</span>${isLocked(e.cur) ? ic.lock.replace('<svg', '<svg style="width:14px;height:14px;color:#B32F3B"') : ''}</div>
 
         ${e.note ? `<div class="tiny muted" style="margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(e.note)}</div>` : ''}</div>
-      <div class="amt"><b class="num">${money(cents(e.amount), e.cur)}</b>${mineOnly || custom ? (myPart(e) ? `<small class="me num">我的份 ${money(myPart(e), e.cur)}</small>` : '') : `<small>每人 <span class="num">${money(base, e.cur)}</span>${rem ? '…' : ''}</small>`}</div>${payTag ? `<div class="extra">${payTag}</div>` : ''}</button>`;
+      <div class="amt"><b class="num">${money(cents(e.amount), e.cur)}</b>${mineOnly || custom ? ((myPart(e) ? `<small class="me num">我的份 ${money(myPart(e), e.cur)}</small>` : '') + (pxCostOf(e, S.me) ? `<small class="num">代購墊 ${money(pxCostOf(e, S.me), e.cur)}</small>` : '')) : `<small>每人 <span class="num">${money(base, e.cur)}</span>${rem ? '…' : ''}</small>`}</div>${payTag ? `<div class="extra">${payTag}</div>` : ''}</button>`;
     g.rows += rows;
   }
   const rows = groups.map(g => `<details class="exgrp" data-day="${esc(g.key)}" ${S.exClosed.has(g.key) ? '' : 'open'}><summary class="exday">${ic.chev.replace('<svg', '<svg class="chev"')}<span>${g.key}${g.ds < TRIP_START && g.ds !== '9999-12-31' ? ' <span class="chip hib">出發前</span>' : ''}</span>
       <span class="sum">${g.n} 筆・<span class="num">${['JPY', 'TWD'].filter(c => g.tot[c]).map(c => money(g.tot[c], c)).join('＋')}</span>${mineOnly ? '（我的份）' : ''}</span></summary>${g.rows}</details>`).join('');
   // 我的花費：每筆我分攤的那份加總（我付的那筆，除不盡的零頭也算我的），日圓用目前匯率換算台幣
   const myCard = (() => {
-    const me = S.me, sum = {JPY: {pre: 0, trip: 0}, TWD: {pre: 0, trip: 0}}, paid = {JPY: 0, TWD: 0};
+    const me = S.me, sum = {JPY: {pre: 0, trip: 0}, TWD: {pre: 0, trip: 0}}, paid = {JPY: 0, TWD: 0}, pxSum = {JPY: 0, TWD: 0};
     let n = 0;
     for (const e of S.expenses) {
       if (!sum[e.cur]) continue;
       paid[e.cur] += paidOf(e, me);
-      if (!e.split.includes(me)) continue;
-      sum[e.cur][exDay(e) < TRIP_START ? 'pre' : 'trip'] += shareOf(e, me) - (rfNet(e)?.parts[me] || 0); // 扣掉退稅折抵
+      if (!e.split.includes(me) && !(shareOf(e, me) > 0)) continue;
+      const pc = pxCostOf(e, me); if (pc) pxSum[e.cur] += pc;
+      sum[e.cur][exDay(e) < TRIP_START ? 'pre' : 'trip'] += shareOf(e, me) - pc - (rfNet(e)?.parts[me] || 0); // 扣掉代購墊款、退稅折抵
       n++;
     }
     if (!n) return {html: '', twd: 0};
@@ -2532,6 +2671,7 @@ function renderMoney() {
       ${tot('TWD') ? row('台幣', money(tot('TWD'), 'TWD')) : ''}
       ${part('pre') ? row('其中出發前', `≈ ${twdFmt(part('pre'))}`) + row('旅途中', `≈ ${twdFmt(part('trip'))}`) : ''}
       ${paid.JPY || paid.TWD ? `<div class="tiny muted" style="margin-top:6px">我先付出去的總額：${[paid.JPY ? money(paid.JPY, 'JPY') : '', paid.TWD ? money(paid.TWD, 'TWD') : ''].filter(Boolean).join('・')}（別人的那份結算時會還我，不算在上面）</div>` : ''}
+      ${pxSum.JPY ? `<div class="tiny muted" style="margin-top:4px">另外幫委託人代購墊了 ${money(pxSum.JPY, 'JPY')}（算在結算裡，向委託人收回，不算在上面）</div>` : ''}
       <div class="tiny muted" style="margin-top:4px">日圓用目前匯率 ${fx} 換算，實際刷卡金額以帳單為準</div></div>`};
   })();
   const pend = pendingCardExps();
@@ -2540,11 +2680,12 @@ function renderMoney() {
   const summary = S.expenses.length ? `<div class="msum"><span>我花了 <b class="num">約 ${twdFmt(myCard.twd)}</b></span>
     <span>結算時 ${myBal.map(({c, v}) => v > 0 ? `要收 <b class="num" style="color:var(--sea-deep)">${money(v, c)}</b>` : v < 0 ? `要付 <b class="num" style="color:#B32F3B">${money(-v, c)}</b>` : `${CUR[c].name}<b>打平</b>`).join('・')}</span></div>` : '';
   // 頁籤只記在這次開啟的期間，重新打開 app 一律回到「明細」
-  const tab = ['settle', 'mine'].includes(S.moneyTab) ? S.moneyTab : 'list';
+  const tab = ['settle', 'mine', 'proxy'].includes(S.moneyTab) ? S.moneyTab : 'list';
   const lockedAny = ['JPY', 'TWD'].some(isLocked);
-  const tabs = `<div class="mtabs" id="mTabs">${[['list', '明細'], ['settle', `結算${lockedAny ? ' 🔒' : ''}`], ['mine', `我的${pend.length ? '<span class="dot"></span>' : ''}`]].map(([k, t]) => `<button type="button" aria-pressed="${tab === k}" data-t="${k}">${t}</button>`).join('')}</div>`;
+  const tabs = `<div class="mtabs" id="mTabs">${[['list', '明細'], ['settle', `結算${lockedAny ? ' 🔒' : ''}`], ['mine', `我的${pend.length ? '<span class="dot"></span>' : ''}`], ['proxy', '代購']].map(([k, t]) => `<button type="button" aria-pressed="${tab === k}" data-t="${k}">${t}</button>`).join('')}</div>`;
   const body = tab === 'settle' ? (cards || `<div class="card empty">${ic.shell}還沒有任何記帳，按右下角「記一筆」開始</div>`)
     // 「我的」頁籤：我的花費、待退稅、待填卡片（明細頁一打開就直接是記帳）
+    : tab === 'proxy' ? pxTabHTML()
     : tab === 'mine' ? `${pend.length ? `<div class="card pend">${ic.coin}<div class="body">有 <b class="num">${pend.length}</b> 筆你付的刷卡還沒填是哪張卡<div class="tiny muted">只有你看得到，用來計算回饋和剩餘額度</div></div><button class="btn sm pri" id="pendGo">補填</button></div>` : ''}${rfMineHTML()}${myCard.html || `<div class="card empty">${ic.shell}還沒有分給你的記帳</div>`}`
     : `
     <div class="exf" id="exF"><span class="lbl">幣別</span>${[['all', '全部'], ['JPY', '日圓'], ['TWD', '台幣']].map(([k, t]) => `<button type="button" aria-pressed="${f === k}" data-f="${k}">${t}</button>`).join('')}<button type="button" class="tog" data-m aria-pressed="${mineOnly}">只看分給我的<span class="sw"></span></button></div>
@@ -2555,6 +2696,7 @@ function renderMoney() {
   $('#main').querySelectorAll('details.exgrp').forEach(d => d.addEventListener('toggle', () => { if (d.open) S.exClosed.delete(d.dataset.day); else S.exClosed.add(d.dataset.day); }));
   $('#main').querySelectorAll('[data-ex]').forEach(b => b.onclick = () => editExpense(S.expenses.find(e => e.id === b.dataset.ex)));
   bindRfMine();
+  if (tab === 'proxy') bindPxTab();
   $('#pendGo')?.addEventListener('click', () => editExpense(pend.sort((a, b) => (tsDate(a.createdAt)?.getTime() || 0) - (tsDate(b.createdAt)?.getTime() || 0))[0]));
   $('#main').querySelectorAll('[data-settle]').forEach(b => b.onclick = async () => {
     b.disabled = true;
@@ -2585,7 +2727,7 @@ function editExpense(e, pre = null) {
   const fmtAmt = c => String(Math.round(c) / 100);
   if (e && customSplit(e)) { for (const m of e.split) if (e.shares[m]) shareIn[m] = String(e.shares[m]); }
   else if (e) { // 平均分攤的記帳：照平均帶入（零頭給付最多的人，他沒分攤時給第一位）
-    const ev = evenShares(cents(e.amount), e.split);
+    const ev = evenShares(exParts(e).own, e.split); // 有代購時只分自己人的部分
     for (const m of e.split) shareIn[m] = fmtAmt(ev[m] || 0);
   }
   let settled = e ? settledOf(e) : [];
@@ -2611,7 +2753,8 @@ function editExpense(e, pre = null) {
     <div class="seg" id="eCur" style="margin-bottom:12px">${['JPY', 'TWD'].map(c => `<button type="button" data-c="${c}">${CUR[c].sym} ${CUR[c].name}</button>`).join('')}</div>
     <label class="f"><span>總額 <em>*</em></span><input class="in big" id="eAmt" type="text" inputmode="decimal" autocomplete="off" placeholder="0" value="${e ? esc(e.amount) : pre?.amount ? esc(pre.amount) : ''}"></label>
     <div class="f"><span>誰先付錢 <span class="tiny muted">（可以選多位）</span></span><div class="pick" id="ePayer"></div><div id="ePaidBox"></div></div>
-    <div class="f" id="eSplitF"><span>分攤的人 <span class="tiny muted">（勾選後帶入平均金額，可以改）</span></span><div class="pick" id="eSplit"></div><div id="eOwn"></div></div>
+    <div id="ePx"></div>
+    <div class="f" id="eSplitF"><span id="eSplitLbl">分攤的人 <span class="tiny muted">（勾選後帶入平均金額，可以改）</span></span><div class="pick" id="eSplit"></div><div id="eOwn"></div></div>
     <div id="eHow"></div>
     <label class="f"><span>品名 <em>*</em></span><input class="in" id="eName" required value="${esc(e?.name || pre?.name || '')}" maxlength="100" placeholder="例如 燒肉晚餐"></label>
     <details class="emore" id="eMore" ${moreOpen ? 'open' : ''}><summary>更多<span class="sum" id="eMoreSum"></span>${ic.chev.replace('<svg', '<svg class="chev"')}</summary>
@@ -2626,6 +2769,166 @@ function editExpense(e, pre = null) {
     <div class="sheet-acts">${isNew ? '' : `<button class="btn" id="eDel">${ic.trash}刪除</button>`}<button class="btn pri" id="eSave">儲存</button></div>`, s => {
     const amtEl = s.querySelector('#eAmt'), chSel = s.querySelector('#eCh'), box = s.querySelector('#eCardBox');
     const channel = () => chSel ? chSel.value : (e?.channel || null);
+    // ── 代購：這張收據裡幫委託人買的商品（只列代購的，自己人的部分不用列）──
+    const px0 = e ? pxItemsOf(e) : pre?.proxy?.items || [];
+    const px = {on: px0.length > 0, gross: e?.proxy?.gross ? String(e.proxy.gross) : '', items: px0.map(x => ({...x})), ed: null, dr: null, pick: false, picked: new Set()};
+    const pxBox = s.querySelector('#ePx');
+    const pxOk = () => cur === 'JPY';
+    const pxNum = v => yenInt(v);
+    // 存檔用的 proxy（沒有代購時 null）
+    const pxData = () => {
+      if (!pxOk() || !px.on || !px.items.length) return null;
+      const items = px.items.map(x => {
+        const o = {k: x.k, name: String(x.name || '').trim().slice(0, 100), yen: pxNum(x.yen), tax: x.tax === 8 ? 8 : 10, client: x.client || '', owner: x.owner || ''};
+        if (Number(x.qty) > 1) o.qty = Math.min(999, Math.round(Number(x.qty)));
+        if (pxNum(x.off) > 0) o.off = pxNum(x.off);
+        if (x.noRf) o.noRf = true;
+        if (x.shop?.id) o.shop = {o: x.shop.o, id: x.shop.id};
+        return o;
+      });
+      const out = {items, owners: IDS.filter(m => items.some(x => x.owner === m))};
+      if (pxNum(px.gross) > 0) out.gross = pxNum(px.gross);
+      if (pxNum(rf.food) > 0) out.food = pxNum(rf.food);
+      return out;
+    };
+    // 商品本身的問題（沒填價格、沒選委託人）
+    const pxItemErr = () => {
+      const noName = px.items.find(x => !String(x.name || '').trim()), noYen = px.items.find(x => !(pxNum(x.yen) > 0)), noCl = px.items.find(x => !x.client || !(x.owner in COLORS));
+      return noName ? '有代購商品沒填品名' : noYen ? `代購「${noYen.name}」還沒填標價` : noCl ? `代購「${noCl.name}」還沒選委託人` : '';
+    };
+    // 從購物清單帶入的候選：大家清單裡標了「代購給」、已買、還沒拆進任何記帳的項目
+    const pxCands = () => {
+      const used = new Set(S.expenses.filter(z => z.id !== e?.id).flatMap(z => pxItemsOf(z).map(x => x.shop?.id)).concat(px.items.map(x => x.shop?.id)).filter(Boolean));
+      return IDS.flatMap(o => (S.shopping[o] || []).filter(x => x.proxyFor && x.bought && !used.has(x.id) && pxClientById(x.proxyFor)).map(x => ({o, x})));
+    };
+    const clientChip = (cid, sel) => { const c = pxClientById(cid); return c ? `<button type="button" class="chpick pxcc" data-pxcl="${esc(c.id)}" aria-pressed="${sel}" style="--c:${COLORS[c.owner]}">${esc(c.name)}</button>` : ''; };
+    const pxRowHTML = (x, i, r) => {
+      const c = pxClientById(x.client), t = pxThumb(x), ri = r?.items[i], need = !(pxNum(x.yen) > 0);
+      return `<button type="button" class="pxrow ${px.ed === i ? 'on' : ''} ${need || !c ? 'bad' : ''}" data-pxi="${i}">${t ? `<span class="pxth"><img src="${esc(t.thumb)}" alt=""></span>` : ''}
+        <span class="body"><span class="nm">${esc(x.name || '（沒填品名）')}${Number(x.qty) > 1 ? ` <span class="tiny muted">×${esc(x.qty)}</span>` : ''}</span>
+        <span class="sub">${c ? `<span class="chip" style="--c:${COLORS[c.owner]}"><i class="odot"></i>${esc(c.name)}・${esc(nm(c.owner))}</span>` : '<span class="chip hib">沒選委託人</span>'}${x.tax === 8 ? '<span class="chip sea">食品 8%</span>' : ''}${pxNum(x.off) ? `<span class="chip terra">單品折價 −${yen(pxNum(x.off))}</span>` : ''}${x.noRf ? '<span class="chip">不可退稅</span>' : ''}</span></span>
+        <span class="amt">${need ? '<b class="warnline">填標價</b>' : `<b class="num">${yen(pxNum(x.yen))}</b>`}${ri && !need && ri.cost !== ri.yen * 100 ? `<small class="num">成本 ${money(ri.cost, 'JPY')}</small>` : ''}</span></button>`;
+    };
+    // 新增／編輯一件代購商品
+    const pxEdHTML = () => {
+      const d = px.dr, isNewI = px.ed === -1, mineFirst = [S.me, ...IDS.filter(m => m !== S.me)];
+      const groups = mineFirst.map(m => ({m, cs: S.pxClients.filter(c => c.owner === m).sort((a, b) => String(a.name).localeCompare(String(b.name)))})).filter(g => g.cs.length);
+      return `<div class="pxed"><div class="f"><span>委託人 <em>*</em> <span class="tiny muted">顏色是負責收錢的人</span></span>
+          ${groups.map(g => `<div class="pxgrp"><span class="who">${avatar(g.m, 's').replace('data-profile', 'data-x')}${esc(nm(g.m))}</span><div class="chips">${g.cs.map(c => clientChip(c.id, d.client === c.id)).join('')}</div></div>`).join('')}
+          <button type="button" class="btn sm ghost" id="pxNewC" style="margin-top:4px">${ic.plus}新增委託人</button></div>
+        <label class="f"><span>品名 <em>*</em></span><input class="in" id="pxName" maxlength="100" value="${esc(d.name || '')}" placeholder="例如 合利他命 EX Plus"></label>
+        <div class="row2"><label class="f"><span>數量</span><input class="in" id="pxQty" type="number" inputmode="numeric" min="1" value="${esc(d.qty || '')}" placeholder="1"></label>
+          <label class="f"><span>含稅標價 <em>*</em> <span class="tiny muted">這件合計</span></span><input class="in" id="pxYen" type="text" inputmode="numeric" autocomplete="off" value="${esc(d.yen || '')}" placeholder="¥"></label></div>
+        <div class="f"><span>稅率</span><div class="seg" id="pxTax"><button type="button" data-t="10" aria-pressed="${d.tax !== 8}">一般 10%</button><button type="button" data-t="8" aria-pressed="${d.tax === 8}">食品 8%</button></div></div>
+        <details class="pxadv" ${pxNum(d.off) || d.noRf ? 'open' : ''}><summary>單品折價・不可退稅<span class="tiny muted">（平常不用填）</span></summary>
+          <label class="f" style="margin-top:8px"><span>單品折價 <span class="tiny muted">只折這一件的折價券</span></span><input class="in" id="pxOff" type="text" inputmode="numeric" autocomplete="off" value="${esc(d.off || '')}" placeholder="¥0"></label>
+          <button type="button" class="opt" role="checkbox" aria-checked="${!!d.noRf}" id="pxNoRf"><span class="box" style="--c:var(--terra)" aria-hidden="true">${ic.check}</span><span class="txt">不可退稅<span class="tiny muted" style="display:block">用了「不能和免稅併用」的券，或不是免稅商品。不參加退稅分配</span></span></button></details>
+        <div class="tiny warnline" id="pxEdErr"></div>
+        <div class="sheet-acts">${isNewI ? '' : `<button type="button" class="btn" id="pxDel">${ic.trash}刪除</button>`}<button type="button" class="btn" id="pxCancel">取消</button><button type="button" class="btn pri" id="pxOkI">${isNewI ? '加入' : '更新'}</button></div></div>`;
+    };
+    const pxPickHTML = () => {
+      const cs = pxCands();
+      return `<div class="pxed"><b>從購物清單帶入</b><div class="tiny muted" style="margin:2px 0 8px">大家清單裡標了「代購給」、已勾已買、還沒拆進記帳的項目。價格用預算 × 數量，帶入後再照收據改</div>
+        ${cs.length ? cs.map(({o, x}) => { const c = pxClientById(x.proxyFor); return `<button type="button" class="opt" role="checkbox" aria-checked="${px.picked.has(x.id)}" data-pk="${esc(x.id)}"><span class="box" style="--c:var(--sea)" aria-hidden="true">${ic.check}</span>${x.thumb && x.imgId ? `<span class="pxth"><img src="${esc(x.thumb)}" alt=""></span>` : ''}<span class="txt">${esc(x.name)}${Number(x.qty) > 1 ? ` ×${esc(x.qty)}` : ''}<span class="tiny muted" style="display:block">${esc(nm(o))} 的清單・代購給 ${esc(c.name)}（${esc(nm(c.owner))}）${Number(x.budget) > 0 ? `・預算 ${yen(Number(x.budget) * (Number(x.qty) || 1))}` : '・沒有預算，要自己填'}${x.food ? '・食品' : ''}</span></span></button>`; }).join('') : '<p class="tiny muted">沒有可以帶入的項目</p>'}
+        <div class="sheet-acts"><button type="button" class="btn" id="pxPickNo">取消</button>${cs.length ? `<button type="button" class="btn pri" id="pxPickOk">帶入 ${px.picked.size} 項</button>` : ''}</div></div>`;
+    };
+    // 對帳：收據印的 8%／10% 對象 vs 代購（折後）vs 自己人
+    const pxSumHTML = r => {
+      if (!r) return '';
+      const A = cents(parseAmt(amtEl.value) || 0), py8 = r.pxFood, py10 = r.total - r.pxFood;
+      const cell = (v, warn) => `<td class="num ${warn ? 'warnline' : ''}">${money(v, 'JPY').replace('¥', '')}</td>`;
+      const tb = `<table class="pxtb"><tr><th></th><th>10%</th><th>8%</th><th>合計</th></tr>
+        <tr><td>收據印的</td>${cell(A - r.food)}${cell(r.food)}${cell(A)}</tr>
+        <tr><td>代購<span class="tiny muted">（折後）</span></td>${cell(py10)}${cell(py8)}${cell(r.total)}</tr>
+        <tr class="own"><td>自己人</td>${cell(r.own10, r.own10 < 0)}${cell(r.own8, r.own8 < 0)}${cell(r.own, r.own < 0)}</tr></table>`;
+      const os = IDS.filter(m => r.byOwner[m]);
+      return `${tb}<div class="tiny muted" style="margin-top:4px">標價 ${yen(r.tag / 100)}${r.off ? `・單品折價 −${yen(r.off / 100)}` : ''}${r.D ? `・全單折扣 −${money(r.D, 'JPY')} 照金額比例分` : ''}</div>
+        ${os.length ? `<div class="tiny" style="margin-top:2px">算進份額：${os.map(m => `${esc(nm(m))} ${money(r.byOwner[m], 'JPY')}`).join('、')}</div>` : ''}
+        ${r.err.map(t => `<div class="tiny warnline">${esc(t)}</div>`).join('')}${r.warn.map(t => `<div class="tiny warnline">⚠ ${esc(t)}${r.food || r.own8 >= 0 ? '（稅率選錯或漏了一件？）' : ''}</div>`).join('')}`;
+    };
+    let pxShape = null;
+    const paintPx = () => {
+      const ok = pxOk(), locked = !!(isLocked(cur) || (e && isLocked(e.cur))), shape = `${ok}|${px.on}|${locked}`;
+      if (!ok) { if (pxShape !== shape) { pxShape = shape; pxBox.innerHTML = ''; } return; }
+      if (shape !== pxShape) {
+        pxShape = shape;
+        pxBox.innerHTML = `<div class="rfform pxform"><button type="button" class="opt" role="checkbox" aria-checked="${px.on}" id="ePxOn" ${locked ? 'disabled' : ''}><span class="box" style="--c:var(--terra)" aria-hidden="true">${ic.check}</span><span class="txt">🛍️ 這張收據有代購商品<span class="tiny muted" style="display:block">幫委託人買的逐項列出，成本算給負責人；自己人的部分不用列</span></span></button>
+          ${px.on ? `<div id="ePxIn" style="padding:4px 0 8px"><div class="row2"><label class="f"><span>折扣前合計 <span class="tiny muted">有折扣才填</span></span><input class="in" id="ePxGross" type="text" inputmode="numeric" autocomplete="off" value="${esc(px.gross)}" ${locked ? 'disabled' : ''}></label>
+            <label class="f"><span>收據 8% 對象 <span class="tiny muted">含稅</span></span><input class="in" id="ePxFood" type="text" inputmode="numeric" autocomplete="off" placeholder="沒有食品不用填" value="${esc(rf.food)}" ${locked ? 'disabled' : ''}></label></div>
+            <div id="ePxList"></div><div id="ePxEd"></div><div id="ePxSum"></div></div>` : ''}</div>`;
+      }
+      if (!px.on) return;
+      const g = pxBox.querySelector('#ePxGross'); if (g) g.placeholder = '沒填＝同實付';
+      const c = calc(), r = c.px, cs = pxCands().length;
+      pxBox.querySelector('#ePxList').innerHTML = `${px.items.map((x, i) => pxRowHTML(x, i, r)).join('')}
+        ${px.ed === null && !px.pick && !locked ? `<div class="pxacts"><button type="button" class="btn sm" id="pxAdd">${ic.plus}新增代購商品</button>${cs ? `<button type="button" class="btn sm" id="pxPick">從購物清單帶入（${cs}）</button>` : ''}</div>` : ''}`;
+      const ed = pxBox.querySelector('#ePxEd');
+      if (px.ed !== null && !ed.querySelector('.pxed')) ed.innerHTML = pxEdHTML();
+      else if (px.pick) ed.innerHTML = pxPickHTML();
+      else if (px.ed === null) ed.innerHTML = '';
+      pxBox.querySelector('#ePxSum').innerHTML = px.items.length ? pxSumHTML(r) : '';
+    };
+    const pxDraftFromForm = () => {
+      const q = id => pxBox.querySelector(id);
+      if (!q('.pxed #pxName')) return;
+      Object.assign(px.dr, {name: q('#pxName').value, qty: q('#pxQty').value, yen: q('#pxYen').value, off: q('#pxOff').value});
+    };
+    const pxOwnChanged = () => { if (split.length && (!ownOpen || split.every(m => !shareIn[m]))) reAverage(); paint(); };
+    pxBox.onclick = async ev => {
+      const t = ev.target;
+      if (t.closest('#ePxOn')) {
+        if (px.on && px.items.length && !await confirmDialog({title: '取消代購？', body: `會移除這張收據的 ${px.items.length} 件代購商品。`, ok: '移除', danger: true})) return;
+        px.on = !px.on; if (!px.on) { px.items = []; px.ed = null; px.pick = false; px.gross = ''; }
+        pxOwnChanged(); return;
+      }
+      if (t.closest('#pxAdd')) { px.ed = -1; px.dr = {k: pxNewK(), tax: 10, client: px.items[px.items.length - 1]?.client || ''}; paintPx(); pxBox.querySelector('#pxName')?.focus(); return; }
+      if (t.closest('#pxPick')) { px.pick = true; px.picked = new Set(); paintPx(); return; }
+      const row = t.closest('[data-pxi]');
+      if (row) {
+        if (isLocked(cur) || (e && isLocked(e.cur))) return;
+        px.pick = false; px.ed = +row.dataset.pxi; px.dr = {...px.items[px.ed]}; pxBox.querySelector('#ePxEd').innerHTML = ''; paintPx(); return;
+      }
+      const cl = t.closest('[data-pxcl]');
+      if (cl) { px.dr.client = cl.dataset.pxcl; pxBox.querySelectorAll('[data-pxcl]').forEach(b => b.setAttribute('aria-pressed', String(b === cl))); return; }
+      if (t.closest('#pxNewC')) {
+        pxDraftFromForm();
+        const id = await pxClientDialog(null, S.me);
+        if (id) { px.dr.client = id; pxBox.querySelector('#ePxEd').innerHTML = ''; paintPx(); }
+        return;
+      }
+      const tx = t.closest('#pxTax [data-t]');
+      if (tx) { px.dr.tax = +tx.dataset.t; pxBox.querySelectorAll('#pxTax [data-t]').forEach(b => b.setAttribute('aria-pressed', String(b === tx))); return; }
+      if (t.closest('#pxNoRf')) { px.dr.noRf = !px.dr.noRf; pxBox.querySelector('#pxNoRf').setAttribute('aria-checked', String(!!px.dr.noRf)); return; }
+      if (t.closest('#pxCancel')) { px.ed = null; px.dr = null; paintPx(); return; }
+      if (t.closest('#pxDel')) { px.items.splice(px.ed, 1); px.ed = null; px.dr = null; pxOwnChanged(); return; }
+      if (t.closest('#pxOkI')) {
+        pxDraftFromForm();
+        const d = px.dr, c = pxClientById(d.client), errEl = pxBox.querySelector('#pxEdErr');
+        const er = !c ? '請選委託人（沒有的話按「新增委託人」）' : !String(d.name || '').trim() ? '請填品名' : !(pxNum(d.yen) > 0) ? '請填含稅標價' : pxNum(d.off) >= pxNum(d.yen) ? '單品折價要比標價少' : '';
+        if (er) { errEl.textContent = er; return; }
+        const it = {...d, name: String(d.name).trim(), owner: c.owner, qty: Number(d.qty) > 1 ? Math.round(Number(d.qty)) : '', yen: pxNum(d.yen), off: pxNum(d.off) || ''};
+        if (px.ed === -1) { if (px.items.length >= PX_MAX) { errEl.textContent = `一張收據最多 ${PX_MAX} 件代購`; return; } px.items.push(it); } else px.items[px.ed] = it;
+        px.ed = null; px.dr = null; pxOwnChanged(); return;
+      }
+      const pk = t.closest('[data-pk]');
+      if (pk) { const id = pk.dataset.pk; px.picked.has(id) ? px.picked.delete(id) : px.picked.add(id); pk.setAttribute('aria-checked', String(px.picked.has(id))); const b = pxBox.querySelector('#pxPickOk'); if (b) b.textContent = `帶入 ${px.picked.size} 項`; return; }
+      if (t.closest('#pxPickNo')) { px.pick = false; paintPx(); return; }
+      if (t.closest('#pxPickOk')) {
+        const add = pxCands().filter(({x}) => px.picked.has(x.id));
+        if (!add.length) { toast('請勾選要帶入的項目'); return; }
+        for (const {o, x} of add) { const c = pxClientById(x.proxyFor), q = Number(x.qty) || 1; px.items.push({k: pxNewK(), name: x.name, qty: q > 1 ? q : '', yen: Number(x.budget) > 0 ? Math.round(Number(x.budget) * q) : '', tax: x.food ? 8 : 10, client: c.id, owner: c.owner, shop: {o, id: x.id}}); }
+        px.pick = false; px.picked = new Set(); pxOwnChanged();
+        if (add.some(({x}) => !(Number(x.budget) > 0))) toast('有項目沒有預算，點一下填標價');
+        return;
+      }
+    };
+    pxBox.oninput = ev => {
+      const t = ev.target;
+      if (t.id === 'ePxGross') { px.gross = t.value; pxOwnChanged(); }
+      else if (t.id === 'ePxFood') { rf.food = t.value; const f2 = s.querySelector('#eRfFood'); if (f2) f2.value = t.value; paintSums(); }
+    };
+    // 實付扣掉代購成本後，自己人的部分（分）
+    const ownOf = A => { const d = pxData(); return d ? Math.max(0, pxCalc(A, d).own) : A; };
     // 目前輸入算出來的付款、應付（單位：分）；不合法時 err 會寫原因
     const calc = () => {
       const A = cents(parseAmt(amtEl.value) || 0), paid = {}, share = {}, err = {};
@@ -2636,17 +2939,22 @@ function editExpense(e, pre = null) {
         else if (d) err.pay = d > 0 ? `付款合計還差 ${money(d, cur)}` : `付款合計超過總額 ${money(-d, cur)}`;
       } else paid[payers[0]] = A;
       const main = mainPayer(paid) || payers[0];
+      // 代購：自己人的部分＝實付 − 代購成本；分攤金額對的是自己人的部分
+      const pd = pxData(), pr = pd ? pxCalc(A, pd) : null, own = pr ? pr.own : A;
+      if (pr) { const ie = pxItemErr(); if (ie || pr.err.length) err.px = ie || pr.err[0]; }
       const input = {};
       for (const m of split) { const v = cents(Number(String(shareIn[m] || '').replace(/[,，\s]/g, '')) || 0); if (v > 0) { share[m] = v; input[m] = v; } }
-      const d = A - Object.values(share).reduce((a, b) => a + b, 0), zeroS = split.filter(m => !share[m]);
-      if (!split.length) err.split = '至少要勾一位分攤的人';
+      const d = own - Object.values(share).reduce((a, b) => a + b, 0), zeroS = split.filter(m => !share[m]), tot = pr ? '自己人的部分' : '總額';
+      if (pr && own <= 0) { for (const k of Object.keys(share)) delete share[k]; for (const k of Object.keys(input)) delete input[k]; } // 全部都是代購：沒有自己人的部分
+      else if (!split.length) err.split = '至少要勾一位分攤的人';
       else if (zeroS.length) err.split = `${zeroS.map(nm).join('、')} 的分攤金額要大於 0（不分攤請取消勾選）`;
-      else if (d) err.split = d > 0 ? `分攤金額合計還差 ${money(d, cur)}` : `分攤金額合計超過總額 ${money(-d, cur)}`;
-      return {A, paid, share, input, main, err};
+      else if (d) err.split = d > 0 ? `分攤金額合計還差 ${money(d, cur)}（${tot} ${money(own, cur)}）` : `分攤金額合計超過${tot} ${money(-d, cur)}`;
+      if (pr) for (const [m, v] of Object.entries(pr.byOwner)) share[m] = (share[m] || 0) + v;
+      return {A, paid, share, input, main, err, own, px: pr};
     };
     const myAmt = () => (calc().paid[S.me] || 0) / 100;
     const reAverage = () => {
-      const A = cents(parseAmt(amtEl.value) || 0), n = split.length;
+      const A = ownOf(cents(parseAmt(amtEl.value) || 0)), n = split.length;
       for (const k of Object.keys(shareIn)) delete shareIn[k];
       if (!A || !n) return;
       // 平均：捨去到小數第 2 位，除不盡的幾分錢從第一個人開始每人加 0.01
@@ -2719,7 +3027,7 @@ function editExpense(e, pre = null) {
     };
     // 退稅：只有日圓＋日本實體購物才出現；勾「已在店家登記退稅」才展開。存成非金額欄位，不影響分帳和結算
     const rf0 = e?.taxRefund || pre?.refund || null, rfBox = s.querySelector('#eRf');
-    const rf = {on: !!rf0, store: rf0?.store || '', method: rf0?.method || null, food: rf0?.food ? String(rf0.food) : '', actual: rf0?.actual ? String(rf0.actual) : '', who: rf0?.who || null};
+    const rf = {on: !!rf0, store: rf0?.store || '', method: rf0?.method || null, food: e?.proxy?.food ? String(e.proxy.food) : rf0?.food ? String(rf0.food) : pre?.proxyFood ? String(pre.proxyFood) : '', actual: rf0?.actual ? String(rf0.actual) : '', who: rf0?.who || null};
     let rfShape = null;
     const rfOk = () => cur === 'JPY' && rfEligibleCh(channel());
     const rfWho = () => payers.length === 1 ? payers[0] : payers.includes(rf.who) ? rf.who : payers.includes(S.me) ? S.me : payers[0];
@@ -2727,7 +3035,10 @@ function editExpense(e, pre = null) {
     const rfStoreNow = () => rfStoreFor(rf.store);
     const paintRfDyn = () => {
       if (!rfBox.querySelector('#eRfIn')) return;
-      const st = rfStoreNow(), A = parseAmt(amtEl.value) || 0, who = rfWho();
+      const st = rfStoreNow(), Araw = parseAmt(amtEl.value) || 0, who = rfWho();
+      // 有代購時：扣掉不可退稅的代購商品（食品從 8% 對象扣）
+      const pd = pxData(), pr = pd ? pxCalc(cents(Araw), pd) : null, nr = pr ? pr.items.filter(x => x.noRf) : [];
+      const A = pr ? Math.max(0, cents(Araw) - nr.reduce((n, x) => n + x.cost, 0)) / 100 : Araw, nrFood = nr.filter(x => x.tax === 8).reduce((n, x) => n + x.cost, 0) / 100;
       if (st?.cash === 'no') rf.method = 'card'; else if (!rf.method) rf.method = rfDefMethod(st);
       // 登記人：多位付款人時讓人選（退稅跟著護照走）
       const ps = payers.length > 1 ? payers : null;
@@ -2741,8 +3052,8 @@ function editExpense(e, pre = null) {
       rfBox.querySelector('#eRfMHint').innerHTML = st?.cash === 'no' ? '<div class="tiny hintbox">這家只能退到信用卡（要輸入卡號和安全碼）。用額度最低、有開刷卡通知的卡；金額小也可以考慮不退。</div>'
         : !st || st.cash === 'unknown' ? (rf.method === 'cash' ? '<div class="tiny hintbox">還不確定能不能領現金：結帳時問店員「能在那霸機場領現金嗎？」</div>' : '')
         : rf.method === 'card' ? '<div class="tiny muted" style="margin-top:6px">退到卡要輸入卡號和安全碼，建議用額度最低、有開刷卡通知的卡。</div>' : '';
-      const food = rfNum(rf.food), r = rfCalc(A, food, st, rf.method), act = rfNum(rf.actual);
-      rfBox.querySelector('#eRfGen').innerHTML = A ? `一般商品（10%）自動算：<b class="num">${yen(Math.max(0, A - Math.min(food, A)))}</b>${food > A ? '<span class="warnline">（食品金額超過總額，先以總額計算）</span>' : ''}` : '';
+      const food = Math.max(0, rfNum(rf.food) - nrFood), r = rfCalc(A, food, st, rf.method), act = rfNum(rf.actual);
+      rfBox.querySelector('#eRfGen').innerHTML = A ? `${nr.length ? `已扣掉不可退稅的代購 ${nr.length} 件・` : ''}一般商品（10%）自動算：<b class="num">${yen(Math.max(0, A - Math.min(food, A)))}</b>${food > A ? '<span class="warnline">（食品金額超過總額，先以總額計算）</span>' : ''}` : '';
       rfBox.querySelector('#eRfEst').innerHTML = !A ? '<span class="tiny muted">輸入總額後顯示預估退稅</span>' : `
         <div class="rfl"><span>未稅金額</span><span class="num">${yen(r.excl)}</span></div>
         <div class="rfl"><span>稅額${r.food ? '（8%＋10%）' : '（10%）'}</span><span class="num">${yen(r.tax)}</span></div>
@@ -2786,7 +3097,7 @@ function editExpense(e, pre = null) {
     rfBox.oninput = ev => {
       const t = ev.target;
       if (t.id === 'eRfStore') { const before = rfStoreNow(); rf.store = t.value; const now = rfStoreNow(); if (now !== before) rf.method = rfDefMethod(now); }
-      else if (t.id === 'eRfFood') rf.food = t.value;
+      else if (t.id === 'eRfFood') { rf.food = t.value; const f2 = s.querySelector('#ePxFood'); if (f2) f2.value = t.value; }
       else if (t.id === 'eRfAct') rf.actual = t.value;
       else return;
       paintSums(); // 退稅會影響「這筆怎麼還」
@@ -2804,9 +3115,9 @@ function editExpense(e, pre = null) {
     const rfLive = c => {
       if (!rfOk() || !rf.on) return null;
       const act = rfNum(rf.actual); if (!(act > 0)) return null;
-      const st = rfStoreNow(), sp = IDS.filter(m => c.share[m] > 0), pm = Object.keys(c.paid);
-      const tmp = {id: e?.id || '~new', cur, amount: c.A / 100, payer: c.main, split: sp, shares: Object.fromEntries(sp.map(m => [m, c.share[m] / 100])), paidDate: s.querySelector('#ePaid').value,
-        taxRefund: {who: rfWho(), method: st?.cash === 'no' ? 'card' : (rf.method || rfDefMethod(st)), actual: act}};
+      const st = rfStoreNow(), pd = c.px ? pxData() : null, src = pd ? c.input : c.share, sp0 = IDS.filter(m => src[m] > 0), sp = sp0.length ? sp0 : [c.main], pm = Object.keys(c.paid);
+      const tmp = {id: e?.id || '~new', cur, amount: c.A / 100, payer: c.main, split: sp, ...(sp0.length ? {shares: Object.fromEntries(sp.map(m => [m, src[m] / 100]))} : {}), paidDate: s.querySelector('#ePaid').value,
+        taxRefund: {who: rfWho(), method: st?.cash === 'no' ? 'card' : (rf.method || rfDefMethod(st)), actual: act}, ...(pd ? {proxy: pd} : {})};
       if (pm.length > 1) tmp.paid = Object.fromEntries(pm.map(m => [m, c.paid[m] / 100]));
       return rfNetCalc(S.expenses.filter(z => z.id !== e?.id).concat(tmp), rfCashMap(S.rfCash)).get(tmp) || null;
     };
@@ -2816,10 +3127,10 @@ function editExpense(e, pre = null) {
       const pf = s.querySelector('#ePaidFoot');
       if (pf) pf.innerHTML = c.err.pay ? `<span class="ng">${c.err.pay}</span>` : `<span class="ok">✓ 合計等於總額</span>`;
       const of = s.querySelector('#eOwnFoot');
-      if (of) of.innerHTML = !c.A ? '' : c.err.split ? `<span class="ng">${c.err.split}</span>` : `<span class="ok">✓ 合計等於總額</span>`;
+      if (of) of.innerHTML = !c.A ? '' : c.err.split ? `<span class="ng">${c.err.split}</span>` : `<span class="ok">✓ 合計等於${c.px ? '自己人的部分' : '總額'}</span>`;
       // 這筆怎麼還：每一列旁邊直接標「已結清」（旅途中已經先還了，就不列入最後結算）
       const how = s.querySelector('#eHow');
-      const ok = c.A > 0 && !c.err.pay && !c.err.split, tr = ok ? planTransfers(c.paid, c.share) : [];
+      const ok = c.A > 0 && !c.err.pay && !c.err.split && !c.err.px, tr = ok ? planTransfers(c.paid, c.share) : [];
       const owers = [...new Set(tr.map(t => t.from))];
       if (ok) settled = settled.filter(m => owers.includes(m)); // 金額還沒對上時先保留，避免打字途中把已結清清掉
       // 退稅折抵：登記人收到的退稅照分攤比例分回每個人。和原本要還的錢同一對人時合併成一列（扣掉後的金額）
@@ -2833,17 +3144,17 @@ function editExpense(e, pre = null) {
       }
       for (const r of rtr) if (!tr.some(t => t.from === r.to && t.to === r.from)) rows.push({k: 'rf', m: r.to, from: r.from, to: r.to, amt: r.amt, done: rfSettled.includes(r.to)});
       const nDone = rows.filter(r => r.done).length, u = x ? '筆' : '人';
-      const howSum = !ok ? '金額還沒對上' : !rows.length ? '這筆不用還錢' : `${rows.length} ${u}要還${nDone ? `・${nDone} ${u}已結清` : ''}`;
+      const howSum = !ok ? (c.err.px ? '代購還沒填好' : '金額還沒對上') : !rows.length ? '這筆不用還錢' : `${rows.length} ${u}要還${nDone ? `・${nDone} ${u}已結清` : ''}`;
       const av = m => avatar(m, 's').replace('data-profile', 'data-x');
-      const rfLine = x ? `<div class="rfnote">🧾 ${esc(nm(x.who))} 收到退稅 <b class="num">${money(x.N, cur)}</b>${x.N !== x.rec ? `（收據 ${money(x.rec, cur)}，照機場實際領到的比例調整）` : ''}，照分攤比例折抵：${IDS.filter(m => x.parts[m]).map(m => `${esc(nm(m))} −${money(x.parts[m], cur)}`).join('、')}</div>` : '';
+      const rfLine = x ? `<div class="rfnote">🧾 ${esc(nm(x.who))} 收到退稅 <b class="num">${money(x.N, cur)}</b>${x.N !== x.rec ? `（收據 ${money(x.rec, cur)}，照機場實際領到的比例調整）` : ''}，${c.px ? '照預估稅額比例（代購那份歸負責人，不可退稅的不分）' : '照分攤比例'}折抵：${IDS.filter(m => x.parts[m]).map(m => `${esc(nm(m))} −${money(x.parts[m], cur)}`).join('、')}</div>` : '';
       how.innerHTML = !c.A ? '' : `<details class="pay" ${howOpen ? 'open' : ''}><summary class="h"><span>這筆怎麼還</span><span class="r">${howSum}${ic.chev.replace('<svg', '<svg class="chev"')}</span></summary>
         ${rfLine}${rows.length ? '<div class="tiny muted">按「已結清」＝旅途中已經先還了</div>' : ''}
-        ${!ok ? '<div class="tr"><span class="t muted">金額還沒對上</span></div>' : !rows.length ? '<div class="tr"><span class="t muted">這筆不用還錢</span></div>'
+        ${!ok ? `<div class="tr"><span class="t muted">${c.err.px ? esc(c.err.px) : '金額還沒對上'}</span></div>` : !rows.length ? '<div class="tr"><span class="t muted">這筆不用還錢</span></div>'
           : rows.map(r => `<div class="tr ${r.done ? 'done' : ''}"><span class="t">${av(r.from)}${nm(r.from)} <span class="arr">→</span> ${av(r.to)}${nm(r.to)}${r.k === 'net' ? `<span class="sub">原本 ${money(r.gross, cur)}・退稅折抵 −${money(r.rf, cur)}</span>` : r.k === 'rf' ? `<span class="sub">退稅分回${r.done ? '' : '・沒按已結清的話，併到最後結算'}</span>` : ''}</span><b class="num">${money(r.amt, cur)}</b>
             <button type="button" class="setb" data-set="${r.m}" data-k="${r.k}" aria-pressed="${r.done}" ${locked ? 'disabled' : ''}>${r.done ? '✓ 已結清' : '已結清？'}</button></div>`).join('')}
         ${rows.length > 1 && !locked ? `<div style="display:flex;justify-content:flex-end"><button type="button" class="btn sm ghost" id="eSetAll">${rows.every(r => r.done) ? '全部取消結清' : '全部結清'}</button></div>` : ''}</details>`;
       s.querySelector('#eSave').disabled = (isNew && locked) || (!!(c.err.pay || c.err.split) && !!c.A);
-      paintCard(); paintRf(); paintMore();
+      paintPx(); paintCard(); paintRf(); paintMore();
     };
     // 「更多」收起來時，摘要列出目前的設定，不用展開也知道
     const paintMore = () => {
@@ -2869,9 +3180,11 @@ function editExpense(e, pre = null) {
       s.querySelector('#ePayF').style.display = multi ? 'none' : '';
       s.querySelectorAll('#ePay [data-p]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.p === payType)));
       s.querySelector('#eSplit').innerHTML = IDS.map(m => `<button type="button" data-m="${m}" aria-pressed="${split.includes(m)}" style="--c:${COLORS[m]}" ${dis}>${avatar(m)}${nm(m)}</button>`).join('');
-      const A0 = cents(parseAmt(amtEl.value) || 0), vals = split.map(m => cents(Number(shareIn[m]) || 0));
-      const evTxt = !A0 ? '輸入總額後，自動平均分給勾選的人' : vals.every(v => v === vals[0]) ? `平均分攤・每人 <b>${money(vals[0], cur)}</b>` : `平均分攤・每人約 <b>${money(Math.floor(A0 / split.length), cur)}</b>（零頭自動分配）`;
-      s.querySelector('#eOwn').innerHTML = !split.length ? '<div class="erfoot"><span class="ng">至少要勾一位分攤的人</span></div>'
+      const pd0 = pxData(), hasPx = !!pd0, A0 = ownOf(cents(parseAmt(amtEl.value) || 0)), vals = split.map(m => cents(Number(shareIn[m]) || 0));
+      const pxOver = hasPx && pxCalc(cents(parseAmt(amtEl.value) || 0), pd0).own < 0;
+      s.querySelector('#eSplitLbl').innerHTML = hasPx ? `自己人的部分怎麼分 <span class="tiny muted">（實付扣掉代購成本${A0 ? `：${money(A0, cur)}` : ''}）</span>` : '分攤的人 <span class="tiny muted">（勾選後帶入平均金額，可以改）</span>';
+      const evTxt = pxOver ? '代購成本超過實付，請檢查上面的代購' : hasPx && !A0 && cents(parseAmt(amtEl.value) || 0) ? '全部都是代購，沒有自己人的部分' : !A0 ? '輸入總額後，自動平均分給勾選的人' : vals.every(v => v === vals[0]) ? `平均分攤・每人 <b>${money(vals[0], cur)}</b>` : `平均分攤・每人約 <b>${money(Math.floor(A0 / split.length), cur)}</b>（零頭自動分配）`;
+      s.querySelector('#eOwn').innerHTML = hasPx && !A0 && cents(parseAmt(amtEl.value) || 0) ? `<div class="evsum"><span>${evTxt}</span></div>` : !split.length ? '<div class="erfoot"><span class="ng">至少要勾一位分攤的人</span></div>'
         : !ownOpen ? `<div class="evsum"><span>${evTxt}</span>${split.length > 1 && !moneyLocked ? '<button type="button" class="btn sm ghost" id="eOwnEdit">各自金額</button>' : ''}</div>`
         : `<div class="erows">${split.map(m => `<div class="erow"><span class="who">${avatar(m, 's').replace('data-profile', 'data-x')}${nm(m)}</span>
           <input class="amt" data-om="${m}" type="text" inputmode="decimal" autocomplete="off" placeholder="0" value="${esc(shareIn[m] || '')}" ${dis}></div>`).join('')}</div>
@@ -2939,8 +3252,10 @@ function editExpense(e, pre = null) {
       const c = calc();
       if (c.err.pay) { toast(c.err.pay); return; }
       if (c.err.split) { toast(c.err.split); return; }
-      const paidM = Object.keys(c.paid), main = c.main;
-      const sp = IDS.filter(m => c.input[m]);
+      if (c.err.px) { toast(c.err.px); return; }
+      const paidM = Object.keys(c.paid), main = c.main, pd = pxData();
+      // 全部都是代購（沒有自己人的部分）時，split 只放主要付款人（金額是 0）
+      const sp0 = IDS.filter(m => c.input[m]), sp = sp0.length ? sp0 : [main];
       const data = {cur, amount, payer: main, split: sp, name: s.querySelector('#eName').value.trim(), note: s.querySelector('#eNote').value.trim(), paidDate: dateEl.value};
       if (paidM.length > 1) {
         data.paid = Object.fromEntries(paidM.map(m => [m, c.paid[m] / 100]));
@@ -2948,12 +3263,13 @@ function editExpense(e, pre = null) {
         data.payType = data.payTypes[main];
       } else if (payers.length > 1 ? pts[main] : payType) data.payType = payers.length > 1 ? pts[main] : payType;
       // 和「平均分攤、零頭給付最多的人」一模一樣就不存 shares（舊版 app 也看得懂）；舊記帳沒動到分攤時也維持原樣
-      const eqSig = JSON.stringify(exParts({amount, payer: main, split: sp, ...(data.paid ? {paid: data.paid} : {})}).share), mySig = JSON.stringify(c.share);
-      const evIn = evenShares(c.A, sp), eqIn = sp.every(m => c.input[m] === evIn[m]); // 剛好是平均＝平均分攤
-      // 舊的平均分攤記帳：總額、分攤的人、主要付款人和金額都沒動 → 維持平均分攤
-      const keepOld = e && !customSplit(e) && sameSet(e.split, sp) && cents(e.amount) === c.A && main === e.payer && mySig === shareSig0;
+      const eqSig = JSON.stringify(exParts({cur, amount, payer: main, split: sp, ...(data.paid ? {paid: data.paid} : {}), ...(pd ? {proxy: pd} : {})}).share), mySig = JSON.stringify(c.share);
+      const evIn = evenShares(c.own, sp), eqIn = sp.every(m => (c.input[m] || 0) === evIn[m]); // 剛好是平均＝平均分攤
+      // 舊的平均分攤記帳：總額、分攤的人、主要付款人、代購和金額都沒動 → 維持平均分攤
+      const keepOld = e && !customSplit(e) && sameSet(e.split, sp) && cents(e.amount) === c.A && main === e.payer && mySig === shareSig0 && pxSig(e) === pxSig({proxy: pd});
       if (keepOld) data.split = [...e.split];
-      else if (!(eqIn && eqSig === mySig)) data.shares = Object.fromEntries(sp.map(m => [m, c.input[m] / 100]));
+      else if (sp0.length && !(eqIn && eqSig === mySig)) data.shares = Object.fromEntries(sp.map(m => [m, c.input[m] / 100]));
+      data.proxy = pd; // null＝沒有代購（舊記帳有的話存檔時刪掉欄位）
       const owers = [...new Set(planTransfers(c.paid, c.share).map(t => t.from))];
       data.settled = settled.filter(m => owers.includes(m));
       if (chSel) data.channel = chSel.value;
@@ -2974,6 +3290,249 @@ function editExpense(e, pre = null) {
     });
   });
 }
+/* ───────────── 代購：委託人、匯率、收款（和四人結算無關） ───────────── */
+const pxClientById = id => S.pxClients.find(c => c.id === id) || null;
+const pxClientName = id => pxClientById(id)?.name || '（委託人已刪除）';
+const pxRateOf = m => { const r = Number(S.pxCfg[m]?.rate); return r > 0 ? r : null; };
+// 委託人用的匯率：自訂 > 負責人的代購匯率；都沒設時 null
+const pxRateFor = c => { const r = Number(c?.rate); return r > 0 ? r : pxRateOf(c?.owner); };
+const rateFmt = r => String(Math.round(r * 10000) / 10000);
+// 日圓 × 匯率，無條件進位到整數（匯率最多 4 位小數，用整數算避免浮點誤差）
+const twdCeil = (yen, rate) => { const ri = Math.round(rate * 10000); return Math.floor((Math.round(yen) * ri + 9999) / 10000); };
+const pxKey = (e, x) => `${e.id}:${x.k}`;
+const pxNewK = () => Math.random().toString(36).slice(2, 8);
+// 委託人的代購商品（照付款日期）→ 未收、已收
+function pxClientState(c) {
+  const all = [];
+  for (const e of S.expenses) for (const x of pxItemsOf(e)) if (x.client === c.id) all.push({key: pxKey(e, x), e, x, date: e.paidDate || localDateOf(e.createdAt)});
+  all.sort((a, b) => String(a.date).localeCompare(String(b.date)) || String(a.e.name).localeCompare(String(b.e.name)));
+  const pays = Array.isArray(c.pays) ? c.pays : [], paidKeys = new Set(pays.flatMap(p => p.keys || []));
+  const unpaid = all.filter(i => !paidKeys.has(i.key)), paid = all.filter(i => paidKeys.has(i.key));
+  const yenOf = list => list.reduce((n, i) => n + yenInt(i.x.yen), 0);
+  const have = new Set(all.map(i => i.key)), gone = [...paidKeys].filter(k => !have.has(k)).length;
+  return {all, unpaid, paid, pays, unpaidYen: yenOf(unpaid), paidYen: yenOf(paid), gone};
+}
+// 購物清單照片的小縮圖（代購商品從購物清單帶入時）
+const pxThumb = x => { const it = x.shop && S.shopping[x.shop.o]?.find(i => i.id === x.shop.id); return it?.thumb && it?.imgId ? it : null; };
+async function savePxClient(id, data) {
+  requireOnline();
+  const stamp = {updatedBy: S.me, updatedAt: serverTimestamp()};
+  if (id) { await updateDoc(doc(db, 'proxyClients', id), {...data, ...stamp}); return id; }
+  const ref = doc(collection(db, 'proxyClients'));
+  await setDoc(ref, {note: '', rate: null, pays: [], ...data, createdBy: S.me, createdAt: serverTimestamp(), ...stamp});
+  return ref.id;
+}
+// 收款紀錄：讀了再寫，避免兩支手機同時按蓋掉
+async function editPxPays(id, fn) {
+  requireOnline();
+  await runTransaction(db, async tx => {
+    const ref = doc(db, 'proxyClients', id), d = await tx.get(ref);
+    if (!d.exists()) throw new AppError('gone', '這位委託人已被刪除');
+    tx.update(ref, {pays: fn(Array.isArray(d.data().pays) ? d.data().pays : []), updatedBy: S.me, updatedAt: serverTimestamp()});
+  });
+}
+async function savePxRate(rate) {
+  requireOnline();
+  const ref = doc(db, 'proxyCfg', S.me);
+  if (rate > 0) await setDoc(ref, {rate, updatedBy: S.me, updatedAt: serverTimestamp()}); else await deleteDoc(ref);
+}
+const parseRate = v => { const n = Number(String(v || '').replace(/[,，\s]/g, '')); return isFinite(n) && n > 0 && n < 10 ? Math.round(n * 10000) / 10000 : null; };
+
+// 新增／編輯委託人（小視窗，可以疊在記帳畫面上面）。回傳委託人 id；取消回傳 null
+function pxClientDialog(c = null, ownerDef = S.me) {
+  return new Promise(res => {
+    const d = $('#dlg'); let owner = c?.owner || ownerDef;
+    d.innerHTML = `<h4>${c ? '編輯委託人' : '新增委託人'}</h4>
+      <label class="f"><span>名稱 <em>*</em></span><input class="in" id="pxCName" maxlength="40" value="${esc(c?.name || '')}" placeholder="例如 同事小美、媽媽"></label>
+      ${c ? `<div class="tiny muted" style="margin:-4px 2px 10px">負責人：${esc(nm(owner))}（建立後不能改）</div>` : `<div class="f"><span>誰負責向他收錢</span><div class="chips" id="pxCOwn">${IDS.map(m => `<button type="button" class="chpick" data-o="${m}" aria-pressed="${m === owner}">${esc(nm(m))}</button>`).join('')}</div></div>`}
+      <label class="f"><span>備註</span><input class="in" id="pxCNote" maxlength="100" value="${esc(c?.note || '')}" placeholder="LINE 名稱、怎麼付款…"></label>
+      <div class="tiny warnline" id="pxCErr" style="margin:-4px 2px 8px"></div>
+      <div class="sheet-acts"><button class="btn" data-a="no">取消</button><button class="btn pri" data-a="ok">${c ? '儲存' : '新增'}</button></div>`;
+    const veilWasOn = $('#veil').classList.contains('on');
+    $('#veil').classList.add('on'); d.classList.add('on');
+    setTimeout(() => d.querySelector('#pxCName').focus(), 50);
+    const close = v => { d.classList.remove('on'); if (!veilWasOn) $('#veil').classList.remove('on'); d.onclick = null; res(v); };
+    d.onclick = async ev => {
+      const o = ev.target.closest('[data-o]');
+      if (o) { owner = o.dataset.o; d.querySelectorAll('[data-o]').forEach(b => b.setAttribute('aria-pressed', String(b === o))); return; }
+      const a = ev.target.closest('[data-a]')?.dataset.a; if (!a) return;
+      if (a === 'no') return close(null);
+      const name = d.querySelector('#pxCName').value.trim(), note = d.querySelector('#pxCNote').value.trim(), err = d.querySelector('#pxCErr');
+      if (!name) { err.textContent = '請填名稱'; return; }
+      if (S.pxClients.some(x => x.id !== c?.id && x.owner === owner && x.name.trim() === name)) { err.textContent = `${nm(owner)} 已經有叫「${name}」的委託人`; return; }
+      const b = ev.target.closest('[data-a]'); b.disabled = true;
+      try {
+        const id = await savePxClient(c?.id, c ? {name, note} : {owner, name, note});
+        if (!c && !pxClientById(id)) S.pxClients.push({id, owner, name, note, rate: null, pays: []}); // 還沒收到同步前先放進清單，選單馬上看得到
+        close(id); toast(c ? '已更新' : `已新增委託人「${name}」`);
+      }
+      catch (e2) { err.textContent = errMsg(e2); b.disabled = false; }
+    };
+  });
+}
+
+// 記帳 → 代購頁籤：我的代購匯率、我的委託人（待收／已收）
+function pxTabHTML() {
+  const all = S.exPxAll === true, list = S.pxClients.filter(c => all || c.owner === S.me)
+    .map(c => ({c, st: pxClientState(c)}))
+    .sort((a, b) => (IDS.indexOf(a.c.owner) - IDS.indexOf(b.c.owner)) || (b.st.unpaidYen > 0) - (a.st.unpaidYen > 0) || String(a.c.name).localeCompare(String(b.c.name)));
+  const myRate = pxRateOf(S.me), fx = fxNow();
+  const mine = list.filter(i => i.c.owner === S.me);
+  let dueTwd = 0, dueJpy = 0, noRate = 0;
+  for (const {c, st} of mine) if (st.unpaidYen) { const r = pxRateFor(c); dueJpy += st.unpaidYen; if (r) dueTwd += twdCeil(st.unpaidYen, r); else noRate++; }
+  const recvTwd = mine.reduce((n, {st}) => n + st.pays.filter(p => p.cur === 'TWD').reduce((a, p) => a + (p.amt || 0), 0), 0);
+  const recvJpy = mine.reduce((n, {st}) => n + st.pays.filter(p => p.cur === 'JPY').reduce((a, p) => a + (p.amt || 0), 0), 0);
+  const rateBox = `<div class="card pxrate"><div class="row"><b>我的代購匯率</b><span class="tiny muted">目前匯率 ${fx.rate ? rateFmt(fx.rate) : '—'}</span></div>
+    <div class="row" style="margin-top:6px"><input class="in" id="pxRate" type="text" inputmode="decimal" autocomplete="off" placeholder="例如 0.218" value="${myRate ? rateFmt(myRate) : ''}"><button type="button" class="btn sm pri" id="pxRateSave">儲存</button></div>
+    <div class="tiny muted" style="margin-top:4px">${myRate ? `日圓 × ${rateFmt(myRate)}，每位委託人的總額無條件進位到整數。個別委託人可以另外設` : '還沒設定：委託人付台幣時要用這個匯率換算'}</div></div>`;
+  const sum = `<div class="pxsum"><div><div class="tiny muted">我待收</div><b class="num">${!dueJpy ? 'NT$0' : dueTwd ? `${twdFmt(dueTwd)}${noRate ? '＋' : ''}` : yen(dueJpy)}</b><div class="tiny muted">${dueJpy ? `日圓標價 ${yen(dueJpy)}${noRate ? `・${noRate} 位沒設匯率` : ''}` : '沒有待收'}</div></div>
+    <div><div class="tiny muted">我已收</div><b class="num">${recvTwd || !recvJpy ? twdFmt(recvTwd) : yen(recvJpy)}</b><div class="tiny muted">${recvTwd && recvJpy ? `另收日圓 ${yen(recvJpy)}` : `${mine.reduce((n, {st}) => n + st.pays.length, 0)} 筆收款`}</div></div></div>`;
+  const rows = list.map(({c, st}) => {
+    const r = pxRateFor(c), due = st.unpaidYen, cnt = st.unpaid.reduce((n, i) => n + (Number(i.x.qty) || 1), 0);
+    const status = !st.all.length ? '<span class="chip">還沒有商品</span>' : due ? `<span class="chip hib">待收</span>` : '<span class="chip ok">已收清</span>';
+    return `<button type="button" class="card pxcl" data-pxc="${esc(c.id)}">${avatar(c.owner, 's').replace('data-profile', 'data-x')}
+      <div class="body"><div class="nm">${esc(c.name)}</div><div class="tiny muted">${st.all.length ? `${new Set(st.all.map(i => i.e.id)).size} 張收據・${st.all.length} 項` : ''}${c.owner !== S.me ? `${st.all.length ? '・' : ''}${esc(nm(c.owner))} 負責` : ''}${c.rate ? `・自訂匯率 ${rateFmt(c.rate)}` : ''}</div></div>
+      <div class="amt">${due ? `<b class="num">${r ? twdFmt(twdCeil(due, r)) : yen(due)}</b><small class="num">${r ? `${yen(due)}・${cnt} 件` : '沒設匯率'}</small>` : ''}${status}</div></button>`;
+  }).join('');
+  const seg = `<div class="exf" id="pxF"><span class="lbl">委託人</span><button type="button" aria-pressed="${!all}" data-a="0">我負責的</button><button type="button" aria-pressed="${all}" data-a="1">全部</button></div>`;
+  return `${rateBox}${sum}${seg}${rows || `<div class="card empty">${ic.bag}${all ? '還沒有委託人' : '你還沒有委託人'}<div class="tiny muted" style="margin-top:6px">記帳時打開「這張收據有代購商品」，或在購物清單標記「代購給誰」都可以新增</div></div>`}
+    <button type="button" class="btn full" id="pxAddC" style="margin-top:12px">${ic.plus}新增委託人</button>
+    <p class="tiny muted" style="margin:10px 2px 0">代購的成本在記帳裡算給負責人（四人結算只看四個人）；向委託人收錢在這裡記，不影響結算。</p>`;
+}
+function bindPxTab() {
+  $('#pxF')?.addEventListener('click', ev => { const b = ev.target.closest('[data-a]'); if (b) { S.exPxAll = b.dataset.a === '1'; renderMoney(); } });
+  $('#main').querySelectorAll('[data-pxc]').forEach(b => b.onclick = () => openPxStatement(b.dataset.pxc));
+  $('#pxAddC')?.addEventListener('click', async () => { const id = await pxClientDialog(); if (id) renderMoney(); });
+  $('#pxRateSave')?.addEventListener('click', async ev => {
+    const raw = $('#pxRate').value.trim(), r = parseRate(raw);
+    if (raw && !r) { toast('匯率請填 0～10 之間的數字，例如 0.218'); return; }
+    ev.currentTarget.disabled = true;
+    try { await savePxRate(r); toast(r ? `代購匯率已設為 ${rateFmt(r)}` : '已清除代購匯率'); } catch (e) { toast(errMsg(e)); ev.currentTarget.disabled = false; }
+  });
+}
+
+// 委託人對帳單：未收的商品、合計算式、複製／分享／存成圖片、記錄收款
+let pxStId = null;
+function openPxStatement(id) {
+  pxStId = id;
+  const c = pxClientById(id); if (!c) return;
+  openSheet(`<h3><span id="pxStTitle">${esc(c.name)}</span><button class="iconbtn x" data-close aria-label="關閉">${ic.x}</button></h3><div id="pxSt"></div>`, () => { paintPxStatement(); });
+  sheetClose = () => { pxStId = null; };
+}
+function pxStatementText(c, st, r) {
+  const lines = [`【代購明細】${c.name}`];
+  let last = '';
+  for (const i of st.unpaid) {
+    const d = `${md(i.date)} ${i.e.name || ''}`.trim();
+    if (d !== last) { lines.push(`— ${d}`); last = d; }
+    lines.push(`・${i.x.name}${Number(i.x.qty) > 1 ? ` ×${i.x.qty}` : ''}　¥${yenInt(i.x.yen).toLocaleString()}`);
+  }
+  lines.push(`日圓合計：¥${st.unpaidYen.toLocaleString()}`);
+  if (r) lines.push(`台幣：¥${st.unpaidYen.toLocaleString()} × ${rateFmt(r)} ＝ NT$${twdCeil(st.unpaidYen, r).toLocaleString()}（無條件進位）`);
+  lines.push('付日圓照上面的標價，付台幣照台幣金額，擇一即可 🙏');
+  return lines.join('\n');
+}
+function paintPxStatement() {
+  const box = $('#pxSt'), c = pxClientById(pxStId);
+  if (!box) return;
+  if (!c) { box.innerHTML = '<p class="empty">這位委託人已被刪除</p>'; return; }
+  $('#pxStTitle').textContent = c.name;
+  const st = pxClientState(c), r = pxRateFor(c), mine = c.owner === S.me, due = st.unpaidYen;
+  const pend = box.querySelector('#pxPayCur') ? {cur: box.querySelector('#pxPayCur [aria-pressed=true]')?.dataset.c, amt: box.querySelector('#pxPayAmt')?.value} : null;
+  const itemRow = i => { const t = pxThumb(i.x); return `<div class="pxit">${t ? `<button type="button" class="pxth" data-pximg="${esc(i.key)}" aria-label="看照片"><img src="${esc(t.thumb)}" alt=""></button>` : ''}
+      <div class="body"><div>${esc(i.x.name)}${Number(i.x.qty) > 1 ? ` <span class="tiny muted">×${esc(i.x.qty)}</span>` : ''}</div><div class="tiny muted">${md(i.date)} ${esc(i.e.name || '')}${i.x.tax === 8 ? '・食品' : ''}</div></div><b class="num">${yen(yenInt(i.x.yen))}</b></div>`; };
+  const payRow = (p, i) => `<div class="pxpay"><span>${p.at ? md(localDateOf(p.at)) : ''} 收 <b class="num">${p.cur === 'TWD' ? twdFmt(p.amt) : yen(p.amt)}</b><span class="tiny muted">・${(p.keys || []).length} 項・標價 ${yen(p.yen || 0)}${p.cur === 'TWD' && p.rate ? `・匯率 ${rateFmt(p.rate)}` : ''}${p.by && p.by !== c.owner ? `・${esc(nm(p.by))} 記` : ''}</span></span>${mine ? `<button type="button" class="btn sm ghost" data-unpay="${i}">取消</button>` : ''}</div>`;
+  box.innerHTML = `<div class="tiny muted" style="margin:-4px 2px 10px">${avatar(c.owner, 's').replace('data-profile', 'data-x')} ${esc(nm(c.owner))} 負責${c.note ? `・${esc(c.note)}` : ''}</div>
+    ${st.gone ? `<div class="warn">已收款的商品裡有 ${st.gone} 項在記帳裡被刪除了，收款金額照當時記的為準。</div>` : ''}
+    <div class="pxblock"><div class="row"><b>還沒收的</b><span class="tiny muted">${st.unpaid.length} 項</span></div>
+      ${st.unpaid.length ? st.unpaid.map(itemRow).join('') : '<p class="tiny muted" style="margin:6px 0">都收清了 🎉</p>'}
+      ${due ? `<div class="pxtot"><div class="rfl"><span>日圓合計（含稅標價）</span><b class="num">${yen(due)}</b></div>
+        ${r ? `<div class="rfl"><span>${yen(due)} × ${rateFmt(r)} ＝ ${(Math.round(due * Math.round(r * 10000)) / 10000).toLocaleString(undefined, {maximumFractionDigits: 4})}</span><b class="num big">${twdFmt(twdCeil(due, r))}</b></div><div class="tiny muted">台幣無條件進位到整數・${c.rate ? '這位委託人的自訂匯率' : `${esc(nm(c.owner))} 的代購匯率`}</div>`
+          : `<div class="tiny warnline">${esc(nm(c.owner))} 還沒設定代購匯率，付台幣時沒辦法換算（到「代購」頁籤設定）</div>`}</div>
+        <div class="pxacts"><button type="button" class="btn sm" id="pxCopy">${ic.copy}複製文字</button>${navigator.share ? `<button type="button" class="btn sm" id="pxShare">分享</button>` : ''}<button type="button" class="btn sm" id="pxPng">${ic.camera}存成圖片</button></div>` : ''}</div>
+    ${due && mine ? `<div class="pxblock"><b>記錄收款</b><div class="tiny muted" style="margin:2px 0 8px">會把上面 ${st.unpaid.length} 項標成已收</div>
+      <div class="seg" id="pxPayCur"><button type="button" data-c="TWD" aria-pressed="${(pend?.cur || (r ? 'TWD' : 'JPY')) === 'TWD'}" ${r ? '' : 'disabled'}>收台幣</button><button type="button" data-c="JPY" aria-pressed="${(pend?.cur || (r ? 'TWD' : 'JPY')) === 'JPY'}">收日圓</button></div>
+      <div class="row" style="margin-top:8px"><input class="in" id="pxPayAmt" type="text" inputmode="numeric" autocomplete="off"><button type="button" class="btn pri" id="pxPayOk">${ic.check}已收款</button></div></div>` : due && !mine ? `<p class="tiny muted" style="margin:0 2px 12px">收款由 ${esc(nm(c.owner))} 記錄。</p>` : ''}
+    ${st.pays.length ? `<details class="pxblock" ${st.unpaid.length ? '' : 'open'}><summary><b>收款紀錄</b><span class="tiny muted">${st.pays.length} 筆・${st.paid.length} 項</span></summary>
+      ${st.pays.map(payRow).join('')}${st.paid.length ? `<div class="tiny muted" style="margin:8px 0 2px">已收款的商品</div>${st.paid.map(itemRow).join('')}` : ''}</details>` : ''}
+    ${mine ? `<div class="pxblock"><b>這位委託人的設定</b>
+      <div class="row" style="margin-top:6px"><input class="in" id="pxCRate" type="text" inputmode="decimal" autocomplete="off" placeholder="${pxRateOf(c.owner) ? `沒填＝用 ${rateFmt(pxRateOf(c.owner))}` : '自訂匯率（選填）'}" value="${c.rate ? rateFmt(c.rate) : ''}"><button type="button" class="btn sm" id="pxCRateSave">儲存匯率</button></div>
+      <div class="tiny muted" style="margin-top:4px">只有這位委託人用自訂匯率；已收款的金額不會跟著改</div>
+      <div class="pxacts" style="margin-top:10px"><button type="button" class="btn sm" id="pxCEdit">${ic.edit}改名稱、備註</button>${st.all.length ? '' : `<button type="button" class="btn sm" id="pxCDel">${ic.trash}刪除委託人</button>`}</div></div>` : ''}`;
+  const amtEl = box.querySelector('#pxPayAmt');
+  const fillAmt = cur => { if (amtEl) amtEl.value = cur === 'TWD' ? (r ? twdCeil(due, r) : '') : due; };
+  if (amtEl) { if (pend?.amt) amtEl.value = pend.amt; else fillAmt(box.querySelector('#pxPayCur [aria-pressed=true]')?.dataset.c); }
+  box.querySelector('#pxPayCur')?.addEventListener('click', ev => { const b = ev.target.closest('[data-c]'); if (!b || b.disabled) return; box.querySelectorAll('#pxPayCur [data-c]').forEach(x => x.setAttribute('aria-pressed', String(x === b))); fillAmt(b.dataset.c); });
+  box.querySelector('#pxPayOk')?.addEventListener('click', async ev => {
+    const cur = box.querySelector('#pxPayCur [aria-pressed=true]')?.dataset.c || 'JPY', amt = yenInt(amtEl.value);
+    if (!(amt > 0)) { toast('請填收到的金額'); amtEl.focus(); return; }
+    const keys = st.unpaid.map(i => i.key);
+    const exp = cur === 'TWD' ? twdCeil(due, r) : due;
+    if (amt !== exp && !await confirmDialog({title: '金額和應收不一樣', body: `應收 ${cur === 'TWD' ? twdFmt(exp) : yen(exp)}，你填的是 ${cur === 'TWD' ? twdFmt(amt) : yen(amt)}。\n還是照這個金額記錄？`, ok: '照這個金額'})) return;
+    ev.currentTarget.disabled = true;
+    try {
+      await editPxPays(c.id, pays => [...pays, {id: pxNewK(), at: Date.now(), by: S.me, cur, amt, yen: due, rate: cur === 'TWD' ? r : null, keys}]);
+      toast(`已記錄收款 ${cur === 'TWD' ? twdFmt(amt) : yen(amt)}`);
+    } catch (e) { toast(errMsg(e)); ev.currentTarget.disabled = false; }
+  });
+  box.querySelectorAll('[data-unpay]').forEach(b => b.onclick = async () => {
+    const p = st.pays[+b.dataset.unpay];
+    if (!await confirmDialog({title: '取消這筆收款？', body: `${p.cur === 'TWD' ? twdFmt(p.amt) : yen(p.amt)}・${(p.keys || []).length} 項\n這些商品會回到「還沒收的」。`, ok: '取消收款', danger: true})) return;
+    try { await editPxPays(c.id, pays => pays.filter(x => x.id !== p.id)); toast('已取消收款'); } catch (e) { toast(errMsg(e)); }
+  });
+  box.querySelector('#pxCopy')?.addEventListener('click', () => copyText(pxStatementText(c, st, r), '已複製明細，可以貼到 LINE'));
+  box.querySelector('#pxShare')?.addEventListener('click', () => navigator.share({title: `${c.name} 代購明細`, text: pxStatementText(c, st, r)}).catch(() => {}));
+  box.querySelector('#pxPng')?.addEventListener('click', () => pxStatementPng(c, st, r));
+  box.querySelectorAll('[data-pximg]').forEach(b => b.onclick = () => { const i = st.all.find(z => z.key === b.dataset.pximg), t = i && pxThumb(i.x); if (t) openShopImg(t); });
+  box.querySelector('#pxCRateSave')?.addEventListener('click', async ev => {
+    const raw = box.querySelector('#pxCRate').value.trim(), v = parseRate(raw);
+    if (raw && !v) { toast('匯率請填 0～10 之間的數字'); return; }
+    ev.currentTarget.disabled = true;
+    try { await savePxClient(c.id, {rate: v}); toast(v ? `自訂匯率 ${rateFmt(v)}` : `改回 ${nm(c.owner)} 的代購匯率`); } catch (e) { toast(errMsg(e)); ev.currentTarget.disabled = false; }
+  });
+  box.querySelector('#pxCEdit')?.addEventListener('click', () => pxClientDialog(c));
+  box.querySelector('#pxCDel')?.addEventListener('click', async () => {
+    if (!await confirmDialog({title: `刪除委託人「${c.name}」？`, body: '這位委託人還沒有任何代購商品，刪除後不能復原。', ok: '刪除', danger: true})) return;
+    try { requireOnline(); await deleteDoc(doc(db, 'proxyClients', c.id)); closeSheet(); toast('已刪除'); } catch (e) { toast(errMsg(e)); }
+  });
+}
+// 對帳單存成圖片（只畫文字，不用外部套件）：手機能分享檔案就用分享，否則下載
+async function pxStatementPng(c, st, r) {
+  const W = 720, P = 40, cv = document.createElement('canvas'), x = cv.getContext('2d');
+  const F = (w, s) => `${w} ${s}px "Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif`;
+  const rows = [];
+  let last = '';
+  for (const i of st.unpaid) {
+    const d = `${md(i.date)} ${i.e.name || ''}`.trim();
+    if (d !== last) { rows.push({t: 'h', a: d}); last = d; }
+    rows.push({t: 'i', a: `${i.x.name}${Number(i.x.qty) > 1 ? ` ×${i.x.qty}` : ''}`, b: yen(yenInt(i.x.yen))});
+  }
+  const H = P * 2 + 80 + rows.length * 44 + (r ? 150 : 90);
+  cv.width = W; cv.height = H;
+  x.fillStyle = '#FBF8F1'; x.fillRect(0, 0, W, H);
+  x.fillStyle = '#2B3A4E'; x.font = F(700, 34); x.textBaseline = 'top'; x.fillText(`${c.name} 的代購明細`, P, P);
+  x.fillStyle = '#8593A3'; x.font = F(400, 20); x.fillText(`${nm(c.owner)} 代購・${localDateOf(Date.now())}`, P, P + 46);
+  let y = P + 90;
+  const fit = (s, max) => { while (s.length > 1 && x.measureText(s).width > max) s = s.slice(0, -2) + '…'; return s; };
+  for (const row of rows) {
+    if (row.t === 'h') { x.fillStyle = '#0B7478'; x.font = F(700, 20); x.fillText(fit(row.a, W - P * 2), P, y + 10); }
+    else { x.fillStyle = '#2B3A4E'; x.font = F(400, 24); x.fillText(fit(row.a, W - P * 2 - 150), P + 16, y + 8); x.font = F(700, 24); x.textAlign = 'right'; x.fillText(row.b, W - P, y + 8); x.textAlign = 'left'; }
+    y += 44;
+  }
+  x.strokeStyle = 'rgba(43,58,78,.3)'; x.lineWidth = 2; x.beginPath(); x.moveTo(P, y + 10); x.lineTo(W - P, y + 10); x.stroke();
+  y += 26;
+  x.fillStyle = '#2B3A4E'; x.font = F(400, 24); x.fillText('日圓合計（含稅標價）', P, y); x.font = F(700, 26); x.textAlign = 'right'; x.fillText(yen(st.unpaidYen), W - P, y); x.textAlign = 'left';
+  if (r) {
+    y += 46; x.font = F(400, 22); x.fillStyle = '#56667A'; x.fillText(`${yen(st.unpaidYen)} × ${rateFmt(r)}（無條件進位）`, P, y);
+    y += 40; x.fillStyle = '#0B7478'; x.font = F(700, 36); x.fillText('台幣', P, y); x.textAlign = 'right'; x.fillText(twdFmt(twdCeil(st.unpaidYen, r)), W - P, y); x.textAlign = 'left';
+  }
+  const blob = await new Promise(res => cv.toBlob(res, 'image/png'));
+  const name = `代購明細_${c.name}_${localDateOf(Date.now())}.png`, file = new File([blob], name, {type: 'image/png'});
+  if (navigator.canShare?.({files: [file]})) { try { await navigator.share({files: [file], title: name}); return; } catch (e) { if (e?.name === 'AbortError') return; } }
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = name; document.body.append(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+  toast('已存成圖片');
+}
+
 function parseAmt(v) {
   const n = Number(String(v).replace(/[,，\s]/g, ''));
   if (!isFinite(n) || n <= 0) return null;
@@ -4217,10 +4776,17 @@ const rfAmt = r => r.lo === r.hi ? yen(r.hi) : `${yen(r.lo)}～${Math.round(r.hi
 const rfFeeText = s => !s ? `手續費未知（0～${rfData()?.unknownFeeMax ?? 2.3}%）` : s.feePct == null && s.feeYen == null ? '手續費未公布' : `手續費 ${s.feeYen ? `每筆 ${yen(s.feeYen)}` : `${s.feePct}%`}${s.feeBasis === 'taxIncl' ? '（含稅價）' : s.feeBasis === 'taxExcl' ? '（未稅）' : ''}`;
 const rfDefMethod = s => s?.cash === 'no' ? 'card' : 'cash';
 // 記帳上的退稅資料 → 計算結果（有填實際金額時用實際金額）
+// 可退稅的金額：有代購時扣掉「不可退稅」的代購商品（食品從 8% 對象扣）
+function rfBaseOf(e) {
+  const t = e?.taxRefund || {}, px = pxItemsOf(e).length ? exParts(e).px : null;
+  if (!px) return {amt: e.amount, food: t.food};
+  const nr = px.items.filter(x => x.noRf), nr8 = nr.filter(x => x.tax === 8).reduce((n, x) => n + x.cost, 0), nrAll = nr.reduce((n, x) => n + x.cost, 0);
+  return {amt: Math.max(0, cents(e.amount) - nrAll) / 100, food: Math.max(0, px.food - nr8) / 100};
+}
 function rfOfExp(e) {
   const t = e?.taxRefund; if (!t || e.cur !== 'JPY') return null;
-  const store = t.storeId ? rfById(t.storeId) : rfStoreFor(t.store);
-  const r = rfCalc(e.amount, t.food, store, store?.cash === 'no' ? 'card' : t.method);
+  const store = t.storeId ? rfById(t.storeId) : rfStoreFor(t.store), b = rfBaseOf(e);
+  const r = rfCalc(b.amt, b.food, store, store?.cash === 'no' ? 'card' : t.method);
   const actual = t.actual > 0 ? Math.round(t.actual) : null;
   return {...r, store, method: store?.cash === 'no' ? 'card' : t.method, actual, val: actual ?? r.lo, valText: actual ? yen(actual) : `約 ${rfAmt(r)}`};
 }
@@ -4228,7 +4794,7 @@ const rfKey = t => t.storeId || String(t.store || '').trim().toLowerCase();
 // 同一人、同店、同日的退稅記帳合計未稅金額（門檻用）
 function rfGroupExcl(who, date, key, skipId) {
   return S.expenses.filter(x => x.id !== skipId && x.cur === 'JPY' && x.taxRefund && x.taxRefund.who === who && x.paidDate === date && rfKey(x.taxRefund) === key)
-    .reduce((n, x) => n + rfCalc(x.amount, x.taxRefund.food, null, 'card').excl, 0);
+    .reduce((n, x) => { const b = rfBaseOf(x); return n + rfCalc(b.amt, b.food, null, 'card').excl; }, 0);
 }
 
 /* ── 出發前重新確認（日本 11/1 起免稅新制） ── */
