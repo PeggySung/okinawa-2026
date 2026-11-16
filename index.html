@@ -3647,7 +3647,7 @@ function editExpense(e, pre = null) {
       const evTxt = pxOver ? '代購成本超過實付，請檢查上面的代購' : hasPx && !A0 && cents(parseAmt(amtEl.value) || 0) ? '全部都是代購，沒有自己人的部分' : !A0 ? '輸入總額後，自動平均分給勾選的人' : vals.every(v => v === vals[0]) ? `平均分攤・每人 <b>${money(vals[0], cur)}</b>` : `平均分攤・每人約 <b>${money(Math.floor(A0 / split.length), cur)}</b>（零頭自動分配）`;
       const jp = cur === 'JPY', tagBtn = '';
       const im = imOn();
-      s.querySelector('#eItGo').innerHTML = jp && !im && !px.on && !moneyLocked ? '<button type="button" class="itgo" id="eItOn">🧾 照收據一件一件點<span class="tiny">買東西的收據：每件點一下是誰的（代購也可以），優惠券和稅 app 自己算</span></button>' : '';
+      s.querySelector('#eItGo').innerHTML = jp && !im && !moneyLocked ? '<button type="button" class="itgo" id="eItOn">🧾 照收據一件一件點<span class="tiny">買東西的收據：每件點一下是誰的（代購也可以），優惠券和稅 app 自己算</span></button>' : '';
       s.querySelector('#eSplit').style.display = im ? 'none' : '';
       if (im) s.querySelector('#eSplitLbl').innerHTML = '🧾 照收據一件一件點';
       const ownWho = m => `<span class="who">${avatar(m, 's').replace('data-profile', 'data-x')}${nm(m)}</span>`;
@@ -3698,10 +3698,26 @@ function editExpense(e, pre = null) {
     s.querySelector('#ePaidBox').oninput = ev => { const i = ev.target.closest('[data-pm]'); if (i) { paidIn[i.dataset.pm] = i.value; paintSums(); } };
     s.querySelector('#ePaidBox').onclick = ev => { const b = ev.target.closest('[data-p]'), g = ev.target.closest('[data-ptm]'); if (!b || !g) return; pts[g.dataset.ptm] = b.dataset.p; g.querySelectorAll('[data-p]').forEach(x => x.setAttribute('aria-pressed', String(x === b))); paintCard(); };
     s.querySelector('#ePay').onclick = ev => { const b = ev.target.closest('[data-p]'); if (b) { payType = b.dataset.p; paint(); } };
-    s.querySelector('#eItGo').onclick = ev => {
+    s.querySelector('#eItGo').onclick = async ev => {
       if (!ev.target.closest('#eItOn')) return;
-      rc.im = true; if (!rc.items.length) rc.items.push(itRow());
-      paint(); s.querySelector('#eOwn [data-ip]')?.focus();
+      // 已經記過的帳：舊的代購商品、照收據標價的算式，盡量轉成一行一行
+      if (!rc.items.length) {
+        const rows = [];
+        if (px.on) for (const x of px.items) {
+          const r = x.tax === 8 ? 8 : 10, p = rc.ex ? (pxNum(x.ex) > 0 ? pxNum(x.ex) : Math.round(pxNum(x.yen) * 100 / (100 + r))) : pxNum(x.yen);
+          rows.push({k: x.k || itNewK(), n: x.name || '', p: p ? String(p) : '', q: Number(x.qty) > 1 ? Number(x.qty) : 1, f: r === 8, ...(x.noRf ? {noRf: true} : {}), ...(x.noDisc ? {nd: true} : {}), to: x.client ? [{w: 'c:' + x.client, n: 1}] : [], ...(x.shop?.id ? {shop: {o: x.shop.o, id: x.shop.id}} : {})});
+        }
+        const tg = rc0?.tags || {};
+        for (const m of IDS) { const t = tg[m]; if (!t) continue; for (const [key, f, nd] of [['g', false, false], ['f', true, false], ['gn', false, true], ['fn', true, true]]) { const v = String(t[key] || '').trim(); if (v) rows.push({k: itNewK(), p: v, ...(f ? {f: true} : {}), ...(nd ? {nd: true} : {}), to: [{w: m, n: 1}]}); } }
+        const hadOwn = cents(parseAmt(amtEl.value) || 0) > (px.on ? px.items.reduce((n, x) => n + pxNum(x.yen), 0) * 100 : 0) && !Object.keys(tg).length && !isNew;
+        if (px.on && !await confirmDialog({title: '改成一件一件點？', body: `原本的 ${px.items.length} 件代購會變成一行一行。${px.items.some(x => !(pxNum(x.ex) > 0)) ? '\n\n代購的價格先帶原本的含稅標價，請照收據改成收據上印的價格。' : ''}${hadOwn ? '\n\n自己人買的東西要照收據一行一行補上。' : ''}`, ok: '改', danger: false})) return;
+        rc.items = rows.length ? rows : [itRow()];
+        if (hadOwn && rows.length) rc.items.push(itRow());
+      }
+      if (px.on) { px.on = false; px.items = []; px.ed = null; px.pick = false; }
+      rc.im = true;
+      paint();
+      const first = [...s.querySelectorAll('#eOwn [data-ip]')].find(x => !x.value); (first || s.querySelector('#eOwn [data-ip]'))?.focus();
     };
     // 一件一件點：點選、份數、更多設定
     const itClick = async ev => {
