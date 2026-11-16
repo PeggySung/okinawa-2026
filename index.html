@@ -1023,6 +1023,7 @@ details.rcbox .rcin{padding:2px 0 10px}
 .itrow .l4 .in{background:var(--card)}
 .itrow .l5 .pxgrp .who{width:62px}
 .itsum{margin-top:12px;padding:10px 12px;border-radius:14px;background:var(--sand);font-size:13px;line-height:1.7;color:var(--ink-2)}
+.itf8{margin-top:10px}
 .itsum .lnk{color:var(--sea-deep);text-decoration:underline;font-size:13px;padding:0 2px}
 .itsum .ppl{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
 .itsum .pp{display:inline-flex;align-items:center;gap:6px;padding:3px 10px 3px 3px;border-radius:999px;background:var(--card);box-shadow:inset 0 0 0 1.5px var(--line);font-size:13.5px;color:var(--ink)}
@@ -2395,7 +2396,8 @@ function rcGuideOpen() {
     ${line('1240', 'UHAグミ 2コ', who('yun', '🛍️ 彭'), true)}
     <div class="tip"><b>兩個人分一件</b>：兩個人都點，下面「幾份」填 2 和 1（例如 3 入保存容器）。<br>
       <b>代購</b>：點「🛍️ 代購…」選委託人（彭是 ${who('yun')} 的委託人）。成本算 ${who('yun')} 的，她再向彭收錢。<br>
-      <b>吃的喝的</b>（零食、飲料、保健軟糖，酒除外）點「🍙 食」。</div></div>
+      <b>吃的喝的</b>（零食、飲料、保健軟糖，酒除外）點「🍙 食」。<br>
+      <b>怕漏點食？</b>收據上有「8%対象」的話（這張是 1,442），填在下面「收據印的 8%対象」，漏點了會提醒你是哪一行。</div></div>
 
   <div class="gstep"><h4><span class="gno">3</span>看下面的結果</h4>
     <p>app 會自己判斷收據是<b>未稅</b>（實付比商品加起來多），也會算出<b>優惠 −¥696</b>，照比例分給每件：</p>
@@ -2943,7 +2945,7 @@ function editExpense(e, pre = null) {
     const channel = () => chSel ? chSel.value : (e?.channel || null);
     // ── 照收據填：含稅／未稅、8% 對象、全單折扣、每個人的標價（rcpt 只是輸入的原樣，金額另外換算存）──
     const rc0 = e?.rcpt || null, food0 = e?.proxy?.food || e?.taxRefund?.food || pre?.refund?.food || pre?.proxyFood || '';
-    const rc = {ex: rc0 ? !!rc0.ex : !e && !food0 && localGet('rcEx') === '1', f8: rc0?.f8 ? String(rc0.f8) : food0 ? String(food0) : '', disc: '', tag: false, tags: {}, im: rc0?.mode === 'items', items: [], exSet: rc0?.mode === 'items' && 'ex' in rc0 ? !!rc0.ex : null};
+    const rc = {ex: rc0 ? !!rc0.ex : !e && !food0 && localGet('rcEx') === '1', f8: rc0?.f8 ? String(rc0.f8) : food0 ? String(food0) : '', disc: '', tag: false, tags: {}, f8c: rc0?.mode === 'items' && rc0.f8 ? String(rc0.f8) : '', im: rc0?.mode === 'items', items: [], exSet: rc0?.mode === 'items' && 'ex' in rc0 ? !!rc0.ex : null};
     for (const m of IDS) { const t = rc0?.tags?.[m]; rc.tags[m] = {g: t?.g || '', f: t?.f || '', gn: t?.gn || '', fn: t?.fn || ''}; }
     rc.nd = !!rc0?.nd; // 有商品不參加全單折扣
     if (rc0?.disc) rc.disc = String(rc0.disc);
@@ -2980,7 +2982,7 @@ function editExpense(e, pre = null) {
           if (r.shop?.id) o.shop = {o: r.shop.o, id: r.shop.id};
           return o;
         });
-        return {mode: 'items', items, ...(rc.exSet != null ? {ex: !!rc.exSet} : {})};
+        return {mode: 'items', items, ...(rc.exSet != null ? {ex: !!rc.exSet} : {}), ...(yenInt(rc.f8c) > 0 ? {f8: yenInt(rc.f8c)} : {})};
       }
       const o = {};
       if (rc.ex) o.ex = true;
@@ -3038,6 +3040,7 @@ function editExpense(e, pre = null) {
       if (!(out.incl > 0)) { out.err = '商品價格加起來是 0'; return out; }
       let k = Bd > 0 ? (A / 100 - Bn) / Bd : (A / 100) / Bn;
       if (k < 0) { out.warn = '不打折的商品加起來比實付還多，請檢查「不打折」'; k = 0; }
+      out.k = k;
       if (out.disc < -Math.max(3, A / 100 * 0.005)) out.warn = `實付比商品${out.ex ? '加稅後' : ''}多 ${yen(Math.round(-out.disc))}：是不是漏了一行？`;
       const keys = [], w = {}, meta = {};
       for (const x of out.rows) {
@@ -3539,6 +3542,20 @@ function editExpense(e, pre = null) {
         const clAmt = {}; for (const x of it.cl) clAmt[x.w] = (clAmt[x.w] || 0) + x.amt;
         const ppl = [...IDS.filter(m => it.mem[m] > 0).map(m => `<span class="pp"><i style="--c:${COLORS[m]}">${esc(nm(m))}</i><b>${money(it.mem[m], cur)}</b></span>`),
           ...Object.entries(clAmt).map(([w, v]) => { const cl = itWho(w); return cl ? `<span class="pp"><i style="--c:${COLORS[cl.owner]}">🛍️ ${esc(cl.name)}</i><b>${money(v, cur)}</b><span class="tiny muted">算${esc(nm(cl.owner))}的・向${esc(cl.name)}收 ${yen(col[cl.id] || 0)}</span></span>` : ''; })];
+        const fh = s.querySelector('#eItF8Hint'), P = yenInt(rc.f8c);
+        if (fh) {
+          let h = '';
+          if (P > 0 && A && !it.err && it.k > 0) {
+            // 收據印的 8% 對象：未稅收據是折後未稅，含稅收據是折後含稅
+            const now = it.ex ? it.food / 100 / 1.08 : it.food / 100, gap = P - now;
+            if (Math.abs(gap) <= Math.max(3, P * 0.005)) h = '<span class="ok">✓ 食品對上了</span>';
+            else {
+              const want = Math.abs(gap) / it.k, cand = it.rows.filter(x => !!x.r.f === gap < 0 && Math.abs(Math.max(0, x.v - x.off) - want) <= Math.max(2, want * 0.004)).map(x => x.i + 1);
+              h = `<span class="warnline">⚠ 收據的 8% 對象是 ${yen(P)}，你點「🍙 食」的加起來約 ${yen(Math.round(now))}，${gap > 0 ? `差 ${yen(Math.round(gap))}：是不是有吃的忘了點「🍙 食」？` : `多了 ${yen(Math.round(-gap))}：是不是點錯了「🍙 食」？`}${cand.length ? `（可能是第 ${cand.join('、')} 行）` : ''}</span>`;
+            }
+          }
+          fh.innerHTML = h;
+        }
         isum.innerHTML = !rc.items.length || !(it.S > 0) ? '<span class="muted">填了價格以後，這裡會算出每個人要付多少</span>' : `
           <div>收據價格：<b>${it.ex ? '未稅' : '含稅'}</b>（${it.auto ? (it.ex ? '自動判斷：實付比商品加起來多' : '自動判斷') : '手動選的'}）<button type="button" class="lnk" data-iex>${it.auto ? `改成${it.ex ? '含稅' : '未稅'}` : '改回自動'}</button></div>
           <div>商品 ${yen(it.S)}${it.ex ? ` → 加稅 ${yen(Math.round(it.incl))}` : ''}${A ? `・實付 ${yen(A)}` : ''}${A && it.disc >= 1 ? `・<b>優惠 −${yen(Math.round(it.disc))}</b>（照比例分給每件）` : ''}</div>
@@ -3613,6 +3630,8 @@ function editExpense(e, pre = null) {
         <div id="eItList">${rc.items.map((r, i) => itRowHTML(r, i, dis)).join('')}</div>
         ${locked ? '' : '<button type="button" class="btn sm" id="eItAdd" style="margin-top:8px">＋ 再加一行</button>'}
         <div class="itsum" id="eItSum"></div>
+        <label class="f itf8"><span>收據印的「8%対象」 <span class="tiny muted">選填・幫你檢查有沒有漏點「🍙 食」</span></span><input class="in" id="eItF8" type="text" inputmode="numeric" autocomplete="off" placeholder="收據上有印才填，例如 1442" value="${esc(rc.f8c)}" ${dis}></label>
+        <div class="tiny" id="eItF8Hint" style="margin:-6px 2px 8px"></div>
         <div class="erfoot" id="eOwnFoot"></div>
         <div style="display:flex;justify-content:space-between;align-items:center;gap:6px;flex-wrap:wrap;margin-top:4px">${rcGuideBtn()}${locked ? '' : '<button type="button" class="btn sm ghost" id="eItOff">改回平均分攤</button>'}</div>`;
     };
@@ -3759,6 +3778,7 @@ function editExpense(e, pre = null) {
       else if ('iname' in d) rc.items[+d.iname].n = t.value;
       else if ('iq' in d) rc.items[+d.iq].q = t.value;
       else if ('ioff' in d) rc.items[+d.ioff].off = t.value;
+      else if (t.id === 'eItF8') rc.f8c = t.value;
       else return false;
       paintSums(); return true;
     };
