@@ -128,7 +128,7 @@ h2.sec .deco{width:22px;height:22px;color:var(--hib)}
 .av{--c:var(--ink);width:30px;height:30px;border-radius:50%;object-fit:cover;background:var(--sand);box-shadow:0 0 0 2px var(--card),0 0 0 3.5px var(--c);flex:none;display:inline-block;vertical-align:middle}
 .av.s{width:22px;height:22px;box-shadow:0 0 0 1.5px var(--card),0 0 0 3px var(--c)}
 .av.l{width:46px;height:46px}
-.av.xl{width:132px;height:132px;box-shadow:0 0 0 4px var(--card),0 0 0 8px var(--c)}
+.av.xl{width:132px;height:132px;box-shadow:0 0 0 4px var(--card),0 0 0 8px var(--c);image-rendering:pixelated}
 .avs{display:inline-flex;align-items:center}
 .chip .av,.sub .av.s{width:16px;height:16px;box-shadow:0 0 0 1px var(--card),0 0 0 2.5px var(--c)}
 .chip .avs .av+.av,.sub .avs .av+.av{margin-left:-3px}
@@ -500,7 +500,7 @@ select.in{-webkit-appearance:none;appearance:none;padding-right:42px;cursor:poin
 #lightbox{position:fixed;inset:0;z-index:80;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:24px 16px calc(var(--safe-b) + 24px);
   background:rgba(30,40,55,.94);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);opacity:0;pointer-events:none;transition:opacity .2s}
 #lightbox.on{opacity:1;pointer-events:auto}
-#lightbox img{width:min(92vw,520px);max-height:74vh;object-fit:contain;border-radius:22px;background:var(--paper);box-shadow:0 0 0 4px var(--card),0 0 0 7px var(--c,var(--sea))}
+#lightbox img{image-rendering:pixelated;width:min(92vw,520px);max-height:74vh;object-fit:contain;border-radius:22px;background:var(--paper);box-shadow:0 0 0 4px var(--card),0 0 0 7px var(--c,var(--sea))}
 #lightbox .cap{color:#fff;font-family:var(--f-title);font-size:18px;text-align:center}
 #lightbox .cap small{display:block;font-size:13px;opacity:.8}
 #lightbox .hint{color:rgba(255,255,255,.7);font-size:12.5px}
@@ -808,9 +808,6 @@ ul.bd li.hint::before{content:"💡 "}
 .gbtn svg{width:22px;height:22px}
 .profile{text-align:center;padding:4px 0 6px}
 .profile .nm{font-family:var(--f-title);font-size:28px;margin-top:16px}
-.profile div.full{color:var(--ink-2);font-family:var(--f-title)}
-.profile .ttl{display:inline-block;margin-top:12px;font-family:var(--f-title);font-size:17px;padding:3px 16px;border-radius:999px;color:#fff;background:var(--c)}
-.profile blockquote{margin:14px 10px 6px;font-family:var(--f-title);font-size:16px;color:var(--ink);line-height:1.7}
 
 /* ── 手冊 ── */
 .gseg{margin-bottom:14px}
@@ -1138,12 +1135,6 @@ const DAYS = [
   {d:4,date:'2026-11-14',w:'六'},{d:5,date:'2026-11-15',w:'日'}];
 const TRIP_START = '2026-11-11', TRIP_END = '2026-11-15';
 const CUR = {JPY:{sym:'¥',name:'日圓'},TWD:{sym:'NT$',name:'台幣'}};
-const PROFILE = {
-  qi:   {full: '乂殺戮o柒乂', title: '煞氣拔刀劍豪', quote: '拔刀斬！擋我者一刀兩斷～今天也要當全伺服器最強！'},
-  xuan: {full: '噯上倪o琁', title: '戀愛腦龍魔導士', quote: '別問ㄌ…只有窩的小龍懂窩の心痛…'},
-  yun:  {full: '筠o不是好惹滴', title: '傲嬌精靈遊俠', quote: '笑屁喔= =？才、才不是為了你才射的啦！'},
-  yue:  {full: '卍弒神o鈅寧卍', title: '懸刃小魔王・阿戴爾', quote: '呼呼呼…愚蠢的人類，就讓本小姐的刃雨教教你什麼叫實力。'}
-};
 
 /* ───────────── icons ───────────── */
 const I = (p, extra='') => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" ${extra}>${p}</svg>`;
@@ -1601,9 +1592,9 @@ document.addEventListener('click', e => {
   e.preventDefault(); e.stopPropagation(); openPreview(a.dataset.full);
 }, true);
 function openPreview(id) {
-  const lb = $('#lightbox'), p = PROFILE[id] || {};
+  const lb = $('#lightbox');
   lb.style.setProperty('--c', COLORS[id]);
-  lb.innerHTML = `<img src="img/full/${id}.webp" alt="${esc(SHORT[id])} 的頭像"><div class="cap">${esc(SHORT[id])}<small>${esc(p.full || '')}・${esc(p.title || '')}</small></div><div class="hint">點任意處關閉</div>`;
+  lb.innerHTML = `<img src="img/full/${id}.webp" alt="${esc(SHORT[id])} 的頭像"><div class="cap">${esc(SHORT[id])}</div><div class="hint">點任意處關閉</div>`;
   lb.classList.add('on'); document.documentElement.classList.add('locked');
   lb.onclick = closePreview;
 }
@@ -1616,14 +1607,12 @@ document.addEventListener('click', e => {
   e.preventDefault(); e.stopPropagation(); openProfile(a.dataset.profile);
 }, true);
 function openProfile(id) {
-  if (!S.members[id] && !PROFILE[id]) return;
-  const m = {...S.members[id], ...PROFILE[id], short: SHORT[id]};
+  if (!SHORT[id]) return;
+  const m = {short: SHORT[id]};
   openSheet(`<div class="profile" style="--c:${COLORS[id]}">
     ${avatar(id, 'xl').replace('data-profile', 'data-full')}
     <div class="tiny muted" style="margin-top:8px">點頭像看大圖</div>
-    <div class="nm">${esc(m.short)}</div><div class="full">${esc(m.full)}</div>
-    <div class="ttl">${esc(m.title)}</div>
-    <blockquote>「${esc(m.quote)}」</blockquote>
+    <div class="nm" style="margin-bottom:14px">${esc(m.short)}</div>
     ${id === S.me ? `<button type="button" class="saverset" id="saverTog" aria-pressed="${saverOn()}"><span class="t">省錢小幫手<small>購物清單和記帳顯示信用卡推薦、優惠券、退稅試算。只影響你自己的手機，關掉也不會刪掉任何資料。</small></span><span class="sw"></span></button>
     <button class="btn pri full" id="toCardsP" style="margin-bottom:10px">${ic.coin}信用卡設定</button><p class="tiny muted">${esc(S.user.email)}</p><button class="btn full" id="logout">登出</button>` : ''}
     <button class="btn ghost full" data-close>關閉</button></div>`, s => {
