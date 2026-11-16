@@ -973,16 +973,32 @@ h2.jpsec{font-size:17px;margin-top:18px}
 .rcseg{margin-bottom:4px}
 .rcseg button{min-height:34px;font-size:13.5px}
 .rchint{margin:2px 2px 8px}
-.tagrows .erow .who{width:64px}
-.tagrows .erow .amt{font-size:15px;padding:6px 8px;text-align:left}
-.tagrows .erow .tf{flex:0 0 27%}
-.tagrows .tres{flex:none;min-width:58px;text-align:right;font-size:14px}
-.tagrows .erow.hd{padding:6px 0 0;font-size:11.5px;line-height:1.3;color:var(--ink-2);align-items:flex-end}
-.tagrows .erow.hd span{flex:1;text-align:left;padding-left:2px}
-.tagrows .erow.hd .tf{flex:0 0 27%}
-.tagrows .erow.hd .tres{text-align:right}
+.tagrows{padding:2px 8px}
+.tagrows .erow{display:grid;grid-template-columns:64px minmax(0,1.5fr) minmax(0,1fr) 60px;gap:6px;align-items:center}
+.tagrows .erow .who{width:auto;min-width:0;gap:5px;font-size:13.5px}
+.tagrows .erow .amt{width:100%;font-size:15px;padding:6px 8px;text-align:left}
+.tagrows .tres{min-width:0;text-align:right;font-size:14px;white-space:nowrap}
+.tagrows .erow.hd{padding:6px 0 0;font-size:11.5px;line-height:1.3;color:var(--ink-2);align-items:end}
+.tagrows .erow.hd span{min-width:0;padding-left:2px}
+.tagrows .erow.hd .tres{text-align:right;font-size:11.5px}
 .tagrows .erow.hd b{font-weight:700;color:var(--ink)}
+.tagrows .erow.nd{border-top:0;padding-top:0}
+.tagrows .erow.nd .who{font-size:12px;color:#9A5B12;padding-left:4px;line-height:1.2}
+.tagrows .erow.nd .amt{min-height:34px;font-size:14px;background:#FFF8EC}
+.rcnd{margin-top:8px}
 .rcgbtn{display:inline-flex;align-items:center;gap:4px;min-height:32px;padding:0 12px;border-radius:999px;background:#FFF1DC;color:#9A5B12;font-size:13.5px;font-family:var(--f-title)}
+details.rcbox{margin:0 0 12px}
+details.rcbox .rcin{padding:2px 0 10px}
+.splithint{display:block;margin-top:3px;font-size:12.5px;color:#9A5B12;line-height:1.5}
+#rcGuide .flow{display:flex;height:46px;border-radius:10px;overflow:hidden;margin:8px 0 4px;font-size:12.5px;line-height:1.25;text-align:center}
+#rcGuide .flow>div{display:grid;place-items:center;padding:0 4px;color:#fff}
+#rcGuide .flow .fp{background:#10B981;flex:1273}#rcGuide .flow .fo{background:#5B6B82;flex:11908}
+#rcGuide .who{display:inline-block;padding:0 7px;border-radius:9px;color:#fff;font-size:12.5px;line-height:20px}
+#rcGuide .fake{background:var(--paper);border-radius:12px;box-shadow:inset 0 0 0 1.5px var(--line);padding:10px 12px;font-size:13.5px;line-height:1.8}
+#rcGuide .fake .r{display:flex;justify-content:space-between;gap:8px}
+#rcGuide .fake .r b{font-family:var(--f-num)}
+#rcGuide .chk{display:inline-grid;place-items:center;width:18px;height:18px;border-radius:5px;background:var(--terra, #C0603A);color:#fff;font-size:12px;vertical-align:-3px;margin-right:4px}
+#rcGuide .nochk{display:inline-block;width:18px;height:18px;border-radius:5px;box-shadow:inset 0 0 0 1.5px var(--line-2);vertical-align:-4px;margin-right:4px}
 /* 照收據填：範例圖卡 */
 #rcGuide{position:fixed;inset:0;z-index:70;background:var(--paper);overflow-y:auto;-webkit-overflow-scrolling:touch;padding:0 16px calc(var(--safe-b) + 24px);display:none}
 #rcGuide.on{display:block}
@@ -2325,16 +2341,17 @@ function rcGuideOpen() {
   let g = document.getElementById('rcGuide');
   if (!g) { g = document.createElement('div'); g.id = 'rcGuide'; g.setAttribute('role', 'dialog'); g.setAttribute('aria-label', '照收據填・範例'); document.body.append(g); }
   const mk = k => `<span class="mk m${k}">${k}</span>`;
+  const who = (m, t) => `<span class="who" style="background:${COLORS[m]}">${t || nm(m)}</span>`;
   g.innerHTML = `<div class="gh"><h3>🧾 照收據填・看一次就會</h3><button type="button" class="btn sm" data-gclose>關閉</button></div>
-  <p style="margin-top:12px">用 11/14 唐吉訶德名護店的收據當例子。<b>收據上印什麼就填什麼</b>，加稅、扣優惠券都交給 app。</p>
+  <p style="margin-top:12px">用 11/14 唐吉訶德名護店的收據當例子：${who('qi')} 刷卡 ¥13,181，裡面有 ${who('yun')} 幫朋友「彭」代購的味覺糖。<b>收據上印什麼就填什麼</b>，加稅、扣優惠券都交給 app。</p>
+  <div class="flow"><div class="fp">代購<br>¥1,273</div><div class="fo">自己人的部分 ¥11,908<br>阿柒・阿琁・鈅寧分</div></div>
+  <p class="tiny muted" style="margin:0">一張收據會拆成兩塊：代購那塊算 ${who('yun')} 的（她再向彭收錢），剩下的才是自己人分。</p>
 
-  <div class="gstep"><h4><span class="gno">1</span>先看收據印的是「未稅」還是「含稅」</h4>
-    <div class="cmp"><div class="cx"><b>印未稅價</b>商品價格加起來 ＜ 合計<br>下面另外列「税額」才加上去<br><span style="color:#9A5B12">例：唐吉訶德</span></div>
-      <div class="ci"><b>印含稅價</b>商品價格加起來 ＝ 合計<br>（税額只是「內含」幾元）</div></div>
-    <p>這張：商品加起來 ¥12,643，合計 ¥13,181 → <b>未稅</b>。在 app 選「<b>印未稅價（另外加稅）</b>」。</p>
-    <div class="tip">選了未稅，下面所有標價、8% 對象、折扣都照收據<b>未稅</b>的數字填。選錯的話每個人的金額會怪怪的。</div></div>
-
-  <div class="gstep"><h4><span class="gno">2</span>收據上的數字 → 填到哪裡</h4>
+  <div class="gstep"><h4><span class="gno">1</span>收據資訊</h4>
+    <p>先看收據印的是「未稅」還是「含稅」：</p>
+    <div class="cmp"><div class="cx"><b>印未稅價</b>商品加起來 ＜ 合計<br>下面另外列「税額」<br><span style="color:#9A5B12">例：唐吉訶德</span></div>
+      <div class="ci"><b>印含稅價</b>商品加起來 ＝ 合計<br>（税額只是「內含」）</div></div>
+    <p>這張：商品加起來 ¥12,643，合計 ¥13,181 → <b>未稅</b>。</p>
     <div class="rcpt">
       <div class="l"><span>★天使のはね お味</span><span class="food">食</span><span>¥278</span></div>
       <div class="l"><span>★ミップ 保存容器780ml 3P</span><span>¥498</span></div>
@@ -2351,27 +2368,47 @@ function rcGuideOpen() {
       <div class="l"><span>税額</span><span>¥1,171</span></div>
       <div class="l tot"><span class="hl hC">合計</span><span class="hl hC">¥13,181</span>${mk('C')}</div>
     </div>
-    <p style="margin-top:12px">在 app 這樣填：</p>
+    <p style="margin-top:12px">在 app 填：</p>
     <div class="map">
       ${mk('C')}<span class="fld">總額</span><span class="val">13181</span>
+      <span></span><span class="fld">收據上的價格</span><span class="val" style="font-size:13px">印未稅價</span>
       ${mk('A')}<span class="fld">全單折扣<br><span class="tiny muted">寫 5% 或 633 都可以</span></span><span class="val">5%</span>
       ${mk('B')}<span class="fld">收據 8% 對象</span><span class="val">1442</span>
-      ${mk('D')}<span class="fld">代購標價<br><span class="tiny muted">選「食品 8%」，數量 2</span></span><span class="val">1240</span>
     </div>
-    <div class="tip">沒有代購就跳過 ${mk('D')}。沒有折扣就不填 ${mk('A')}。沒有食品就不填 ${mk('B')}。</div></div>
+    <div class="tip">都在「🧾 收據資訊」那一格。沒有折扣就不填 ${mk('A')}，沒有食品就不填 ${mk('B')}。</div></div>
 
-  <div class="gstep"><h4><span class="gno">3</span>自己人：每個人填自己買的東西</h4>
-    <p>按「<b>照收據標價</b>」，一般用品和食品<b>分開</b>填，填收據上印的（這張是未稅）：</p>
+  <div class="gstep"><h4><span class="gno">2</span>有代購嗎？（沒有就跳到 3）</h4>
+    <p><b>代購</b>＝幫我們四個以外的人買的東西。這張的 ${mk('D')} 味覺糖是 ${who('yun')} 幫朋友「彭」買的。</p>
+    <div class="fake">
+      <div><span class="chk">✓</span>🛍️ 這張收據有代購商品</div>
+      <div style="margin-top:6px">＋ 新增代購商品：</div>
+      <div class="r"><span>委託人</span><b>${who('yun', '彭')}</b></div>
+      <div class="r"><span>品名</span><b>UHA 味覺糖</b></div>
+      <div class="r"><span>數量</span><b>2</b></div>
+      <div class="r"><span>標價（未稅）${mk('D')}</span><b>1240</b></div>
+      <div class="r"><span>稅率</span><b>食品 8%</b></div>
+    </div>
+    <div class="tip">委託人的顏色＝誰負責收錢。彭是掛在 ${who('yun')} 名下的委託人，所以這件的成本 <b>¥1,273</b>（扣掉分到的優惠券）直接算在 ${who('yun')} 的份。<br>
+      ${who('yun')} 再向彭收 <b>¥1,340</b>（含稅標價），或在「代購」頁籤換成台幣。</div></div>
+
+  <div class="gstep"><h4><span class="gno">3</span>自己人的部分怎麼分</h4>
+    <p><b>只勾自己有買東西的人。</b>${who('yun')} 只是幫彭代購、自己沒買，所以<b>不要勾</b>（她的份在第 2 步已經算好了）：</p>
+    <div class="fake"><span class="chk">✓</span>阿柒　<span class="chk">✓</span>阿琁　<span class="nochk"></span>阿筠　<span class="chk">✓</span>鈅寧</div>
+    <p>按「<b>照收據標價</b>」，每個人填收據上自己買的東西，<b>一般用品和食品分開</b>（這張是未稅）：</p>
     <table><tr><th></th><th>一般用品標價<br>（10%・未稅）</th><th>食品標價<br>（8%・未稅）</th><th style="text-align:right">分到</th></tr>
       <tr><td>阿柒</td><td class="v">332+1280</td><td class="v">278</td><td class="r">¥1,968</td></tr>
       <tr><td>阿琁</td><td class="v">498/3+1199<wbr>+1380+1248</td><td class="v muted">（空白）</td><td class="r">¥4,172</td></tr>
       <tr><td>鈅寧</td><td class="v">1380*3+1380</td><td class="v muted">（空白）</td><td class="r">¥5,768</td></tr></table>
     <div class="tip"><b>食品＝吃的、喝的</b>（零食、飲料、保健軟糖，酒除外），稅率 8%。<b>其他都是一般用品</b>（藥妝、玩具、雜貨），稅率 10%。<br>
-      分東西的寫法：3 入一包只拿 1 個 <code>498/3</code>、拿 2 個 <code>498/3*2</code>；同樣的買 3 個 <code>1380*3</code>；好幾樣用 <code>+</code> 加起來。</div></div>
+      分東西的寫法：3 入一包只拿 1 個 <code>498/3</code>、拿 2 個 <code>498/3*2</code>；同樣的買 3 個 <code>1380*3</code>；好幾樣用 <code>+</code> 加起來。<br>
+      代購的東西（味覺糖）<b>不要</b>再填進這裡。如果 ${who('yun')} 自己也有買東西，才勾她、填她自己買的。</div>
+    <div class="tip"><b>有商品沒被優惠券折到？</b>（例如菸酒、特價品）在「🧾 收據資訊」勾「有商品不參加全單折扣」，每個人下面會多一行「↳ 不打折」，把那件填在那一行（一樣分一般用品、食品）。代購商品則在「單品折價・不可退稅・不打折」裡勾「不參加全單折扣」。</div></div>
 
   <div class="gstep"><h4><span class="gno">4</span>檢查</h4>
-    <p>下面出現 <span class="ok">✓ 合計等於自己人的部分</span> 就完成了。「分到」就是每個人要付的錢（已經扣優惠券、加好稅）。</p>
-    <div class="tip bad">⚠ 這張如果「自己人的部分」不是 ¥11,908（例如變成 ¥11,902），通常是第 1 步選成了「含稅」。</div></div>
+    <p>出現 <span class="ok">✓ 合計等於自己人的部分</span> 就完成了。這張最後：</p>
+    <div class="fake"><div class="r"><span>${who('qi')}</span><b>¥1,968</b></div><div class="r"><span>${who('xuan')}</span><b>¥4,172</b></div><div class="r"><span>${who('yue')}</span><b>¥5,768</b></div><div class="r"><span>${who('yun')}（代購）</span><b>¥1,273</b></div>
+      <div class="r" style="border-top:1px dashed var(--line);margin-top:4px;padding-top:4px"><span>合計＝刷卡金額</span><b>¥13,181</b></div></div>
+    <div class="tip bad">⚠ 「自己人的部分」不是 ¥11,908（例如 ¥11,902），通常是收據價格選成了「含稅」。</div></div>
   <div style="margin-top:16px"><button type="button" class="btn pri" style="width:100%" data-gclose>看懂了，回去填</button></div>`;
   g.classList.add('on'); g.scrollTop = 0;
   g.onclick = ev => { if (ev.target.closest('[data-gclose]')) g.classList.remove('on'); };
@@ -2381,15 +2418,16 @@ const pxItemsOf = e => e?.cur === 'JPY' && Array.isArray(e?.proxy?.items) ? e.pr
 const yenInt = v => Math.max(0, Math.round(Number(String(v ?? '').replace(/[,，\s¥]/g, '')) || 0));
 const taxIn = (v, r) => v * r / (100 + r); // 含稅金額裡的稅額
 // A：實付（分），p：proxy → 每件成本、自己人的部分、各負責人的成本（單位：分）
-function pxCalc(A, p) {
+function pxCalc(A, p, ndOwn = 0) {
   const items = (p?.items || []).map(x => { const yen = yenInt(x.yen); return {...x, yen, off: Math.min(yenInt(x.off), yen), tax: x.tax === 8 ? 8 : 10}; });
   const tag = items.reduce((n, x) => n + x.yen, 0) * 100, off = items.reduce((n, x) => n + x.off, 0) * 100;
   const gross = yenInt(p?.gross) > 0 ? yenInt(p.gross) * 100 : A + off;
   const ownTag = gross - tag, D = gross - off - A, err = [], warn = [];
   if (D < 0) err.push(`折扣前合計比實付＋單品折價還少 ${money(-D, 'JPY')}`);
   else if (ownTag < 0) err.push(yenInt(p?.gross) > 0 ? `代購標價合計超過折扣前合計 ${money(-ownTag, 'JPY')}` : `代購標價合計超過實付 ${money(-ownTag, 'JPY')}（有折扣的話填折扣前合計）`);
-  const keys = [...items.map((_, i) => i), 'own'], w = {own: Math.max(0, ownTag)};
-  items.forEach((x, i) => w[i] = (x.yen - x.off) * 100);
+  // 全單折扣只分給參加折扣的部分：代購勾了 noDisc 的不分；自己人扣掉不參加折扣的金額（rcpt.ndOwn）
+  const keys = [...items.map((_, i) => i), 'own'], w = {own: Math.max(0, ownTag - Math.max(0, Number(ndOwn) || 0) * 100)};
+  items.forEach((x, i) => w[i] = x.noDisc ? 0 : (x.yen - x.off) * 100);
   // 金額都是整數日圓時，折扣以 ¥1 為單位分（不會出現幾角幾分）
   const U = D % 100 === 0 ? 100 : 1, d0 = D > 0 ? lrAlloc(D / U, keys, w) : {}, d = Object.fromEntries(Object.entries(d0).map(([k, v]) => [k, v * U]));
   items.forEach((x, i) => { x.disc = d[i] || 0; x.cost = (x.yen - x.off) * 100 - x.disc; });
@@ -2410,7 +2448,7 @@ function exParts(e) {
   if (multiPay(e)) { for (const m of IDS) if (cents(e.paid[m] || 0) > 0) paid[m] = cents(e.paid[m]); }
   else paid[e.payer] = A;
   // 代購：實付扣掉代購成本，剩下的（自己人的部分）才照 split／shares 分
-  const px = pxItemsOf(e).length ? pxCalc(A, e.proxy) : null, own = px ? Math.max(0, px.own) : A;
+  const px = pxItemsOf(e).length ? pxCalc(A, e.proxy, e.rcpt?.ndOwn) : null, own = px ? Math.max(0, px.own) : A;
   if (customSplit(e)) { for (const m of IDS) if (cents(e.shares[m] || 0) > 0) share[m] = cents(e.shares[m]); }
   else Object.assign(share, evenShares(own, e.split));
   // 保險：各自金額合計和總額對不上的舊資料，差額算主要付款人的（存檔時已經檢查合計，正常不會發生）
@@ -2616,7 +2654,7 @@ async function saveExpense(old, data) {
   return id;
 }
 // 代購的內容（會影響份額和退稅分配，改到就要清空結算）
-const pxSig = d => d?.proxy?.items?.length ? JSON.stringify([d.proxy.gross || 0, d.proxy.food || 0, d.proxy.items.map(x => [x.k, x.name, x.qty || 0, x.yen, x.tax, x.client, x.owner, x.off || 0, !!x.noRf, x.shop?.id || ''])]) : '';
+const pxSig = d => d?.proxy?.items?.length ? JSON.stringify([d.rcpt?.ndOwn || 0, d.proxy.items.map(x => !!x.noDisc), d.proxy.gross || 0, d.proxy.food || 0, d.proxy.items.map(x => [x.k, x.name, x.qty || 0, x.yen, x.tax, x.client, x.owner, x.off || 0, !!x.noRf, x.shop?.id || ''])]) : '';
 function bump(tx, c, {l, s}) {
   if (l.exists()) tx.update(l.ref, {v: (l.data().v || 0) + 1}); else tx.set(l.ref, {v: 1});
   if (s.exists()) tx.delete(s.ref);
@@ -2887,6 +2925,7 @@ function editExpense(e, pre = null) {
     <div class="seg" id="eCur" style="margin-bottom:12px">${['JPY', 'TWD'].map(c => `<button type="button" data-c="${c}">${CUR[c].sym} ${CUR[c].name}</button>`).join('')}</div>
     <label class="f"><span>總額 <em>*</em></span><input class="in big" id="eAmt" type="text" inputmode="decimal" autocomplete="off" placeholder="0" value="${e ? esc(e.amount) : pre?.amount ? esc(pre.amount) : ''}"></label>
     <div class="f"><span>誰先付錢 <span class="tiny muted">（可以選多位）</span></span><div class="pick" id="ePayer"></div><div id="ePaidBox"></div></div>
+    <div id="eRc"></div>
     <div id="ePx"></div>
     <div class="f" id="eSplitF"><span id="eSplitLbl">分攤的人 <span class="tiny muted">（勾選後帶入平均金額，可以改）</span></span><div class="pick" id="eSplit"></div><div id="eOwn"></div></div>
     <div id="eHow"></div>
@@ -2906,7 +2945,8 @@ function editExpense(e, pre = null) {
     // ── 照收據填：含稅／未稅、8% 對象、全單折扣、每個人的標價（rcpt 只是輸入的原樣，金額另外換算存）──
     const rc0 = e?.rcpt || null, food0 = e?.proxy?.food || e?.taxRefund?.food || pre?.refund?.food || pre?.proxyFood || '';
     const rc = {ex: rc0 ? !!rc0.ex : !e && !food0 && localGet('rcEx') === '1', f8: rc0?.f8 ? String(rc0.f8) : food0 ? String(food0) : '', disc: '', tag: !!rc0?.tags, tags: {}};
-    for (const m of IDS) rc.tags[m] = {g: rc0?.tags?.[m]?.g || '', f: rc0?.tags?.[m]?.f || ''};
+    for (const m of IDS) { const t = rc0?.tags?.[m]; rc.tags[m] = {g: t?.g || '', f: t?.f || '', gn: t?.gn || '', fn: t?.fn || ''}; }
+    rc.nd = !!rc0?.nd; // 有商品不參加全單折扣
     if (rc0?.disc) rc.disc = String(rc0.disc);
     else if (e?.proxy?.gross) { const d = Math.round(e.proxy.gross - pxItemsOf(e).reduce((n, x) => n + yenInt(x.off), 0) - Number(e.amount)); if (d > 0) rc.disc = String(d); } // 舊記帳：折扣前合計 → 含稅折扣
     if (rc.tag) ownOpen = true;
@@ -2920,7 +2960,7 @@ function editExpense(e, pre = null) {
       s.querySelectorAll('[data-rcex]').forEach(b => b.setAttribute('aria-pressed', String((b.dataset.rcex === '1') === rc.ex)));
       s.querySelectorAll('[data-rcfl]').forEach(x => x.textContent = rcFoodLbl());
       s.querySelectorAll('[data-rcpl]').forEach(x => x.textContent = rcPl());
-      for (const id of ['#ePxFood', '#eRfFood', '#eTagFood']) { const x = s.querySelector(id); if (x && x !== src) x.value = rc.f8; }
+      for (const id of ['#eRcFood', '#eRfFood']) { const x = s.querySelector(id); if (x && x !== src) x.value = rc.f8; }
       const yl = s.querySelector('#pxYenLbl'); if (yl) yl.textContent = rc.ex ? '標價（未稅）' : '含稅標價';
     };
     const rcData = () => {
@@ -2928,10 +2968,27 @@ function editExpense(e, pre = null) {
       const o = {};
       if (rc.ex) o.ex = true;
       if (yenInt(rc.f8) > 0) o.f8 = yenInt(rc.f8);
-      if (px.on && px.items.length && String(rc.disc).trim()) o.disc = String(rc.disc).trim().slice(0, 20);
-      if (rc.tag) { const t = {}; for (const m of split) { const g = String(rc.tags[m].g || '').trim().slice(0, 200), f = String(rc.tags[m].f || '').trim().slice(0, 200); if (g || f) t[m] = {g, f}; } o.tags = t; }
+      if (String(rc.disc).trim()) o.disc = String(rc.disc).trim().slice(0, 20);
+      if (rc.tag) {
+        const t = {}, cut = v => String(v || '').trim().slice(0, 200);
+        for (const m of split) { const x = rc.tags[m], g = cut(x.g), f = cut(x.f), gn = rc.nd ? cut(x.gn) : '', fn = rc.nd ? cut(x.fn) : ''; if (g || f || gn || fn) t[m] = {g, f, ...(gn ? {gn} : {}), ...(fn ? {fn} : {})}; }
+        o.tags = t;
+      }
+      if (rc.nd) { o.nd = true; const n = ndOwnYen(); if (n > 0) o.ndOwn = n; }
       return Object.keys(o).length ? o : null;
     };
+    // 自己人不參加全單折扣的金額（含稅日圓）：照收據標價、勾了「有商品不參加全單折扣」才有
+    const ndOwnYen = () => {
+      if (!rc.nd || !rc.tag || cur !== 'JPY') return 0;
+      let g = 0, f = 0;
+      for (const m of split) { g += rcEval(rc.tags[m]?.gn) || 0; f += rcEval(rc.tags[m]?.fn) || 0; }
+      return Math.round(rc.ex ? g * 1.1 + f * 1.08 : g + f);
+    };
+    // 代購商品裡不參加全單折扣的金額（含稅，扣掉單品折價）
+    const pxNoDiscYen = () => px.on ? px.items.filter(x => x.noDisc).reduce((n, x) => n + Math.max(0, pxNum(x.yen) - pxNum(x.off)), 0) : 0;
+    // 全單折扣（含稅日圓）：百分比只算在參加折扣的部分
+    const discNow = () => { const A = Math.round(parseAmt(amtEl.value) || 0); return rcDiscIn(rc.disc, rc.ex, Math.max(0, A - ndOwnYen() - pxNoDiscYen()), foodYen()); };
+    const pxCalcLive = (A, pd) => pxCalc(A, pd, ndOwnYen());
     // ── 代購：這張收據裡幫委託人買的商品（只列代購的，自己人的部分不用列）──
     const px0 = e ? pxItemsOf(e) : pre?.proxy?.items || [];
     const px = {on: px0.length > 0, items: px0.map(x => ({...x})), ed: null, dr: null, pick: false, picked: new Set()};
@@ -2946,13 +3003,14 @@ function editExpense(e, pre = null) {
         if (Number(x.qty) > 1) o.qty = Math.min(999, Math.round(Number(x.qty)));
         if (pxNum(x.off) > 0) o.off = pxNum(x.off);
         if (x.noRf) o.noRf = true;
+        if (x.noDisc) o.noDisc = true;
         if (x.shop?.id) o.shop = {o: x.shop.o, id: x.shop.id};
         if (pxNum(x.ex) > 0) o.ex = pxNum(x.ex); // 照收據填的未稅標價（只給編輯畫面還原用）
         return o;
       });
       const out = {items, owners: IDS.filter(m => items.some(x => x.owner === m))};
       // 折扣前合計＝實付＋單品折價＋全單折扣（含稅）
-      const A = Math.round(parseAmt(amtEl.value) || 0), off = items.reduce((n, x) => n + (x.off || 0), 0), D = rcDiscIn(rc.disc, rc.ex, A, foodYen());
+      const A = Math.round(parseAmt(amtEl.value) || 0), off = items.reduce((n, x) => n + (x.off || 0), 0), D = discNow();
       if (D > 0) out.gross = A + off + D;
       if (foodYen() > 0) out.food = foodYen();
       return out;
@@ -2972,7 +3030,7 @@ function editExpense(e, pre = null) {
       const c = pxClientById(x.client), t = pxThumb(x), ri = r?.items[i], need = !(pxNum(x.yen) > 0);
       return `<button type="button" class="pxrow ${px.ed === i ? 'on' : ''} ${need || !c ? 'bad' : ''}" data-pxi="${i}">${t ? `<span class="pxth"><img src="${esc(t.thumb)}" alt=""></span>` : ''}
         <span class="body"><span class="nm">${esc(x.name || '（沒填品名）')}${Number(x.qty) > 1 ? ` <span class="tiny muted">×${esc(x.qty)}</span>` : ''}</span>
-        <span class="sub">${c ? `<span class="chip" style="--c:${COLORS[c.owner]}"><i class="odot"></i>${esc(c.name)}・${esc(nm(c.owner))}</span>` : '<span class="chip hib">沒選委託人</span>'}${x.tax === 8 ? '<span class="chip sea">食品 8%</span>' : ''}${pxNum(x.off) ? `<span class="chip terra">單品折價 −${yen(pxNum(x.off))}</span>` : ''}${x.noRf ? '<span class="chip">不可退稅</span>' : ''}</span></span>
+        <span class="sub">${c ? `<span class="chip" style="--c:${COLORS[c.owner]}"><i class="odot"></i>${esc(c.name)}・${esc(nm(c.owner))}</span>` : '<span class="chip hib">沒選委託人</span>'}${x.tax === 8 ? '<span class="chip sea">食品 8%</span>' : ''}${pxNum(x.off) ? `<span class="chip terra">單品折價 −${yen(pxNum(x.off))}</span>` : ''}${x.noRf ? '<span class="chip">不可退稅</span>' : ''}${x.noDisc ? '<span class="chip">不打折</span>' : ''}</span></span>
         <span class="amt">${need ? '<b class="warnline">填標價</b>' : `<b class="num">${yen(pxNum(x.yen))}</b>`}${ri && !need && ri.cost !== ri.yen * 100 ? `<small class="num">成本 ${money(ri.cost, 'JPY')}</small>` : ''}</span></button>`;
     };
     // 新增／編輯一件代購商品
@@ -2987,9 +3045,10 @@ function editExpense(e, pre = null) {
           <label class="f"><span><span id="pxYenLbl">${rc.ex ? '標價（未稅）' : '含稅標價'}</span> <em>*</em> <span class="tiny muted">這件合計</span></span><input class="in" id="pxYen" type="text" inputmode="numeric" autocomplete="off" value="${esc(d.inp ?? '')}" placeholder="¥"></label></div>
         <div class="tiny muted" id="pxYenHint" style="margin:-6px 2px 10px"></div>
         <div class="f"><span>稅率</span><div class="seg" id="pxTax"><button type="button" data-t="10" aria-pressed="${d.tax !== 8}">一般 10%</button><button type="button" data-t="8" aria-pressed="${d.tax === 8}">食品 8%</button></div></div>
-        <details class="pxadv" ${pxNum(d.off) || d.noRf ? 'open' : ''}><summary>單品折價・不可退稅<span class="tiny muted">（平常不用填）</span></summary>
+        <details class="pxadv" ${pxNum(d.off) || d.noRf || d.noDisc ? 'open' : ''}><summary>單品折價・不可退稅・不打折<span class="tiny muted">（平常不用填）</span></summary>
           <label class="f" style="margin-top:8px"><span>單品折價 <span class="tiny muted">只折這一件的折價券</span></span><input class="in" id="pxOff" type="text" inputmode="numeric" autocomplete="off" value="${esc(d.offInp ?? '')}" placeholder="¥0"></label>
-          <button type="button" class="opt" role="checkbox" aria-checked="${!!d.noRf}" id="pxNoRf"><span class="box" style="--c:var(--terra)" aria-hidden="true">${ic.check}</span><span class="txt">不可退稅<span class="tiny muted" style="display:block">用了「不能和免稅併用」的券，或不是免稅商品。不參加退稅分配</span></span></button></details>
+          <button type="button" class="opt" role="checkbox" aria-checked="${!!d.noRf}" id="pxNoRf"><span class="box" style="--c:var(--terra)" aria-hidden="true">${ic.check}</span><span class="txt">不可退稅<span class="tiny muted" style="display:block">用了「不能和免稅併用」的券，或不是免稅商品。不參加退稅分配</span></span></button>
+          <button type="button" class="opt" role="checkbox" aria-checked="${!!d.noDisc}" id="pxNoDisc"><span class="box" style="--c:var(--terra)" aria-hidden="true">${ic.check}</span><span class="txt">不參加全單折扣<span class="tiny muted" style="display:block">收據的優惠券沒有折到這件（例如菸酒、特價品），全單折扣不分給它</span></span></button></details>
         <div class="tiny warnline" id="pxEdErr"></div>
         <div class="sheet-acts">${isNewI ? '' : `<button type="button" class="btn" id="pxDel">${ic.trash}刪除</button>`}<button type="button" class="btn" id="pxCancel">取消</button><button type="button" class="btn pri" id="pxOkI">${isNewI ? '加入' : '更新'}</button></div></div>`;
     };
@@ -3013,6 +3072,40 @@ function editExpense(e, pre = null) {
         ${os.length ? `<div class="tiny" style="margin-top:2px">算進份額：${os.map(m => `${esc(nm(m))} ${money(r.byOwner[m], 'JPY')}`).join('、')}</div>` : ''}
         ${r.err.map(t => `<div class="tiny warnline">${esc(t)}</div>`).join('')}${r.warn.map(t => `<div class="tiny warnline">⚠ ${esc(t)}${r.food || r.own8 >= 0 ? '（稅率選錯或漏了一件？）' : ''}</div>`).join('')}`;
     };
+    // ── 🧾 收據資訊：含稅／未稅、全單折扣、8% 對象（代購、照標價分攤、退稅共用）──
+    const rcBox = s.querySelector('#eRc');
+    let rcShape = null, rcOpened = !!(rc0 || px.on || rc.tag);
+    const rcOpen = () => { rcOpened = true; const d = rcBox.querySelector('details'); if (d) d.open = true; };
+    const paintRc = () => {
+      const ok = cur === 'JPY', locked = !!(isLocked(cur) || (e && isLocked(e.cur))), shape = `${ok}|${locked}`;
+      if (shape !== rcShape) {
+        rcShape = shape;
+        rcBox.innerHTML = !ok ? '' : `<details class="emore rcbox" ${rcOpened ? 'open' : ''}><summary>🧾 收據資訊<span class="sum" id="eRcSum"></span>${ic.chev.replace('<svg', '<svg class="chev"')}</summary><div class="rcin">
+          <div class="tiny muted" style="margin:0 2px 8px">購物收據才需要：有代購、或要照收據標價分攤時填。吃飯等一般記帳不用管。</div>
+          <div style="margin:0 0 8px">${rcGuideBtn()}</div>
+          <div class="f" style="margin-bottom:8px"><span>收據上的價格 <span class="tiny muted">唐吉訶德是印未稅價</span></span>${rcSeg()}</div>
+          <div class="row2"><label class="f"><span>全單折扣 <span class="tiny muted">沒有就空白</span></span><input class="in" id="eRcDisc" type="text" autocomplete="off" placeholder="例如 5% 或 633" value="${esc(rc.disc)}" ${locked ? 'disabled' : ''}></label>
+          <label class="f"><span>收據 8% 對象 <span class="tiny muted" data-rcfl>${rcFoodLbl()}</span></span><input class="in" id="eRcFood" type="text" inputmode="numeric" autocomplete="off" placeholder="沒有食品不用填" value="${esc(rc.f8)}" ${locked ? 'disabled' : ''}></label></div>
+          <div class="tiny muted rchint" id="eRcHint" style="margin-bottom:0"></div>
+          <button type="button" class="opt rcnd" role="checkbox" aria-checked="${rc.nd}" id="eRcNd" ${locked ? 'disabled' : ''}><span class="box" style="--c:var(--terra)" aria-hidden="true">${ic.check}</span><span class="txt">有商品不參加全單折扣<span class="tiny muted" style="display:block">例如菸酒、特價品。勾了之後，照收據標價分攤時每個人多一行「不打折」；代購商品在「單品折價・不可退稅」裡勾</span></span></button></div></details>`;
+        rcBox.querySelector('details')?.addEventListener('toggle', ev => { rcOpened = ev.target.open; });
+      }
+      if (!ok) return;
+      const A = Math.round(parseAmt(amtEl.value) || 0), D = discNow(), f = yenInt(rc.f8);
+      const off = px.on ? px.items.reduce((n, x) => n + (pxNum(x.off) || 0), 0) : 0;
+      rcBox.querySelector('#eRcHint').innerHTML = [!rcDiscOk(rc.disc) ? '<span class="warnline">全單折扣只能填金額（633）或百分比（5%）</span>' : D > 0 ? `全單折扣含稅約 <b class="num">${yen(D)}</b>${/[%％]/.test(rc.disc) || rc.ex ? '（換算）' : ''}・折扣前約 ${yen(A + off + D)}` : '',
+        rc.ex && f > 0 ? `8% 對象含稅 <b class="num">${yen(foodYen())}</b>` : ''].filter(Boolean).join('<br>');
+      rcBox.querySelector('#eRcSum').textContent = [rc.ex ? '未稅' : yenInt(rc.f8) || String(rc.disc).trim() ? '含稅' : '', String(rc.disc).trim() ? `折扣 ${String(rc.disc).trim()}` : '', f ? `8% ${f.toLocaleString()}` : ''].filter(Boolean).join('・') || '代購、照標價分攤時填';
+    };
+    rcBox.onclick = ev => {
+      const b = ev.target.closest('#eRcNd'); if (!b || b.disabled) return;
+      rc.nd = !rc.nd; b.setAttribute('aria-checked', String(rc.nd)); pxOwnChanged();
+    };
+    rcBox.oninput = ev => {
+      const t = ev.target;
+      if (t.id === 'eRcDisc') { rc.disc = t.value; pxOwnChanged(); }
+      else if (t.id === 'eRcFood') { rc.f8 = t.value; syncRc(t); pxOwnChanged(); }
+    };
     let pxShape = null;
     const paintPx = () => {
       const ok = pxOk(), locked = !!(isLocked(cur) || (e && isLocked(e.cur))), shape = `${ok}|${px.on}|${locked}`;
@@ -3020,21 +3113,12 @@ function editExpense(e, pre = null) {
       if (shape !== pxShape) {
         pxShape = shape;
         pxBox.innerHTML = `<div class="rfform pxform"><button type="button" class="opt" role="checkbox" aria-checked="${px.on}" id="ePxOn" ${locked ? 'disabled' : ''}><span class="box" style="--c:var(--terra)" aria-hidden="true">${ic.check}</span><span class="txt">🛍️ 這張收據有代購商品<span class="tiny muted" style="display:block">幫委託人買的逐項列出，成本算給負責人；自己人的部分不用列</span></span></button>
-          ${px.on ? `<div id="ePxIn" style="padding:4px 0 8px"><div style="margin:2px 0 8px">${rcGuideBtn()}</div><div class="f" style="margin-bottom:8px"><span>收據上的價格 <span class="tiny muted">唐吉訶德是印未稅價</span></span>${rcSeg()}</div>
-            <div class="row2"><label class="f"><span>全單折扣 <span class="tiny muted">沒有就空白</span></span><input class="in" id="ePxDisc" type="text" autocomplete="off" placeholder="例如 5% 或 633" value="${esc(rc.disc)}" ${locked ? 'disabled' : ''}></label>
-            <label class="f"><span>收據 8% 對象 <span class="tiny muted" data-rcfl>${rcFoodLbl()}</span></span><input class="in" id="ePxFood" type="text" inputmode="numeric" autocomplete="off" placeholder="沒有食品不用填" value="${esc(rc.f8)}" ${locked ? 'disabled' : ''}></label></div>
-            <div class="tiny muted rchint" id="ePxDiscHint"></div>
+          ${px.on ? `<div id="ePxIn" style="padding:4px 0 8px"><div class="tiny muted" style="margin:0 2px 4px">只列幫別人買的東西。標價照收據填（收據價格、折扣在上面「🧾 收據資訊」）</div>
             <div id="ePxList"></div><div id="ePxEd"></div><div id="ePxSum"></div></div>` : ''}</div>`;
       }
       if (!px.on) return;
       const c = calc(), r = c.px, cs = pxCands().length;
       // 全單折扣、8% 對象換算後的含稅金額
-      const dh = pxBox.querySelector('#ePxDiscHint');
-      if (dh) {
-        const A = Math.round(parseAmt(amtEl.value) || 0), D = rcDiscIn(rc.disc, rc.ex, A, foodYen()), f = yenInt(rc.f8);
-        dh.innerHTML = [!rcDiscOk(rc.disc) ? '<span class="warnline">全單折扣只能填金額（633）或百分比（5%）</span>' : D > 0 ? `全單折扣含稅約 <b class="num">${yen(D)}</b>${/[%％]/.test(rc.disc) || rc.ex ? '（換算）' : ''}・折扣前約 ${yen(A + (r ? r.off / 100 : 0) + D)}` : '',
-          rc.ex && f > 0 ? `8% 對象含稅 <b class="num">${yen(foodYen())}</b>` : ''].filter(Boolean).join('<br>');
-      }
       pxBox.querySelector('#ePxList').innerHTML = `${px.items.map((x, i) => pxRowHTML(x, i, r)).join('')}
         ${px.ed === null && !px.pick && !locked ? `<div class="pxacts"><button type="button" class="btn sm" id="pxAdd">${ic.plus}新增代購商品</button>${cs ? `<button type="button" class="btn sm" id="pxPick">從購物清單帶入（${cs}）</button>` : ''}</div>` : ''}`;
       const ed = pxBox.querySelector('#ePxEd');
@@ -3065,7 +3149,7 @@ function editExpense(e, pre = null) {
       const t = ev.target;
       if (t.closest('#ePxOn')) {
         if (px.on && px.items.length && !await confirmDialog({title: '取消代購？', body: `會移除這張收據的 ${px.items.length} 件代購商品。`, ok: '移除', danger: true})) return;
-        px.on = !px.on; if (!px.on) { px.items = []; px.ed = null; px.pick = false; rc.disc = ''; }
+        px.on = !px.on; if (!px.on) { px.items = []; px.ed = null; px.pick = false; } else rcOpen();
         pxOwnChanged(); return;
       }
       if (t.closest('#pxAdd')) { px.ed = -1; px.dr = {k: pxNewK(), tax: 10, client: px.items[px.items.length - 1]?.client || '', inp: '', offInp: ''}; paintPx(); pxYenHint(); pxBox.querySelector('#pxName')?.focus(); return; }
@@ -3085,6 +3169,7 @@ function editExpense(e, pre = null) {
       }
       const tx = t.closest('#pxTax [data-t]');
       if (tx) { px.dr.tax = +tx.dataset.t; pxBox.querySelectorAll('#pxTax [data-t]').forEach(b => b.setAttribute('aria-pressed', String(b === tx))); pxYenHint(); return; }
+      if (t.closest('#pxNoDisc')) { px.dr.noDisc = !px.dr.noDisc; pxBox.querySelector('#pxNoDisc').setAttribute('aria-checked', String(!!px.dr.noDisc)); return; }
       if (t.closest('#pxNoRf')) { px.dr.noRf = !px.dr.noRf; pxBox.querySelector('#pxNoRf').setAttribute('aria-checked', String(!!px.dr.noRf)); return; }
       if (t.closest('#pxCancel')) { px.ed = null; px.dr = null; paintPx(); return; }
       if (t.closest('#pxDel')) { px.items.splice(px.ed, 1); px.ed = null; px.dr = null; pxOwnChanged(); return; }
@@ -3112,12 +3197,10 @@ function editExpense(e, pre = null) {
     };
     pxBox.oninput = ev => {
       const t = ev.target;
-      if (t.id === 'ePxDisc') { rc.disc = t.value; pxOwnChanged(); }
-      else if (t.id === 'ePxFood') { rc.f8 = t.value; syncRc(t); pxOwnChanged(); }
-      else if (t.id === 'pxYen' || t.id === 'pxQty') pxYenHint();
+      if (t.id === 'pxYen' || t.id === 'pxQty') pxYenHint();
     };
     // 實付扣掉代購成本後，自己人的部分（分）
-    const ownOf = A => { const d = pxData(); return d ? Math.max(0, pxCalc(A, d).own) : A; };
+    const ownOf = A => { const d = pxData(); return d ? Math.max(0, pxCalcLive(A, d).own) : A; };
     // 目前輸入算出來的付款、應付（單位：分）；不合法時 err 會寫原因
     const calc = () => {
       const A = cents(parseAmt(amtEl.value) || 0), paid = {}, share = {}, err = {};
@@ -3129,7 +3212,7 @@ function editExpense(e, pre = null) {
       } else paid[payers[0]] = A;
       const main = mainPayer(paid) || payers[0];
       // 代購：自己人的部分＝實付 − 代購成本；分攤金額對的是自己人的部分
-      const pd = pxData(), pr = pd ? pxCalc(A, pd) : null, own = pr ? pr.own : A;
+      const pd = pxData(), pr = pd ? pxCalcLive(A, pd) : null, own = pr ? pr.own : A;
       if (pr) { const ie = pxItemErr(); if (ie || pr.err.length) err.px = ie || pr.err[0]; }
       // 照收據標價分：8% 的部分照「食品」欄、10% 的部分照「標價」欄分，以 ¥1 為單位（最大餘數法），寫回各自金額
       const own8 = pr ? Math.max(0, pr.own8) : Math.min(A, foodYen() * 100), tag = tagMode() && own > 0 ? tagAlloc(own, own8) : null;
@@ -3149,8 +3232,15 @@ function editExpense(e, pre = null) {
     // own：自己人的部分（分）、own8：其中 8%（分）→ {share 每人（分）, g, f 每人的標價, err, note}
     const tagAlloc = (own, own8) => {
       const g = {}, f = {}, bad = [], out = {share: {}, g, f, err: '', note: ''};
-      for (const m of split) { const a = rcEval(rc.tags[m]?.g), b = rcEval(rc.tags[m]?.f); if (a === null || b === null) bad.push(m); g[m] = a || 0; f[m] = b || 0; }
+      // 有商品不參加全單折扣：打折的標價 ×（1 − 折扣率），不打折的照原價，換成同一個基準再比例分
+      const A = Math.round(parseAmt(amtEl.value) || 0), D = rc.nd ? discNow() : 0, base = A - ndOwnYen() - pxNoDiscYen() + D, k = D > 0 && base > 0 ? 1 - D / base : 1;
+      for (const m of split) {
+        const t = rc.tags[m] || {}, v = [t.g, t.f, rc.nd ? t.gn : '', rc.nd ? t.fn : ''].map(rcEval);
+        if (v.some(x => x === null)) bad.push(m);
+        g[m] = (v[0] || 0) * k + (v[2] || 0); f[m] = (v[1] || 0) * k + (v[3] || 0);
+      }
       if (bad.length) { out.err = `${bad.map(nm).join('、')} 的標價看不懂（可以用數字和 + − × ÷）`; return out; }
+      if (rc.nd && !(D > 0) && split.some(m => rcEval(rc.tags[m]?.gn) > 0 || rcEval(rc.tags[m]?.fn) > 0)) out.note = '還沒填全單折扣：不打折的商品目前跟其他商品一樣算';
       const none = split.filter(m => !(g[m] + f[m] > 0));
       if (none.length) { out.err = `${none.map(nm).join('、')} 還沒填標價（沒買東西就取消勾選）`; return out; }
       const o8 = Math.min(own8, own), F = split.reduce((n, m) => n + f[m], 0), G = split.reduce((n, m) => n + g[m], 0);
@@ -3159,8 +3249,8 @@ function editExpense(e, pre = null) {
         if (own - o8 > 0 && !(G > 0)) { out.err = `一般用品（10%）有 ${money(own - o8, cur)}，請在「一般用品」欄填誰買的`; return out; }
         pools = [[o8, f], [own - o8, g]];
       } else {
-        if (o8 > 0 && own - o8 > 0) out.note = '有食品的話，「食品」欄分開填會更準';
-        if (F > 0 && !(o8 > 0)) out.note = '填了食品標價：再填收據的 8% 對象會更準';
+        if (o8 > 0 && own - o8 > 0) out.note = out.note || '有食品的話，「食品」欄分開填會更準';
+        if (F > 0 && !(o8 > 0)) out.note = out.note || '填了食品標價：再填收據的 8% 對象會更準';
         pools = [[own, Object.fromEntries(split.map(m => [m, g[m] + f[m]]))]];
       }
       for (const [P, w] of pools) {
@@ -3255,7 +3345,7 @@ function editExpense(e, pre = null) {
       if (!rfBox.querySelector('#eRfIn')) return;
       const st = rfStoreNow(), Araw = parseAmt(amtEl.value) || 0, who = rfWho();
       // 有代購時：扣掉不可退稅的代購商品（食品從 8% 對象扣）
-      const pd = pxData(), pr = pd ? pxCalc(cents(Araw), pd) : null, nr = pr ? pr.items.filter(x => x.noRf) : [];
+      const pd = pxData(), pr = pd ? pxCalcLive(cents(Araw), pd) : null, nr = pr ? pr.items.filter(x => x.noRf) : [];
       const A = pr ? Math.max(0, cents(Araw) - nr.reduce((n, x) => n + x.cost, 0)) / 100 : Araw, nrFood = nr.filter(x => x.tax === 8).reduce((n, x) => n + x.cost, 0) / 100;
       if (st?.cash === 'no') rf.method = 'card'; else if (!rf.method) rf.method = rfDefMethod(st);
       // 登記人：多位付款人時讓人選（退稅跟著護照走）
@@ -3378,7 +3468,7 @@ function editExpense(e, pre = null) {
             <button type="button" class="setb" data-set="${r.m}" data-k="${r.k}" aria-pressed="${r.done}" ${locked ? 'disabled' : ''}>${r.done ? '✓ 已結清' : '已結清？'}</button></div>`).join('')}
         ${rows.length > 1 && !locked ? `<div style="display:flex;justify-content:flex-end"><button type="button" class="btn sm ghost" id="eSetAll">${rows.every(r => r.done) ? '全部取消結清' : '全部結清'}</button></div>` : ''}</details>`;
       s.querySelector('#eSave').disabled = (isNew && locked) || (!!(c.err.pay || c.err.split) && !!c.A);
-      paintPx(); paintCard(); paintRf(); paintMore();
+      paintRc(); paintPx(); paintCard(); paintRf(); paintMore();
     };
     // 「更多」收起來時，摘要列出目前的設定，不用展開也知道
     const paintMore = () => {
@@ -3405,21 +3495,23 @@ function editExpense(e, pre = null) {
       s.querySelectorAll('#ePay [data-p]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.p === payType)));
       s.querySelector('#eSplit').innerHTML = IDS.map(m => `<button type="button" data-m="${m}" aria-pressed="${split.includes(m)}" style="--c:${COLORS[m]}" ${dis}>${avatar(m)}${nm(m)}</button>`).join('');
       const pd0 = pxData(), hasPx = !!pd0, A0 = ownOf(cents(parseAmt(amtEl.value) || 0)), vals = split.map(m => cents(Number(shareIn[m]) || 0));
-      const pxOver = hasPx && pxCalc(cents(parseAmt(amtEl.value) || 0), pd0).own < 0;
-      s.querySelector('#eSplitLbl').innerHTML = hasPx ? `自己人的部分怎麼分 <span class="tiny muted">（實付扣掉代購成本${A0 ? `：${money(A0, cur)}` : ''}）</span>` : '分攤的人 <span class="tiny muted">（勾選後帶入平均金額，可以改）</span>';
+      const pxOver = hasPx && pxCalcLive(cents(parseAmt(amtEl.value) || 0), pd0).own < 0;
+      const pxOw = hasPx ? pd0.owners : [];
+      s.querySelector('#eSplitLbl').innerHTML = hasPx ? `自己人的部分怎麼分 <span class="tiny muted">（實付扣掉代購成本${A0 ? `：${money(A0, cur)}` : ''}）</span><span class="splithint">只勾自己有買東西的人。代購的成本已經算給 ${pxOw.map(nm).join('、')}，${pxOw.length > 1 ? '他們' : nm(pxOw[0])}自己沒買東西就不要勾。</span>` : '分攤的人 <span class="tiny muted">（勾選後帶入平均金額，可以改）</span>';
       const evTxt = pxOver ? '代購成本超過實付，請檢查上面的代購' : hasPx && !A0 && cents(parseAmt(amtEl.value) || 0) ? '全部都是代購，沒有自己人的部分' : !A0 ? '輸入總額後，自動平均分給勾選的人' : vals.every(v => v === vals[0]) ? `平均分攤・每人 <b>${money(vals[0], cur)}</b>` : `平均分攤・每人約 <b>${money(Math.floor(A0 / split.length), cur)}</b>（零頭自動分配）`;
       const jp = cur === 'JPY', tagBtn = jp && split.length > 1 && !moneyLocked ? '<button type="button" class="btn sm ghost" id="eOwnTag">照收據標價</button>' : '';
       const ownWho = m => `<span class="who">${avatar(m, 's').replace('data-profile', 'data-x')}${nm(m)}</span>`;
       s.querySelector('#eOwn').innerHTML = hasPx && !A0 && cents(parseAmt(amtEl.value) || 0) ? `<div class="evsum"><span>${evTxt}</span></div>` : !split.length ? '<div class="erfoot"><span class="ng">至少要勾一位分攤的人</span></div>'
         : !ownOpen ? `<div class="evsum"><span>${evTxt}</span>${split.length > 1 && !moneyLocked ? `<span style="display:flex;gap:4px;flex-wrap:wrap;justify-content:flex-end">${tagBtn}<button type="button" class="btn sm ghost" id="eOwnEdit">各自金額</button></span>` : ''}</div>`
         : tagMode() ? `<div class="tiny muted" style="margin:6px 2px 0">每個人填收據上自己買的東西的標價，<b>一般用品和食品分開填</b>（可以寫 <b>332+1280</b>、<b>498/3*2</b>），app 換成實付，優惠券和稅都算好了</div>
-          <div style="margin:6px 0 0">${rcGuideBtn()}</div>
-          <div class="f" style="margin:8px 0 0"><span>收據上的價格 <span class="tiny muted">唐吉訶德是印未稅價</span></span>${rcSeg()}</div>
-          ${hasPx ? '' : `<div class="f" style="margin:4px 0 0"><span>收據 8% 對象 <span class="tiny muted">有食品才填・<span data-rcfl>${rcFoodLbl()}</span></span></span><input class="in" id="eTagFood" type="text" inputmode="numeric" autocomplete="off" placeholder="照收據「8%対象」的金額" value="${esc(rc.f8)}" ${dis}><div class="tiny muted" id="eTagFoodHint" style="margin:2px 2px 0"></div></div>`}
+          <div class="tiny" style="margin:4px 2px 0">收據價格：<b data-rcpl>${rcPl()}</b>${yenInt(rc.f8) ? '' : '・還沒填 8% 對象'}（在上面「🧾 收據資訊」改）　${rcGuideBtn()}</div>
           <div class="erows tagrows" id="eTagRows"><div class="erow hd"><span class="who"></span><span><b>一般用品</b><br>標價（<i data-rcpl>${rcPl()}</i>）</span><span class="tf"><b>食品 8%</b><br>標價（<i data-rcpl>${rcPl()}</i>）</span><span class="tres">分到</span></div>${split.map(m => `<div class="erow">${ownWho(m)}
-          <input class="amt" data-tg="${m}" type="text" inputmode="text" autocomplete="off" placeholder="一般用品" aria-label="${nm(m)} 一般用品標價" value="${esc(rc.tags[m]?.g || '')}" ${dis}>
-          <input class="amt tf" data-tf="${m}" type="text" inputmode="text" autocomplete="off" placeholder="食品" aria-label="${nm(m)} 食品標價" value="${esc(rc.tags[m]?.f || '')}" ${dis}>
-          <b class="num tres" data-tr="${m}">—</b></div>`).join('')}</div>
+          <input class="amt" data-tg="${m}" type="text" inputmode="text" autocomplete="off" placeholder="${rc.nd ? '打折的' : '一般用品'}" aria-label="${nm(m)} 一般用品標價" value="${esc(rc.tags[m]?.g || '')}" ${dis}>
+          <input class="amt tf" data-tf="${m}" type="text" inputmode="text" autocomplete="off" placeholder="${rc.nd ? '打折的' : '食品'}" aria-label="${nm(m)} 食品標價" value="${esc(rc.tags[m]?.f || '')}" ${dis}>
+          <b class="num tres" data-tr="${m}">—</b></div>${rc.nd ? `<div class="erow nd"><span class="who">↳ 不打折</span>
+          <input class="amt" data-tgn="${m}" type="text" inputmode="text" autocomplete="off" placeholder="不打折的" aria-label="${nm(m)} 不打折的一般用品標價" value="${esc(rc.tags[m]?.gn || '')}" ${dis}>
+          <input class="amt tf" data-tfn="${m}" type="text" inputmode="text" autocomplete="off" placeholder="不打折的" aria-label="${nm(m)} 不打折的食品標價" value="${esc(rc.tags[m]?.fn || '')}" ${dis}>
+          <span></span></div>` : ''}`).join('')}</div>
           <div class="erfoot" id="eOwnFoot"></div>${moneyLocked ? '' : '<div style="display:flex;justify-content:flex-end;gap:4px;flex-wrap:wrap"><button type="button" class="btn sm ghost" id="eOwnEach">改成直接填金額</button><button type="button" class="btn sm ghost" id="eOwnEven">改回平均分攤</button></div>'}`
         : `<div class="erows">${split.map(m => `<div class="erow">${ownWho(m)}
           <input class="amt" data-om="${m}" type="text" inputmode="decimal" autocomplete="off" placeholder="0" value="${esc(shareIn[m] || '')}" ${dis}></div>`).join('')}</div>
@@ -3458,15 +3550,16 @@ function editExpense(e, pre = null) {
     s.querySelector('#ePay').onclick = ev => { const b = ev.target.closest('[data-p]'); if (b) { payType = b.dataset.p; paint(); } };
     s.querySelector('#eOwn').onclick = ev => {
       if (ev.target.closest('#eOwnEdit')) { rc.tag = false; ownOpen = true; paint(); s.querySelector('#eOwn [data-om]')?.focus(); }
-      else if (ev.target.closest('#eOwnTag')) { rc.tag = true; ownOpen = true; paint(); s.querySelector('#eOwn [data-tg]')?.focus(); }
+      else if (ev.target.closest('#eOwnTag')) { rc.tag = true; ownOpen = true; rcOpen(); paint(); s.querySelector('#eOwn [data-tg]')?.focus(); }
       else if (ev.target.closest('#eOwnEach')) { rc.tag = false; ownOpen = true; paint(); } // 保留照標價算出來的金額，之後自己改
       else if (ev.target.closest('#eOwnEven')) { rc.tag = false; ownOpen = false; reAverage(); paint(); }
     };
     s.querySelector('#eOwn').oninput = ev => {
       const i = ev.target.closest('[data-om]'); if (i) { shareIn[i.dataset.om] = i.value; paintSums(); return; }
       const g = ev.target.closest('[data-tg]'), f = ev.target.closest('[data-tf]');
+      const gn = ev.target.closest('[data-tgn]'), fn = ev.target.closest('[data-tfn]');
       if (g) rc.tags[g.dataset.tg].g = g.value; else if (f) rc.tags[f.dataset.tf].f = f.value;
-      else if (ev.target.id === 'eTagFood') { rc.f8 = ev.target.value; syncRc(ev.target); }
+      else if (gn) rc.tags[gn.dataset.tgn].gn = gn.value; else if (fn) rc.tags[fn.dataset.tfn].fn = fn.value;
       else return;
       paintSums();
     };
