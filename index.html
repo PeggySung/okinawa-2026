@@ -1008,6 +1008,10 @@ details.rcbox .rcin{padding:2px 0 10px}
 .itrow .itf{flex:none;min-height:40px;padding:0 10px;border-radius:10px;background:var(--sand);color:var(--ink-2);font-size:13.5px}
 .itrow .itf[aria-pressed=true]{background:var(--sea-light);color:var(--sea-deep);box-shadow:inset 0 0 0 1.5px var(--sea);font-weight:700}
 .itrow .itmore{flex:none;width:34px;min-height:40px;border-radius:10px;color:var(--ink-3);font-size:18px}
+.itrow .lnm{margin-top:6px;padding-left:26px}
+.itrow .itnm{width:100%;min-height:34px;padding:4px 10px;border:0;border-radius:9px;background:var(--paper);box-shadow:inset 0 0 0 1.5px var(--line);font-size:14.5px;outline:none;color:var(--ink)}
+.itrow .itnm:focus{box-shadow:inset 0 0 0 2px var(--sea)}
+.itrow .itnm::placeholder{font-size:13.5px;color:var(--ink-3)}
 .itrow .l2{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin-top:8px;padding-left:26px}
 .itrow .itw{min-height:32px;padding:0 11px;border-radius:999px;font-size:13.5px;color:var(--ink-2);box-shadow:inset 0 0 0 1.5px var(--line-2);background:var(--paper)}
 .itrow .itw[aria-pressed=true]{background:var(--c);color:#fff;box-shadow:none;font-weight:700}
@@ -2395,7 +2399,7 @@ function rcGuideOpen() {
     <div class="tip">判斷錯了（例如收據其實是含稅）就按「改成含稅」。看到「⚠ 實付比商品多」通常是漏了一行。</div></div>
 
   <div class="gstep"><h4><span class="gno">4</span>少見的情況：按每行的「⋯」</h4>
-    <p><b>不打折</b>：優惠券沒折到這件（菸酒、特價品）。<br><b>單品折價</b>：只折這一件的券。<br><b>品名、數量</b>：代購的對帳單會用到，填了比較清楚。<br><b>不可退稅</b>：代購的這件不參加退稅分配。</p></div>
+    <p><b>不打折</b>：優惠券沒折到這件（菸酒、特價品）。<br><b>單品折價</b>：只折這一件的券。<br><b>品名</b>：每行價格下面那格，選填，方便對收據；代購的對帳單也會用到。<br><b>數量</b>：在「⋯」裡，代購的對帳單會用到。<br><b>不可退稅</b>：代購的這件不參加退稅分配。</p></div>
   <div style="margin-top:16px"><button type="button" class="btn pri" style="width:100%" data-gclose>看懂了，回去填</button></div>`;
   g.classList.add('on'); g.scrollTop = 0;
   g.onclick = ev => { if (ev.target.closest('[data-gclose]')) g.classList.remove('on'); };
@@ -3601,12 +3605,12 @@ function editExpense(e, pre = null) {
       return `<div class="itrow" data-ir="${i}">
         <div class="l1"><span class="no">${i + 1}</span><input class="itp" data-ip="${i}" type="text" inputmode="text" autocomplete="off" placeholder="收據上的價格" value="${esc(r.p ?? '')}" ${dis}>
           <button type="button" class="itf" data-if="${i}" aria-pressed="${!!r.f}" ${dis}>🍙 食</button><button type="button" class="itmore" data-imore="${i}" aria-label="更多設定" aria-expanded="${!!r.more}">⋯</button></div>
+        <div class="lnm"><input class="itnm" data-iname="${i}" maxlength="100" autocomplete="off" value="${esc(r.n || '')}" placeholder="品名（選填，例如 味覺糖）" aria-label="品名" ${dis}></div>
         <div class="l2">${mem}${cls}<button type="button" class="itw itpx" data-ipx="${i}" aria-expanded="${!!r.pick}" ${dis}>🛍️ 代購…</button><span class="itc" data-ic="${i}"></span></div>
         ${multi ? `<div class="l3"><span class="tiny muted">幾份：</span>${to.map((t, j) => `<label class="itn">${esc(String(t.w).startsWith('c:') ? itWho(t.w)?.name || '?' : nm(t.w))}<input type="text" inputmode="numeric" data-in="${i}|${j}" value="${esc(t.n ?? 1)}" ${dis}></label>`).join('')}</div>` : ''}
         ${r.pick ? `<div class="l5"><div class="tiny muted" style="margin-bottom:4px">幫誰代購？（顏色＝誰負責收錢）</div>${groups.map(g => `<div class="pxgrp"><span class="who">${avatar(g.m, 's').replace('data-profile', 'data-x')}${esc(nm(g.m))}</span><div class="chips">${g.cs.map(c => `<button type="button" class="chpick pxcc" data-ipc="${i}|${esc(c.id)}" aria-pressed="${sel.has('c:' + c.id)}" style="--c:${COLORS[c.owner]}">${esc(c.name)}</button>`).join('')}</div></div>`).join('') || '<div class="tiny muted">還沒有委託人</div>'}
           <button type="button" class="btn sm ghost" data-ipnew="${i}" style="margin-top:4px">${ic.plus}新增委託人</button></div>` : ''}
-        ${r.more ? `<div class="l4"><label class="f"><span>品名 <span class="tiny muted">（代購的對帳單會用到）</span></span><input class="in" data-iname="${i}" maxlength="100" value="${esc(r.n || '')}" placeholder="例如 味覺糖" ${dis}></label>
-          <div class="row2"><label class="f"><span>數量</span><input class="in" data-iq="${i}" type="text" inputmode="numeric" value="${esc(Number(r.q) > 1 ? r.q : '')}" placeholder="1" ${dis}></label>
+        ${r.more ? `<div class="l4"><div class="row2"><label class="f"><span>數量</span><input class="in" data-iq="${i}" type="text" inputmode="numeric" value="${esc(Number(r.q) > 1 ? r.q : '')}" placeholder="1" ${dis}></label>
           <label class="f"><span>單品折價 <span class="tiny muted">只折這件的券</span></span><input class="in" data-ioff="${i}" type="text" inputmode="text" value="${esc(r.off || '')}" placeholder="0" ${dis}></label></div>
           <button type="button" class="opt" role="checkbox" aria-checked="${!!r.nd}" data-ind="${i}" ${dis}><span class="box" style="--c:var(--terra)" aria-hidden="true">${ic.check}</span><span class="txt">不打折<span class="tiny muted" style="display:block">收據的優惠券沒折到這件（菸酒、特價品）</span></span></button>
           ${hasCl ? `<button type="button" class="opt" role="checkbox" aria-checked="${!!r.noRf}" data-inr="${i}" ${dis}><span class="box" style="--c:var(--terra)" aria-hidden="true">${ic.check}</span><span class="txt">不可退稅<span class="tiny muted" style="display:block">這件代購不參加退稅分配</span></span></button>` : ''}
