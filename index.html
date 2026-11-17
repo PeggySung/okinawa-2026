@@ -2917,6 +2917,7 @@ function editExpense(e, pre = null) {
   openSheet(`<h3>${isNew ? '記一筆' : '編輯記帳'}<button class="iconbtn x" data-close aria-label="關閉">${ic.x}</button></h3>
     <div id="eLock"></div>
     <div class="seg" id="eCur" style="margin-bottom:12px">${['JPY', 'TWD'].map(c => `<button type="button" data-c="${c}">${CUR[c].sym} ${CUR[c].name}</button>`).join('')}</div>
+    <label class="f"><span>品名 <em>*</em></span><input class="in" id="eName" required value="${esc(e?.name || pre?.name || '')}" maxlength="100" placeholder="例如 燒肉晚餐"></label>
     <label class="f"><span>總額 <em>*</em></span><input class="in big" id="eAmt" type="text" inputmode="decimal" autocomplete="off" placeholder="0" value="${e ? esc(e.amount) : pre?.amount ? esc(pre.amount) : ''}"></label>
     <div class="f"><span>誰先付錢 <span class="tiny muted">（可以選多位）</span></span><div class="pick" id="ePayer"></div><div id="ePaidBox"></div></div>
     <div id="eItGo"></div>
@@ -2924,7 +2925,6 @@ function editExpense(e, pre = null) {
     <div id="ePx"></div>
     <div class="f" id="eSplitF"><span id="eSplitLbl">分攤的人 <span class="tiny muted">（勾選後帶入平均金額，可以改）</span></span><div class="pick" id="eSplit"></div><div id="eOwn"></div></div>
     <div id="eHow"></div>
-    <label class="f"><span>品名 <em>*</em></span><input class="in" id="eName" required value="${esc(e?.name || pre?.name || '')}" maxlength="100" placeholder="例如 燒肉晚餐"></label>
     <details class="emore" id="eMore" ${moreOpen ? 'open' : ''}><summary>更多<span class="sum" id="eMoreSum"></span>${ic.chev.replace('<svg', '<svg class="chev"')}</summary>
     <div class="f" id="ePayF"><span>付款方式（大家都看得到）</span><div class="seg" id="ePay"><button type="button" data-p="cash">現金</button><button type="button" data-p="card">刷卡</button></div></div>
     <label class="f"><span>付款日期 <em>*</em> <span class="tiny muted">（大家都看得到，記帳明細依這個日期排）</span></span><input class="in" id="ePaid" type="date" value="${esc(sel.date)}"></label>
@@ -3685,7 +3685,7 @@ function editExpense(e, pre = null) {
     if (!e && pre?.amount) reAverage(); // 從刷卡試算帶入總額：先帶平均
     syncCh(); paint();
     const shareSig0 = JSON.stringify(calc().share);
-    if (isNew && !pre?.amount) setTimeout(() => amtEl.focus(), 250);
+    if (isNew && !pre?.amount) setTimeout(() => (s.querySelector('#eName').value.trim() ? amtEl : s.querySelector('#eName')).focus(), 250); // 新增時先跳到最上面的品名，有帶入品名就跳總額
     amtEl.oninput = () => { if (imOn()) { paintSums(); return; } if (split.length && (!ownOpen || split.every(m => !shareIn[m]))) { reAverage(); paint(); } else paintSums(); };
     s.querySelector('#eName').oninput = () => { if (syncCh()) paint(); else { paintCard(); paintRf(); } };
     s.querySelector('#ePaid').onchange = ev => { sel.date = ev.target.value || sel.date; paintCard(); paintRf(); paintMore(); };
